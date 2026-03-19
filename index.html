@@ -769,7 +769,14 @@
     }
 
     .section-overlay.sturmzx2-modal.expanding {
-      max-width: min(94vw, 680px);
+      width: 50vw !important;
+      height: 50vh !important;
+      max-width: none;
+      max-height: none;
+    }
+
+    .section-overlay.sturmzx2-modal.expanding::-webkit-scrollbar {
+      width: 60px;
     }
 
     .section-overlay.bio-modal.expanding {
@@ -2094,7 +2101,6 @@
       <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 13.2 2h-3v13.4a2.59 2.59 0 0 1-2.6 2.6 2.59 2.59 0 0 1-2.6-2.6 2.59 2.59 0 0 1 2.6-2.6c.28 0 .56.04.82.12V9.2A6.2 6.2 0 0 0 4 15.4a6.2 6.2 0 0 0 6.2 6.2 6.2 6.2 0 0 0 6.2-6.2V9.06a7.7 7.7 0 0 0 4.6 1.52V7.04a4.28 4.28 0 0 1-4.4-1.22Z"/></svg>
       <span class="social-tooltip">Soundcloud</span>
     </a>
-   
   </div>
 
   <div class="daynight-switch" id="dayNightSwitch" title="Toggle day / night">
