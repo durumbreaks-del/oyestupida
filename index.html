@@ -1,0 +1,3815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oye Estupida</title>
+  <link rel="icon" type="image/png" href="img/favico.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { corePlugins: { ringWidth: false, ringColor: false, ringOpacity: false, ringOffsetWidth: false } }</script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *:focus { outline: none; }
+
+    .site-logo {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      pointer-events: none;
+      width: 100px;
+      max-width: 100px;
+    }
+
+    .site-logo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Courier New', monospace;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    body.grayscale-mode {
+      filter: grayscale(100%);
+      transition: filter 0.6s ease;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: url('mouse.png') 0 0, auto;
+      background-image: url('img/bg1.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      transition: background-image 0.6s ease;
+    }
+
+    body.night-mode {
+      background-image: url('img/bg_night.png');
+    }
+
+    /* ---------- Ring ---------- */
+    .ring {
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 360px;
+      height: 360px;
+      z-index: 20;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .ring.hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.6);
+      pointer-events: none;
+    }
+
+    .ring-btn {
+      position: absolute;
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px; font-weight: bold;
+      text-align: center;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s ease, opacity 0.4s ease, left 0.4s ease, top 0.4s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ring-btn .tarot-button-label,
+    .ring-btn .mini-btn-label,
+    .ring-btn .contact-button-label {
+      display: none;
+    }
+
+    .ring-btn-tooltip {
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      white-space: nowrap;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .ring-btn:hover .ring-btn-tooltip,
+    .ring-btn.laser-hover .ring-btn-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .frame-tooltip {
+      position: fixed;
+      transform: translateX(-50%) translateY(4px);
+      white-space: nowrap;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 40;
+    }
+    .frame-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .couch-tooltip {
+      position: fixed;
+      transform: translateX(-50%) translateY(4px);
+      white-space: nowrap;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 40;
+    }
+    .couch-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Day/Night interruptor */
+    .daynight-switch {
+      position: fixed;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 64px;
+      border-radius: 999px;
+      border: 1.5px solid #ff00c0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1200;
+      box-shadow: 0 0 12px rgba(255,0,192,0.4);
+    }
+    .daynight-toggle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ff0;
+      box-shadow: 0 0 10px rgba(255,255,0,0.8);
+      transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+      transform: translateY(-12px);
+    }
+    .daynight-switch.night .daynight-toggle {
+      transform: translateY(12px);
+      background: #0ff;
+      box-shadow: 0 0 10px rgba(0,255,255,0.8);
+    }
+
+    /* Tarot tooltip: nudge slightly up */
+    .ring-btn.tarot-btn .ring-btn-tooltip {
+      bottom: calc(120% + 15px);
+    }
+
+    /* CAKES button tooltip: lift a bit */
+    .ring-btn.cakes-btn .ring-btn-tooltip {
+      bottom: calc(120% + 50px);
+    }
+
+    /* CONTACT button tooltip: nudge up */
+    .ring-btn.contact-btn .ring-btn-tooltip {
+      bottom: calc(120% + 30px);
+    }
+
+    /* TATTOOS button tooltip: lift a bit */
+    .ring-btn.tattoos-btn .ring-btn-tooltip {
+      bottom: calc(120% + 20px);
+    }
+
+    /* STURM button is huge → lift tooltip more */
+    .ring-btn.sturm-btn .ring-btn-tooltip {
+      bottom: calc(120% + 80px);
+    }
+
+    .ring-btn:hover,
+    .ring-btn.laser-hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.6), 0 0 40px rgba(255,0,192,0.3);
+      transform: scale(1.15);
+    }
+
+    .ring-btn:active {
+      transform: scale(0.95);
+      background: #ff00c0;
+    }
+
+    .ring-btn.selected {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 14px rgba(255,0,192,0.5);
+    }
+
+    .ring-btn.hit {
+      animation: btnHit 0.4s ease-out;
+    }
+
+    .ring-btn.vibrate-once {
+      animation: ringVibrate 0.18s linear 0s 2;
+    }
+
+    @keyframes ringVibrate {
+      0%   { transform: translateX(0); }
+      25%  { transform: translateX(-2px); }
+      50%  { transform: translateX(2px); }
+      75%  { transform: translateX(-1px); }
+      100% { transform: translateX(0); }
+    }
+
+    .ring-btn.tarot-btn {
+      width: 80px;
+      height: 56px;
+      border-radius: 12px;
+      padding: 0;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .ring-btn.tarot-btn:hover {
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .ring-btn.contact-btn {
+      width: 80px;
+      height: 56px;
+      border-radius: 12px;
+      padding: 0;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .ring-btn.tattoos-btn,
+    .ring-btn.cakes-btn,
+    .ring-btn.sturm-btn {
+      width: 80px;
+      height: 56px;
+      border-radius: 12px;
+      padding: 0;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .ring-btn.contact-btn:hover {
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .ring-btn.tattoos-btn:hover,
+    .ring-btn.cakes-btn:hover,
+    .ring-btn.sturm-btn:hover {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none !important;
+      transform: none;
+      color: inherit;
+    }
+
+    /* STURMZX2 & TATTOOS buttons: never show pink selected/hover glow */
+    .ring-btn.sturm-btn,
+    .ring-btn.sturm-btn:hover,
+    .ring-btn.sturm-btn.selected,
+    .ring-btn.sturm-btn.hit,
+    .ring-btn.tattoos-btn,
+    .ring-btn.tattoos-btn:hover,
+    .ring-btn.tattoos-btn.selected,
+    .ring-btn.tattoos-btn.hit {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .tarot-button-cards {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tarot-button-card {
+      position: absolute;
+      width: 28px;
+      height: 42px;
+      border-radius: 4px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      box-shadow: none;
+      filter: hue-rotate(-20deg) saturate(1.6);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1.6);
+    }
+
+    /* Slight resting offsets so all cards peek out a bit */
+    .ring-btn.tarot-btn .tarot-button-card.c1 {
+      transform: translate(-80%, -40%) scale(1.6);
+    }
+    .ring-btn.tarot-btn .tarot-button-card.c2 {
+      transform: translate(-60%, -55%) scale(1.6);
+    }
+    .ring-btn.tarot-btn .tarot-button-card.c3 {
+      transform: translate(-40%, -60%) scale(1.6);
+    }
+    .ring-btn.tarot-btn .tarot-button-card.c4 {
+      transform: translate(-20%, -40%) scale(1.6);
+    }
+
+    .tarot-button-card.c1 { background-image: url('img/tarot/tarot4.png'); z-index: 1; }
+    .tarot-button-card.c2 { background-image: url('img/tarot/tarot3.png'); z-index: 2; }
+    .tarot-button-card.c3 { background-image: url('img/tarot/tarot2.png'); z-index: 3; }
+    .tarot-button-card.c4 { background-image: url('img/tarot/tarot1.png'); z-index: 4; }
+
+    .tarot-button-label {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .contact-button-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .contact-button-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200px;
+      height: 200px;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .contact-button-icon svg {
+      width: 36px;
+      height: 36px;
+      fill: none;
+      stroke: #ff00c0;
+      stroke-width: 2.5;
+    }
+
+    .contact-button-label {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      pointer-events: none;
+    }
+
+    .mini-btn-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini-btn-label {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      pointer-events: none;
+    }
+
+    .mini-btn-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 140px;
+      height: 140px;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-btn-icon svg {
+      width: 34px;
+      height: 34px;
+      fill: none;
+      stroke: #ff00c0;
+      stroke-width: 2.3;
+    }
+
+    .ring-btn.tarot-btn:hover .tarot-button-card.c1 {
+      transform: translate(-90%, -30%) rotate(-18deg) scale(2);
+    }
+
+    .ring-btn.tarot-btn:hover .tarot-button-card.c2 {
+      transform: translate(-50%, -60%) rotate(-6deg) scale(2);
+    }
+
+    .ring-btn.tarot-btn:hover .tarot-button-card.c3 {
+      transform: translate(-10%, -60%) rotate(6deg) scale(2);
+    }
+
+    .ring-btn.tarot-btn:hover .tarot-button-card.c4 {
+      transform: translate(30%, -30%) rotate(18deg) scale(2);
+    }
+
+    @keyframes btnHit {
+      0%   { transform: scale(1.3); background: #fff; box-shadow: 0 0 30px #fff, 0 0 60px #ff00c0; }
+      50%  { transform: scale(0.85); }
+      100% { transform: scale(1); }
+    }
+
+    .frame-btn {
+      pointer-events: auto !important;
+      transform-origin: top center;
+      transition: filter 0.2s, width 0.4s ease, max-width 0.4s ease;
+    }
+
+    .frame-btn.laser-hover {
+      filter: brightness(1.25);
+    }
+
+    .frame-btn.hit {
+      animation: frameHit 0.4s ease-out;
+    }
+
+    #frameArt {
+      object-fit: contain;
+      border-radius: 0;
+      clip-path: none;
+    }
+
+    @keyframes frameHit {
+      0%   { filter: brightness(1.8); }
+      100% { filter: brightness(1); }
+    }
+
+    /* ---------- Cakes order button & form ---------- */
+    .cakes-order-btn {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      z-index: 1200;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 0;
+      background: #ff00c0;
+      color: #000;
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: none;
+      transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+    .cakes-order-btn.visible {
+      display: inline-flex;
+    }
+    .cakes-order-btn:hover,
+    .cakes-order-btn.laser-hover {
+      transform: translateY(-2px);
+      box-shadow: none;
+      filter: brightness(1.05);
+    }
+
+    .cakes-order-form-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 0, 10, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1300;
+    }
+    .cakes-order-form-overlay.visible {
+      display: flex;
+    }
+    .cakes-order-form {
+      width: min(420px, 90vw);
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 20px 22px;
+      border-radius: 18px;
+      border: 1px solid #ff00c0;
+      background: radial-gradient(circle at top, rgba(255,0,192,0.15), transparent 60%), rgba(10, 0, 20, 0.96);
+      box-shadow: 0 0 30px rgba(255,0,192,0.7);
+      font-family: 'Courier New', monospace;
+      color: #fdf0ff;
+    }
+    .cakes-order-form h3 {
+      margin: 0 0 14px;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: #ff00c0;
+      text-align: center;
+    }
+    .cakes-order-form p {
+      font-size: 11px;
+      line-height: 1.5;
+      margin: 0 0 14px;
+      color: #ffbdf1;
+      text-align: center;
+    }
+    .cakes-order-form label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 10px 0 4px;
+      color: #ffdaf7;
+    }
+    .cakes-order-step {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cakes-order-step.active {
+      display: flex;
+    }
+    .cakes-order-form input[type="text"],
+    .cakes-order-form input[type="date"],
+    .cakes-order-form textarea,
+    .cakes-order-form select {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(255,0,192,0.4);
+      background: rgba(10,0,20,0.9);
+      color: #fff;
+      padding: 7px 9px;
+      font-size: 11px;
+      font-family: inherit;
+      outline: none;
+    }
+    .cakes-order-form textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    .cakes-order-form small {
+      display: block;
+      font-size: 9px;
+      color: #ff9eea;
+      margin-top: 2px;
+    }
+    .cakes-order-form .colors-row {
+      display: flex;
+      gap: 6px;
+    }
+    .cakes-order-form .colors-row input[type="color"] {
+      width: 100%;
+      height: 44px;
+      flex: 1 1 0;
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid rgba(255,0,192,0.4);
+      background: rgba(10,0,20,0.9);
+      cursor: pointer;
+    }
+    .cakes-order-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+    .cakes-order-submit {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #ff00c0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+    }
+    .cakes-order-submit:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 0 20px rgba(255,0,192,0.8);
+    }
+    .cakes-order-cancel {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: transparent;
+      color: #fff;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .cakes-order-cancel:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .couch-kiss {
+      position: fixed;
+      font-size: 42px;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 15;
+      opacity: 0;
+      transition: none;
+      transform: translate(-50%, -50%);
+    }
+    .couch-kiss.animate {
+      animation: kissRise 1.2s ease-out forwards;
+    }
+    @keyframes kissRise {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+      }
+      25% {
+        opacity: 1;
+        transform: translate(-50%, calc(-50% - 20px)) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% - 100px)) scale(1.1);
+      }
+    }
+
+    /* ---------- Section overlay ---------- */
+    .section-overlay {
+      position: fixed;
+      border-radius: 50%;
+      border: none;
+      background: rgba(20, 0, 15, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 900;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 850;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-backdrop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .section-overlay.expanding {
+      pointer-events: auto;
+      opacity: 1;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0;
+    }
+
+    .section-overlay.bio-modal.expanding,
+    .section-overlay.sturmzx2-modal.expanding,
+    .section-overlay.tarot-modal.expanding,
+    .section-overlay.contact-modal.expanding,
+    .section-overlay.paintings-modal.expanding,
+    .section-overlay.tattoos-modal.expanding {
+      top: 50% !important;
+      left: 50% !important;
+      width: fit-content !important;
+      height: fit-content !important;
+      max-width: min(94vw, 480px);
+      max-height: 90vh;
+      transform: translate(-50%, -50%) !important;
+      border-radius: 12px;
+      padding: 32px;
+      overflow: auto;
+    }
+
+    .section-overlay.sturmzx2-modal.expanding {
+      max-width: min(94vw, 680px);
+    }
+
+    .section-overlay.bio-modal.expanding {
+      width: min(94vw, 520px) !important;
+      height: min(78vh, 720px) !important;
+      overflow: hidden !important; /* modal itself should not scroll */
+    }
+
+    .section-overlay.sturmzx2-modal .bio-content {
+      max-width: 100%;
+    }
+
+    .section-overlay.sturmzx2-modal .bio-text {
+      text-align: justify;
+    }
+
+    .section-overlay.tarot-modal.expanding {
+      max-width: min(94vw, 520px);
+    }
+
+    /* All modals: close animation — slide down to bottom */
+    .section-overlay.modal-closing {
+      top: 100% !important;
+      left: 50% !important;
+      width: 85% !important;
+      max-width: 420px !important;
+      height: 55vh !important;
+      transform: translate(-50%, -100%) scale(0.92) !important;
+      border-radius: 12px;
+    }
+
+    /* Cakes modal: slide in from top, out to bottom, full width */
+    .section-overlay.cakes-modal.expanding {
+      border: none;
+      border-radius: 0;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      transform: none !important;
+    }
+
+    .section-overlay.cakes-modal.cakes-closing {
+      border: none !important;
+      border-radius: 0 !important;
+      top: 100% !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      transform: none !important;
+    }
+
+    .tarot-hero {
+      width: 100%;
+      max-width: 260px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin: 0 auto;
+      display: block;
+      background: #fff;
+    }
+
+    .tarot-title {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .tarot-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255, 105, 180, 0.95);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .tarot-contact-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+
+    .tarot-contact-btn:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+    }
+
+    .tarot-content {
+      width: 100%;
+    }
+
+    .tarot-video-wrap {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .tarot-text-wrap {
+      background: #000;
+      padding: 24px;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .tarot-text-wrap .tarot-title {
+      margin-top: 0;
+    }
+
+    .section-overlay.paintings-modal.expanding {
+      max-width: min(98vw, 1200px);
+      padding: 32px 28px 24px 28px;
+    }
+
+    .section-overlay.tattoos-modal.expanding {
+      max-width: 98vw !important;
+      height: 90vh !important;
+      max-height: 90vh !important;
+      padding: 24px 20px 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tattoos-modal .section-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    /* Tattoos: fixed title + scrollable gallery */
+    .tattoos-modal .gallery-title {
+      letter-spacing: 8px;
+      margin: 0 0 16px 0;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .tattoos-modal .tattoos-gallery-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0 0;
+    }
+
+    /* ---------- Fluid gallery (tattoos) ---------- */
+    .fluid-gallery {
+      columns: 4;
+      column-gap: 16px;
+      width: 100%;
+      min-width: 280px;
+    }
+
+    @media (max-width: 1024px) {
+      .fluid-gallery { columns: 3; }
+    }
+
+    @media (max-width: 640px) {
+      .fluid-gallery { columns: 2; }
+    }
+
+    .fluid-gallery .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      aspect-ratio: auto;
+      border: none;
+      overflow: hidden;
+    }
+
+    .fluid-gallery .gallery-item:hover,
+    .fluid-gallery .gallery-item.laser-hover {
+      transform: none;
+      box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.06), 0 0 24px rgba(0, 255, 0, 0.08);
+    }
+
+    .fluid-gallery .gallery-item:nth-child(7) { animation-delay: 0.35s; }
+    .fluid-gallery .gallery-item:nth-child(8) { animation-delay: 0.4s; }
+    .fluid-gallery .gallery-item:nth-child(n+9) { animation-delay: 0.45s; }
+
+    .fluid-gallery .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .fluid-gallery .tattoo-ball-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .fluid-gallery .tattoo-ball-particle {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      background: url('ball.png') center / contain no-repeat;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .fluid-gallery .gallery-item:hover .tattoo-ball-particle,
+    .fluid-gallery .gallery-item.laser-hover .tattoo-ball-particle {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .fluid-gallery .tattoo-ball-particle:nth-child(1)  { transition-delay: 0s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(2)  { transition-delay: 0.03s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(3)  { transition-delay: 0.06s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(4)  { transition-delay: 0.09s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(5)  { transition-delay: 0.12s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(6)  { transition-delay: 0.15s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(7)  { transition-delay: 0.18s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(8)  { transition-delay: 0.21s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(9)  { transition-delay: 0.24s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(10) { transition-delay: 0.27s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(11) { transition-delay: 0.3s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(12) { transition-delay: 0.33s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(13) { transition-delay: 0.36s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(14) { transition-delay: 0.39s; }
+    .fluid-gallery .tattoo-ball-particle:nth-child(15) { transition-delay: 0.42s; }
+
+    .section-overlay.cakes-modal {
+      background: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-overlay.cakes-modal.expanding .section-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .section-overlay.cakes-modal .gallery-title {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      white-space: nowrap;
+      z-index: 5;
+    }
+
+    /* ---------- Cakes carousel ---------- */
+    .cakes-container {
+      position: relative;
+      width: min(100vw, 100vh);
+      height: min(100vw, 100vh);
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+
+    .cakes-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%;
+      height: 50%;
+      min-width: 160px;
+      min-height: 160px;
+      z-index: 6;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cakes-center img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: cakeUnfold 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    .cakes-center.hit img {
+      animation: cakeCenterHit 0.3s ease-out;
+    }
+
+    @keyframes cakeCenterHit {
+      0% { transform: scale(1.2); filter: brightness(1.5); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    .cakes-center-essentials {
+      background: transparent;
+      padding: 28px;
+    }
+
+    .cakes-recipe {
+      text-align: center;
+      list-style: none;
+    }
+
+    .cakes-recipe-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #ff00c0;
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .cakes-recipe-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .cakes-recipe-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+      line-height: 2.2;
+      color: rgba(255, 105, 180, 0.9);
+      font-family: 'Courier New', monospace;
+    }
+
+    .cakes-recipe-ingredient {
+      text-transform: lowercase;
+      letter-spacing: 1px;
+    }
+
+    .cakes-recipe-amount {
+      font-weight: bold;
+      color: #ff00c0;
+      margin-left: 12px;
+    }
+
+    .cakes-orbit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 88%;
+      height: 88%;
+      margin: -44% 0 0 -44%;
+      transform-origin: center center;
+      animation: orbitSpin 30s linear infinite;
+      z-index: 4;
+    }
+
+    @keyframes orbitSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitCounterSpin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(-360deg); }
+    }
+
+    .cakes-orbit-item {
+      position: absolute;
+      width: 22%;
+      height: 22%;
+      min-width: 80px;
+      min-height: 80px;
+      cursor: inherit;
+      transition: all 0.3s ease;
+      transform: translate(-50%, -50%);
+      animation: orbitCounterSpin 30s linear infinite;
+      z-index: 5;
+    }
+
+    .cakes-orbit-item.hit {
+      animation: cakeHit 0.4s ease-out, orbitCounterSpin 30s linear infinite;
+    }
+
+    @keyframes cakeHit {
+      0%   { filter: brightness(1.3); }
+      100% { filter: brightness(1); }
+    }
+
+    .cakes-orbit-item:hover,
+    .cakes-orbit-item.laser-hover {
+      z-index: 3;
+    }
+
+    .cakes-orbit-item:hover img,
+    .cakes-orbit-item.laser-hover img {
+      transform: scale(1.15);
+    }
+
+    .cakes-orbit-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      animation: cakeUnfold 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    .cakes-orbit-item:nth-child(1) img { animation-delay: 0.05s; }
+    .cakes-orbit-item:nth-child(2) img { animation-delay: 0.12s; }
+    .cakes-orbit-item:nth-child(3) img { animation-delay: 0.19s; }
+    .cakes-orbit-item:nth-child(4) img { animation-delay: 0.26s; }
+    .cakes-orbit-item:nth-child(5) img { animation-delay: 0.33s; }
+    .cakes-orbit-item:nth-child(6) img { animation-delay: 0.4s; }
+    .cakes-orbit-item:nth-child(7) img { animation-delay: 0.47s; }
+    .cakes-orbit-item:nth-child(8) img { animation-delay: 0.54s; }
+    .cakes-orbit-item:nth-child(9) img { animation-delay: 0.61s; }
+
+    @keyframes cakeUnfold {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .falling-cakes-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .falling-cake {
+      position: fixed;
+      border-radius: 50%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .falling-cake img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .cakes-nutrition {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      max-width: 160px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0a12 100%);
+      border: 2px solid rgba(255, 105, 180, 0.5);
+      border-radius: 6px;
+      z-index: 4;
+      box-shadow: 0 0 16px rgba(255, 105, 180, 0.15);
+    }
+
+    .cakes-nutrition-title {
+      font-size: 8px;
+      color: #ff00c0;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 105, 180, 0.3);
+      padding-bottom: 6px;
+    }
+
+    .cakes-nutrition-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
+      color: rgba(255, 105, 180, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      line-height: 1.6;
+    }
+
+    .cakes-nutrition-row span:first-child {
+      color: rgba(255, 105, 180, 0.6);
+    }
+
+    .cakes-nutrition-row span:last-child {
+      color: #ff00c0;
+      font-weight: bold;
+    }
+
+    .section-overlay .section-content {
+      opacity: 0;
+      transition: opacity 0.3s 0.3s;
+      color: #ff00c0;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+    }
+
+    .section-overlay.expanding .section-content {
+      opacity: 1;
+    }
+
+    /* ---------- Brutalist scrollbar ---------- */
+    .section-overlay::-webkit-scrollbar {
+      width: 18px;
+    }
+    .section-overlay::-webkit-scrollbar-track {
+      background: #050505;
+      border-left: 3px solid #ff00c0;
+    }
+    .section-overlay::-webkit-scrollbar-thumb {
+      background: #ff00c0;
+      border: 3px solid #000;
+      min-height: 64px;
+      box-shadow: inset 0 0 0 2px #000;
+    }
+    .section-overlay::-webkit-scrollbar-thumb:hover {
+      background: #ff00c0;
+      box-shadow: inset 0 0 0 3px #000;
+    }
+    .section-overlay {
+      scrollbar-width: auto;
+      scrollbar-color: #ff00c0 #0a0a0a;
+    }
+
+    /* ---------- Contact form ---------- */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      min-width: 280px;
+      max-width: 400px;
+    }
+
+    /* ---------- Paintings gallery ---------- */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      width: 100%;
+      min-width: 280px;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 105, 180, 0.3);
+      cursor: inherit;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: galleryIn 0.5s ease backwards;
+    }
+
+    .gallery-item:nth-child(1) { animation-delay: 0.05s; }
+    .gallery-item:nth-child(2) { animation-delay: 0.1s; }
+    .gallery-item:nth-child(3) { animation-delay: 0.15s; }
+    .gallery-item:nth-child(4) { animation-delay: 0.2s; }
+    .gallery-item:nth-child(5) { animation-delay: 0.25s; }
+    .gallery-item:nth-child(6) { animation-delay: 0.3s; }
+
+    @keyframes galleryIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .gallery-item:hover,
+    .gallery-item.laser-hover {
+      border-color: #ff00c0;
+      transform: scale(1.05);
+      box-shadow: 0 0 24px rgba(255, 105, 180, 0.4), 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-title {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 2px solid #ff00c0;
+      box-shadow: 0 0 60px rgba(255, 105, 180, 0.3);
+    }
+
+    .lightbox.tattoo-view img {
+      border: none;
+      box-shadow: none;
+    }
+
+    .lightbox-loupe {
+      position: fixed;
+      width: 100px;
+      height: 100px;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 10001;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      border: 2px solid rgba(0, 255, 0, 0.4);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+    }
+
+    .lightbox-loupe.visible {
+      opacity: 1;
+    }
+
+    .lightbox-loupe canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+    }
+
+    .lightbox-close:hover {
+      background: #ff00c0;
+      color: #000;
+    }
+
+    /* ---------- Bio modal ---------- */
+    .bio-content {
+      max-width: 420px;
+      width: 100%;
+      padding: 8px 0;
+      height: 100%;
+      position: relative;
+    }
+
+    .bio-content .bio-title {
+      font-size: 26px;
+      font-weight: bold;
+      color: #ff00c0;
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      margin: 0 0 8px 0;
+      text-align: center;
+    }
+
+    .bio-content .bio-tagline {
+      font-size: 12px;
+      color: rgba(255, 105, 180, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .bio-content .bio-text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: rgba(255, 105, 180, 0.95);
+      text-align: center;
+    }
+
+    .bio-scroll {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      height: calc(100% - 110px);
+      padding: 0 6px 10px 6px;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge legacy */
+      cursor: grab;
+      user-select: none;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+    }
+    .bio-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+    .bio-scroll.dragging {
+      cursor: grabbing;
+    }
+    .bio-content .bio-text p {
+      margin-bottom: 16px;
+    }
+
+    .bio-content .bio-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .bio-photo-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 100%;
+      height: 0; /* anchor-only; image can overflow upward */
+      transform: translateX(-50%);
+      overflow: visible;
+      z-index: 30;
+      pointer-events: none; /* don't block scrolling on bio text */
+    }
+    .bio-photo-wrap img {
+      width: min(520px, 92%);
+      height: auto;
+      max-height: 92%;
+      display: block;
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 0%) scale(0.34);
+      transform-origin: bottom center;
+      transition: transform 0.45s ease, filter 0.45s ease;
+      filter: drop-shadow(0 0 14px rgba(255,0,192,0.55));
+      pointer-events: auto; /* image can still be hovered */
+      outline: 1px solid rgba(255,0,192,0.25);
+      border-radius: 10px;
+    }
+    .bio-photo-wrap img:hover,
+    .bio-photo-wrap img.laser-hover {
+      transform: translate(-50%, 0%) scale(1);
+      filter: drop-shadow(0 0 22px rgba(255,0,192,0.75));
+    }
+
+    .contact-form .form-prompt {
+      color: #ff00c0;
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.05);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      transition: all 0.25s ease;
+    }
+
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: rgba(255, 105, 180, 0.5);
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      background: rgba(255, 105, 180, 0.12);
+      box-shadow: 0 0 20px rgba(255,0,192,0.2);
+    }
+
+    .contact-form textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .contact-form .form-step {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .contact-form .form-step.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .contact-form .form-btn {
+      padding: 12px 32px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 8px;
+    }
+
+    .contact-form .form-btn:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+    }
+
+    /* ---------- Exit button ---------- */
+    .exit-btn {
+      position: fixed;
+      top: 30px; right: 30px;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.15);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 22px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 950;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.5);
+      transition: all 0.3s ease;
+    }
+
+    .exit-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .exit-btn:hover,
+    .exit-btn.laser-hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.6), 0 0 40px rgba(255,0,192,0.3);
+      transform: scale(1.15);
+    }
+
+    .exit-btn.hit {
+      animation: btnHit 0.4s ease-out;
+    }
+
+    .mute-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #ff00c0;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ff00c0;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 951;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .mute-btn:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 16px rgba(255,0,192,0.5);
+      transform: scale(1.1);
+    }
+
+    /* Cakes button tiny fire animation */
+    .ring-btn.cakes-btn {
+      position: absolute;
+    }
+    .ring-btn.cakes-btn::before {
+      content: "🔥";
+      position: absolute;
+      top: -61px;
+      left: -12px;
+      font-size: 20px;
+      filter: drop-shadow(0 0 6px rgba(255, 120, 0, 0.9));
+      animation: cakesFire 0.6s infinite alternate;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 2;
+      transition: opacity 0.25s ease-out;
+    }
+    .ring-btn.cakes-btn:hover::before,
+    .ring-btn.cakes-btn.laser-hover::before {
+      opacity: 1;
+    }
+    @keyframes cakesFire {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0.9;
+      }
+      to {
+        transform: translateY(-2px) scale(1.08);
+        opacity: 1;
+      }
+    }
+    .mute-btn.muted .mute-icon { opacity: 0.5; }
+
+    /* ---------- Preview ---------- */
+    .preview-box {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      border: 1px solid #ff00c044;
+      padding: 12px;
+      background: rgba(255, 105, 180, 0.05);
+      border-radius: 8px;
+      user-select: none;
+      z-index: 700;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .preview-box.folded {
+      width: 20px !important;
+      height: 20px !important;
+      padding: 0;
+      border-radius: 50%;
+      border: 2px solid #0f0;
+      background: #0f0;
+      box-shadow: 0 0 8px #0f0, 0 0 16px rgba(0,255,0,0.4);
+      cursor: pointer;
+    }
+
+    .preview-box.folded * {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .preview-box.folded:hover {
+      box-shadow: 0 0 14px #0f0, 0 0 28px rgba(0,255,0,0.6);
+      transform: scale(1.3);
+    }
+
+    .preview-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .preview-box img.gun-preview {
+      display: block;
+      width: 200px;
+      image-rendering: auto;
+    }
+
+    .preview-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .hotspot-dot {
+      position: absolute;
+      width: 14px; height: 14px;
+      background: #0f0;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px #0f0, 0 0 16px rgba(0,255,0,0.4);
+      cursor: grab;
+      z-index: 10;
+      transition: box-shadow 0.2s;
+    }
+
+    .hotspot-dot:hover { box-shadow: 0 0 12px #0f0, 0 0 24px rgba(0,255,0,0.6); }
+    .hotspot-dot.dragging { cursor: grabbing; box-shadow: 0 0 16px #0f0, 0 0 32px rgba(0,255,0,0.8); }
+
+    .vector-dot {
+      position: absolute;
+      width: 12px; height: 12px;
+      background: #ff4500;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px #ff4500, 0 0 16px rgba(255,69,0,0.4);
+      cursor: grab;
+      z-index: 10;
+      transition: box-shadow 0.2s;
+    }
+
+    .vector-dot:hover { box-shadow: 0 0 12px #ff4500, 0 0 24px rgba(255,69,0,0.6); }
+    .vector-dot.dragging { cursor: grabbing; box-shadow: 0 0 16px #ff4500, 0 0 32px rgba(255,69,0,0.8); }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .legend span {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend .dot-green { width: 8px; height: 8px; background: #0f0; border-radius: 50%; }
+    .legend .dot-red   { width: 8px; height: 8px; background: #ff4500; border-radius: 50%; }
+
+    .save-btn {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      border: 1px solid #0f0;
+      border-radius: 4px;
+      background: rgba(0, 255, 0, 0.1);
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .save-btn:hover { background: #0f0; color: #000; }
+
+    .save-btn.saved {
+      border-color: #ff00c0;
+      background: rgba(255,0,192,0.2);
+      color: #ff00c0;
+    }
+
+    /* ---------- Social icons ---------- */
+    .social-icons {
+      position: fixed;
+      bottom: 28px;
+      left: 25%;
+      display: flex;
+      flex-direction: row;
+      gap: 14px;
+      z-index: 800;
+    }
+    @media (min-width: 1024px) {
+      .social-icons {
+        left: 6%;
+      }
+    }
+
+    .social-icons a {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid #ff00c0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      color: #ff00c0;
+      cursor: inherit !important;
+      position: relative;
+    }
+    .social-icons a svg,
+    .social-icons a .social-tooltip {
+      cursor: inherit !important;
+    }
+
+    .social-icons a:hover,
+    .social-icons a.laser-hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 16px rgba(255,0,192,0.5), 0 0 32px rgba(255,0,192,0.25);
+      transform: scale(1.2);
+      cursor: inherit !important;
+    }
+
+    .social-icons a svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      shape-rendering: geometricPrecision;
+    }
+
+    .social-ig-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid #ff00c0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      color: #ff00c0;
+      cursor: inherit !important;
+      position: relative;
+    }
+
+    .social-ig-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      shape-rendering: geometricPrecision;
+    }
+
+    .social-ig-btn:hover,
+    .social-ig-btn.laser-hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 16px rgba(255,0,192,0.5);
+      transform: scale(1.2);
+    }
+
+    .social-tooltip {
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      white-space: nowrap;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .social-ig-btn:hover .social-tooltip,
+    .social-ig-btn.laser-hover .social-tooltip,
+    .social-icons a:hover .social-tooltip,
+    .social-icons a.laser-hover .social-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ---------- Balls ---------- */
+    .ball {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: 24px; height: 24px;
+    }
+
+    .ball img { width: 100%; height: 100%; }
+
+    .muzzle-flash {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, #ff0 40%, transparent 70%);
+      transform: translate(-50%, -50%);
+      animation: flash 0.15s ease-out forwards;
+    }
+
+    @keyframes flash {
+      0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scale(2); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="site-logo" id="siteLogo">
+    <img src="" alt="Oye Estupida" id="siteLogoImg">
+  </div>
+
+  <img src="img/frames/frame1.png" alt="Artwork in frame" id="frameArt" class="fixed left-1/2 -translate-x-1/2 w-[45vw] sm:w-[30vw] md:w-[20vw] max-w-[280px] z-20" style="top: 70px;" draggable="false">
+  <img src="img/frame-mask.png" alt="Paintings frame" id="frameBtn" class="frame-btn fixed left-1/2 -translate-x-1/2 w-[45vw] sm:w-[30vw] md:w-[20vw] max-w-[280px] z-30" style="top: 70px;" draggable="false">
+
+  <div class="ring" id="ring"></div>
+
+  <!-- UI sounds (folder: sound — car→sturm, celebration→cakes, holy→tarot, frame→frame, kiss→couch, tattoo→tattoo, phone→contact) -->
+  <audio id="soundTattoos" src="sound/tattoo-1.mp3" preload="auto"></audio>
+  <audio id="soundContact" src="sound/phone-1.mp3" preload="auto"></audio>
+  <audio id="soundTarot" src="sound/holy-1.mp3" preload="auto"></audio>
+  <audio id="soundSturm" src="sound/car-1.mp3" preload="auto"></audio>
+  <audio id="soundCakes" src="sound/celebration-1.mp3" preload="auto"></audio>
+  <audio id="soundFrame" src="sound/frame-1.mp3" preload="auto"></audio>
+  <audio id="soundCouch" src="sound/kiss-1.mp3" preload="auto"></audio>
+  <audio id="soundGun" src="audio/gun-shot.mp3" preload="auto"></audio>
+  <audio id="soundTheme" src="sound/oye-estupida-theme.mp3" preload="auto" loop></audio>
+
+  <button type="button" class="mute-btn" id="muteBtn" aria-label="Mute site sound" title="Mute / Unmute">
+    <span class="mute-icon" aria-hidden="true">🔊</span>
+  </button>
+
+  <svg id="laserSvg" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index:9990;">
+    <line id="laserLine" stroke="#0f0" stroke-width="1" opacity="0.5" />
+    <circle id="laserDot" r="3" fill="#0f0" opacity="0.8" />
+  </svg>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <div class="section-overlay" id="sectionOverlay">
+    <div class="section-content" id="sectionContent"></div>
+  </div>
+
+  <button class="exit-btn" id="exitBtn">&times;</button>
+
+  <button id="cakesOrderBtn" class="cakes-order-btn">
+    ORDER YOUR PERSONALIZED CAKE
+  </button>
+
+  <div id="cakesOrderOverlay" class="cakes-order-form-overlay" aria-hidden="true">
+    <form id="cakesOrderForm" class="cakes-order-form">
+      <h3>Personalized cake</h3>
+      <p id="cakesOrderPrompt">Hey! What’s your name?</p>
+
+      <div class="cakes-order-step active" data-step="1">
+        <input type="text" id="cakeName" name="name" placeholder="Type here..." autocomplete="name" />
+      </div>
+
+      <div class="cakes-order-step" data-step="2">
+        <textarea id="cakeInspiration" name="inspiration" placeholder="Tell me the story, mood, references..." rows="4"></textarea>
+        <small>Concept ideas: scarry, spooky, spicy, cheesy, cute, creepy, funny</small>
+      </div>
+
+      <div class="cakes-order-step" data-step="3">
+        <div class="colors-row">
+          <input type="color" id="cakeColor1" name="color1" value="#ff00c0" aria-label="Color 1">
+          <input type="color" id="cakeColor2" name="color2" value="#000000" aria-label="Color 2">
+          <input type="color" id="cakeColor3" name="color3" value="#ffffff" aria-label="Color 3">
+        </div>
+        <small>Pick 3 colors. I’ll translate them into frosting energy.</small>
+      </div>
+
+      <div class="cakes-order-step" data-step="4">
+        <textarea id="cakeConditions" name="conditions" placeholder="Allergies, intolerances, vegan, or anything to add..." rows="4"></textarea>
+      </div>
+
+      <div class="cakes-order-step" data-step="5">
+        <input type="date" id="cakeDate" name="date" />
+        <small>7 weeks before works for me.</small>
+      </div>
+
+      <div class="cakes-order-actions">
+        <button type="button" class="cakes-order-cancel" id="cakesOrderCancel">Cancel</button>
+        <button type="button" class="cakes-order-cancel" id="cakesOrderBack">Back</button>
+        <button type="button" class="cakes-order-submit" id="cakesOrderNext">→</button>
+      </div>
+    </form>
+  </div>
+
+  <img src="couch.png" alt="couch" id="couchBtn" class="frame-btn fixed bottom-0 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[60vw] md:w-[40vw] max-w-[500px] z-10" draggable="false">
+  <div class="couch-kiss" id="couchKiss" aria-hidden="true">💋</div>
+
+  <div class="social-icons">
+    <a href="#" id="instagramTattoo" class="social-ig-btn" aria-label="Instagram Tattoo">
+      <svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.25-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
+      <span class="social-tooltip">TATTOO</span>
+    </a>
+    <a href="#" id="instagramArt" class="social-ig-btn" aria-label="Instagram Visual Art">
+      <svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.25-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
+      <span class="social-tooltip">ART</span>
+    </a>
+    <a href="https://soundcloud.com" target="_blank" rel="noopener" aria-label="Soundcloud" title="Soundcloud">
+      <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 13.2 2h-3v13.4a2.59 2.59 0 0 1-2.6 2.6 2.59 2.59 0 0 1-2.6-2.6 2.59 2.59 0 0 1 2.6-2.6c.28 0 .56.04.82.12V9.2A6.2 6.2 0 0 0 4 15.4a6.2 6.2 0 0 0 6.2 6.2 6.2 6.2 0 0 0 6.2-6.2V9.06a7.7 7.7 0 0 0 4.6 1.52V7.04a4.28 4.28 0 0 1-4.4-1.22Z"/></svg>
+      <span class="social-tooltip">Soundcloud</span>
+    </a>
+   
+  </div>
+
+  <div class="daynight-switch" id="dayNightSwitch" title="Toggle day / night">
+    <div class="daynight-toggle"></div>
+  </div>
+
+  <div class="preview-box" id="preview">
+    <div class="preview-container" id="previewContainer">
+      <img src="mouse.png" id="previewImg" class="gun-preview" alt="cursor preview" draggable="false">
+      <svg class="preview-svg" id="previewSvg">
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#ff4500" />
+          </marker>
+        </defs>
+        <line id="vectorLine" stroke="#ff4500" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrowhead)" />
+      </svg>
+      <div class="hotspot-dot" id="hotspotDot"></div>
+      <div class="vector-dot" id="vectorDot"></div>
+    </div>
+    <div class="legend">
+      <span><span class="dot-green"></span><span style="color:#0f0">hotspot</span></span>
+      <span><span class="dot-red"></span><span style="color:#ff4500">direction</span></span>
+    </div>
+    <button class="save-btn" id="saveBtn">save config</button>
+  </div>
+
+  <script type="module">
+    import {
+      Space, Body, BodyType, Vec2, Circle, Polygon,
+    } from "https://cdn.jsdelivr.net/npm/@newkrok/nape-js/dist/index.js";
+
+    // Recolor favicon to pink while preserving transparency
+    (function tintFaviconToPink() {
+      const link = document.querySelector("link[rel='icon']");
+      if (!link || !link.href) return;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        const pink = { r: 255, g: 105, b: 180 };
+        for (let i = 0; i < data.length; i += 4) {
+          const a = data[i + 3];
+          if (a === 0) continue;
+          const gray = (data[i] + data[i + 1] + data[i + 2]) / (3 * 255);
+          data[i]     = pink.r * gray;
+          data[i + 1] = pink.g * gray;
+          data[i + 2] = pink.b * gray;
+        }
+        ctx.putImageData(imgData, 0, 0);
+        link.href = canvas.toDataURL('image/png');
+      };
+      img.src = link.href;
+    })();
+
+    (function() {
+      const logos = ['img/oyestupida-logo1.png', 'img/oyestupida-logo2.png'];
+      const img = document.getElementById('siteLogoImg');
+      if (img) img.src = logos[Math.random() < 0.5 ? 0 : 1];
+    })();
+
+    /* ---------- Day / Night background ---------- */
+    (function() {
+      const NIGHT_HOUR = 20; // 20hs = 8pm
+      const STORAGE_KEY = 'bgTheme';
+      const switchEl = document.getElementById('dayNightSwitch');
+      const toggleEl = switchEl ? switchEl.querySelector('.daynight-toggle') : null;
+
+      function applyTheme(theme) {
+        if (theme === 'night') {
+          document.body.classList.add('night-mode');
+          if (switchEl) switchEl.classList.add('night');
+        } else {
+          document.body.classList.remove('night-mode');
+          if (switchEl) switchEl.classList.remove('night');
+        }
+      }
+
+      let theme = localStorage.getItem(STORAGE_KEY);
+      if (!theme) {
+        const now = new Date();
+        const hour = now.getHours();
+        theme = hour >= NIGHT_HOUR ? 'night' : 'day';
+      }
+      applyTheme(theme);
+
+      if (switchEl && toggleEl) {
+        switchEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          theme = theme === 'night' ? 'day' : 'night';
+          localStorage.setItem(STORAGE_KEY, theme);
+          applyTheme(theme);
+        });
+      }
+    })();
+    const ring = document.getElementById('ring');
+    const previewImg = document.getElementById('previewImg');
+    const previewContainer = document.getElementById('previewContainer');
+    const hotspotDot = document.getElementById('hotspotDot');
+    const vectorDot = document.getElementById('vectorDot');
+    const vectorLine = document.getElementById('vectorLine');
+    const saveBtn = document.getElementById('saveBtn');
+    const cakesOrderBtn = document.getElementById('cakesOrderBtn');
+    const cakesOrderOverlay = document.getElementById('cakesOrderOverlay');
+    const cakesOrderForm = document.getElementById('cakesOrderForm');
+    const cakesOrderCancel = document.getElementById('cakesOrderCancel');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const sectionOverlay = document.getElementById('sectionOverlay');
+    const sectionContent = document.getElementById('sectionContent');
+    const exitBtn = document.getElementById('exitBtn');
+
+    let imgW = 32, imgH = 32;
+    let hotX = 0, hotY = 0;
+    let shootAngle = -0.78;
+    const ARROW_LEN = 60;
+    let sectionOpen = false;
+
+    const tmpImg = new Image();
+    tmpImg.onload = () => {
+      imgW = tmpImg.naturalWidth;
+      imgH = tmpImg.naturalHeight;
+      const saved = localStorage.getItem('gunConfig');
+      if (saved) {
+        try {
+          const s = JSON.parse(saved);
+          if (s && typeof s.hotX === 'number' && typeof s.hotY === 'number' && typeof s.angle === 'number') {
+            hotX = s.hotX;
+            hotY = s.hotY;
+            shootAngle = s.angle;
+            saveBtn.textContent = 'saved \u2713';
+            saveBtn.classList.add('saved');
+            document.getElementById('preview').classList.add('folded');
+          }
+        } catch (e) { /* ignore corrupt saved config */ }
+      }
+      applyCursor(hotX, hotY);
+      updatePreview();
+      requestAnimationFrame(() => { applyCursor(hotX, hotY); updatePreview(); });
+    };
+    tmpImg.src = 'mouse.png';
+
+    function getImgRect() {
+      const rect = previewImg.getBoundingClientRect();
+      const cRect = previewContainer.getBoundingClientRect();
+      return {
+        offX: rect.left - cRect.left,
+        offY: rect.top - cRect.top,
+        w: rect.width,
+        h: rect.height
+      };
+    }
+
+    function applyCursor(xRatio, yRatio) {
+      hotX = Math.max(0, Math.min(1, xRatio));
+      hotY = Math.max(0, Math.min(1, yRatio));
+      const maxW = Math.min(imgW, 128);
+      const maxH = Math.min(imgH, 128);
+      const hx = Math.round(hotX * (maxW - 1));
+      const hy = Math.round(hotY * (maxH - 1));
+      const rule = `url('mouse.png') ${hx} ${hy}, auto`;
+      document.body.style.cursor = rule;
+      document.querySelectorAll('.ring-btn, .exit-btn, .mute-btn, .frame-btn, .social-icons a, .tarot-contact-btn, .gallery-item, .cakes-orbit-item, .cakes-center').forEach(b => b.style.cursor = rule);
+      hotspotDot.style.cursor = 'grab';
+    }
+
+    function updatePreview() {
+      const r = getImgRect();
+      const hpx = r.offX + hotX * r.w;
+      const hpy = r.offY + hotY * r.h;
+      hotspotDot.style.left = hpx + 'px';
+      hotspotDot.style.top  = hpy + 'px';
+      const vEndX = hpx + Math.cos(shootAngle) * ARROW_LEN;
+      const vEndY = hpy + Math.sin(shootAngle) * ARROW_LEN;
+      vectorDot.style.left = vEndX + 'px';
+      vectorDot.style.top  = vEndY + 'px';
+      vectorLine.setAttribute('x1', hpx);
+      vectorLine.setAttribute('y1', hpy);
+      vectorLine.setAttribute('x2', vEndX);
+      vectorLine.setAttribute('y2', vEndY);
+    }
+
+    /* ---------- Dragging ---------- */
+    let draggingHot = false;
+    let draggingVec = false;
+
+    hotspotDot.addEventListener('mousedown', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      draggingHot = true;
+      hotspotDot.classList.add('dragging');
+    });
+
+    vectorDot.addEventListener('mousedown', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      draggingVec = true;
+      vectorDot.classList.add('dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (draggingHot) {
+        const rect = previewImg.getBoundingClientRect();
+        applyCursor(
+          (e.clientX - rect.left) / rect.width,
+          (e.clientY - rect.top) / rect.height
+        );
+        updatePreview();
+        markUnsaved();
+      }
+      if (draggingVec) {
+        const r = getImgRect();
+        const cRect = previewContainer.getBoundingClientRect();
+        shootAngle = Math.atan2(
+          (e.clientY - cRect.top) - (r.offY + hotY * r.h),
+          (e.clientX - cRect.left) - (r.offX + hotX * r.w)
+        );
+        updatePreview();
+        markUnsaved();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (draggingHot) { draggingHot = false; hotspotDot.classList.remove('dragging'); }
+      if (draggingVec) { draggingVec = false; vectorDot.classList.remove('dragging'); }
+    });
+
+    function markUnsaved() {
+      saveBtn.textContent = 'save config';
+      saveBtn.classList.remove('saved');
+    }
+
+    const previewBox = document.getElementById('preview');
+
+    saveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      localStorage.setItem('gunConfig', JSON.stringify({ hotX, hotY, angle: shootAngle }));
+      saveBtn.textContent = 'saved \u2713';
+      saveBtn.classList.add('saved');
+      setTimeout(() => previewBox.classList.add('folded'), 400);
+    });
+
+    previewBox.addEventListener('click', (e) => {
+      if (previewBox.classList.contains('folded')) {
+        e.stopPropagation();
+        previewBox.classList.remove('folded');
+        requestAnimationFrame(() => updatePreview());
+      }
+    });
+
+    /* ---------- 5 Sections ---------- */
+    const sectionNames = ['Paintings', 'STURMZX2', 'CAKES', 'BIO', 'TAROT', 'Tattoos', 'Contact'];
+
+    const ringButtons = [];
+
+    const ringSounds = {
+      Tattoos: document.getElementById('soundTattoos'),
+      Contact: document.getElementById('soundContact'),
+      TAROT: document.getElementById('soundTarot'),
+      STURMZX2: document.getElementById('soundSturm'),
+      CAKES: document.getElementById('soundCakes'),
+    };
+    const soundFrame = document.getElementById('soundFrame');
+    const soundCouch = document.getElementById('soundCouch');
+    const soundTheme = document.getElementById('soundTheme');
+
+    let siteMuted = JSON.parse(localStorage.getItem('siteMuted') || 'false');
+    const UI_VOLUME = 0.2;
+    const THEME_VOLUME = 0.22;
+
+    function updateMuteState() {
+      localStorage.setItem('siteMuted', JSON.stringify(siteMuted));
+      if (soundTheme) {
+        soundTheme.muted = siteMuted;
+      }
+      const muteBtn = document.getElementById('muteBtn');
+      if (muteBtn) {
+        muteBtn.classList.toggle('muted', siteMuted);
+        muteBtn.setAttribute('aria-label', siteMuted ? 'Unmute site sound' : 'Mute site sound');
+        const icon = muteBtn.querySelector('.mute-icon');
+        if (icon) icon.textContent = siteMuted ? '🔇' : '🔊';
+      }
+    }
+
+    function playSoundForElement(el, audio) {
+      if (!audio) return;
+      if (siteMuted) return;
+      audio.volume = UI_VOLUME;
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
+
+    function startThemeOnce() {
+      if (!soundTheme || soundTheme.dataset.started) return;
+      soundTheme.dataset.started = '1';
+      soundTheme.volume = THEME_VOLUME;
+      soundTheme.muted = siteMuted;
+      soundTheme.play().catch(() => {});
+    }
+
+    document.getElementById('muteBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      siteMuted = !siteMuted;
+      updateMuteState();
+    });
+    updateMuteState();
+
+    document.body.addEventListener('click', () => startThemeOnce(), { once: true });
+    document.body.addEventListener('keydown', () => startThemeOnce(), { once: true });
+    document.body.addEventListener('touchstart', () => startThemeOnce(), { once: true });
+
+    const ringSections = [
+      { label: 'STURMZX2', idx: 1, xPct: 0.72, yPct: 0.38 },
+      { label: 'CAKES', idx: 2, xPct: 0.50, yPct: 0.45 },
+      { label: 'TAROT', idx: 4, xPct: 0.22, yPct: 0.25 },
+      { label: 'Tattoos', idx: 5, xPct: 0.22, yPct: 0.42 },
+      { label: 'Contact', idx: 6, xPct: 0.22, yPct: 0.59 },
+    ];
+
+    const draggableBtns = [];
+    const savedPositions = JSON.parse(localStorage.getItem('btnPositions') || '{}');
+
+    function saveBtnPositions() {
+      const positions = {};
+      draggableBtns.forEach(b => { positions[b.key] = { x: b.getPctX(), y: b.getPctY() }; });
+      localStorage.setItem('btnPositions', JSON.stringify(positions));
+    }
+
+    ringSections.forEach((sec, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ring-btn';
+      btn.dataset.sectionLabel = sec.label;
+      if (sec.label === 'TAROT') {
+        btn.classList.add('tarot-btn');
+        btn.setAttribute('aria-label', 'Tarot');
+        btn.innerHTML = `
+          <div class="tarot-button-cards">
+            <div class="tarot-button-label">TAROT</div>
+            <div class="tarot-button-card c1"></div>
+            <div class="tarot-button-card c2"></div>
+            <div class="tarot-button-card c3"></div>
+            <div class="tarot-button-card c4"></div>
+          </div>
+        `;
+      } else if (sec.label === 'Tattoos') {
+        btn.classList.add('tattoos-btn');
+        btn.setAttribute('aria-label', 'Tattoos');
+        btn.innerHTML = `
+          <div class="mini-btn-wrap">
+            <div class="mini-btn-label">TATTOOS</div>
+            <div class="mini-btn-icon">
+              <img src="img/tatoo-button.png" alt="" aria-hidden="true" draggable="false" style="width:210px;height:210px;object-fit:contain;">
+            </div>
+          </div>
+        `;
+      } else if (sec.label === 'CAKES') {
+        btn.classList.add('cakes-btn');
+        btn.setAttribute('aria-label', 'Cakes');
+        btn.innerHTML = `
+          <div class="mini-btn-wrap">
+            <div class="mini-btn-label">CAKES</div>
+            <div class="mini-btn-icon">
+              <img src="img/cakes-button.png" alt="" aria-hidden="true" draggable="false" style="width:240px;height:240px;object-fit:contain;">
+            </div>
+          </div>
+        `;
+      } else if (sec.label === 'STURMZX2') {
+        btn.classList.add('sturm-btn');
+        btn.setAttribute('aria-label', 'STURMZX2');
+        btn.innerHTML = `
+          <div class="mini-btn-wrap">
+            <div class="mini-btn-label">STURMZX2</div>
+            <div class="mini-btn-icon">
+              <img src="img/sturmz-button.png" alt="" aria-hidden="true" draggable="false" style="width:200px;height:200px;object-fit:contain;">
+            </div>
+          </div>
+        `;
+      } else if (sec.label === 'Contact') {
+        btn.classList.add('contact-btn');
+        btn.setAttribute('aria-label', 'Contact');
+        btn.innerHTML = `
+          <div class="contact-button-wrap">
+            <div class="contact-button-label">CONTACT</div>
+            <div class="contact-button-icon">
+              <img src="img/contact-button.png" alt="" aria-hidden="true" draggable="false" style="width:170px;height:170px;object-fit:contain;">
+            </div>
+          </div>
+        `;
+      } else {
+        btn.innerHTML = sec.label;
+      }
+      const tooltipLabel = sec.label === 'Tattoos' ? 'TATTOOS' : (sec.label === 'Contact' ? 'CONTACT' : sec.label);
+      btn.insertAdjacentHTML('beforeend', `<span class="ring-btn-tooltip">${tooltipLabel}</span>`);
+      btn.style.position = 'fixed';
+
+      const key = 'sec_' + sec.idx;
+      const saved = savedPositions[key];
+      let pctX = saved ? saved.x : sec.xPct;
+      let pctY = saved ? saved.y : sec.yPct;
+
+      function applyPosition() {
+        btn.style.left = (window.innerWidth * pctX - 32) + 'px';
+        btn.style.top  = (window.innerHeight * pctY - 32) + 'px';
+      }
+      applyPosition();
+      btn.style.zIndex = '20';
+
+      // hover sound + optional vibration (play on rollover; click will not play again)
+      btn.addEventListener('mouseenter', () => {
+        playSoundForElement(btn, ringSounds[sec.label]);
+        if (sec.label !== 'TAROT') {
+          btn.classList.add('vibrate-once');
+          setTimeout(() => btn.classList.remove('vibrate-once'), 300);
+        }
+      });
+
+      let isDragging = false;
+      let dragStartX, dragStartY, btnStartX, btnStartY;
+
+      btn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isDragging = false;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        btnStartX = parseFloat(btn.style.left);
+        btnStartY = parseFloat(btn.style.top);
+
+        function onMove(ev) {
+          const dx = ev.clientX - dragStartX;
+          const dy = ev.clientY - dragStartY;
+          if (!isDragging && Math.hypot(dx, dy) > 5) isDragging = true;
+          if (isDragging) {
+            const newLeft = btnStartX + dx;
+            const newTop  = btnStartY + dy;
+            btn.style.left = newLeft + 'px';
+            btn.style.top  = newTop + 'px';
+            pctX = (newLeft + 32) / window.innerWidth;
+            pctY = (newTop + 32) / window.innerHeight;
+          }
+        }
+
+        function onUp() {
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onUp);
+          if (isDragging) saveBtnPositions();
+          else pressButton();
+        }
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+      });
+
+      function pressButton() {
+        // Tarot toggle: if Tarot modal already open, close it instead of reopening
+        if (sec.label === 'TAROT' && sectionOpen && sectionOverlay.classList.contains('tarot-modal')) {
+          closeSection();
+          return;
+        }
+        document.querySelectorAll('.ring-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        openSection(btn, sec.idx);
+      }
+
+      draggableBtns.push({ applyPosition, key, getPctX: () => pctX, getPctY: () => pctY });
+      ringButtons.push({ el: btn, press: pressButton });
+      document.body.appendChild(btn);
+    });
+
+    window.addEventListener('resize', () => {
+      draggableBtns.forEach(b => b.applyPosition());
+    });
+
+    /* ---------- Frame = draggable artwork (no modal) ---------- */
+    const frameBtn = document.getElementById('frameBtn');
+    const frameArt = document.getElementById('frameArt');
+
+    frameBtn.addEventListener('mouseenter', () => playSoundForElement(frameBtn, soundFrame));
+
+    const FRAME_IMAGES = [
+      'img/frames/frame1.png',
+      'img/frames/frame2.png',
+      'img/frames/frame3.png',
+    ];
+    let frameArtIndex = 0;
+
+    function pressFrame() {
+      // small hit animation + cycle artwork, no modal
+      frameBtn.classList.add('hit');
+      setTimeout(() => frameBtn.classList.remove('hit'), 350);
+      if (frameArt) {
+        frameArtIndex = (frameArtIndex + 1) % FRAME_IMAGES.length;
+        frameArt.src = FRAME_IMAGES[frameArtIndex];
+      }
+    }
+
+    frameBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pressFrame();
+    });
+
+    ringButtons.push({ el: frameBtn, press: pressFrame });
+
+    // Draggable frame (like ring buttons, no persistence for now)
+    (function enableFrameDrag() {
+      if (!frameBtn) return;
+      frameBtn.style.position = 'fixed';
+
+      let draggingFrame = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      frameBtn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const rect = frameBtn.getBoundingClientRect();
+        draggingFrame = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = rect.left;
+        startTop = rect.top;
+
+        function onMove(ev) {
+          if (!draggingFrame) return;
+          const dx = ev.clientX - startX;
+          const dy = ev.clientY - startY;
+          const newLeft = startLeft + dx;
+          const newTop = startTop + dy;
+          frameBtn.style.left = newLeft + 'px';
+          frameBtn.style.top = newTop + 'px';
+          if (frameArt) {
+            frameArt.style.left = newLeft + 'px';
+            frameArt.style.top = newTop + 'px';
+          }
+        }
+
+        function onUp() {
+          draggingFrame = false;
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onUp);
+        }
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+      });
+    })();
+
+    // Frame tooltip: ARTWORKS coming from bottom
+    const frameTooltip = document.createElement('div');
+    frameTooltip.className = 'frame-tooltip';
+    frameTooltip.textContent = 'ARTWORKS';
+    document.body.appendChild(frameTooltip);
+
+    function positionFrameTooltip() {
+      const rect = frameBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const bottomY = rect.bottom;
+      frameTooltip.style.left = centerX + 'px';
+      frameTooltip.style.top = (bottomY + 8) + 'px';
+    }
+
+    frameBtn.addEventListener('mouseenter', () => {
+      positionFrameTooltip();
+      frameTooltip.classList.add('visible');
+    });
+    frameBtn.addEventListener('mousemove', () => {
+      positionFrameTooltip();
+    });
+    frameBtn.addEventListener('mouseleave', () => {
+      frameTooltip.classList.remove('visible');
+    });
+
+    /* ---------- Couch = BIO (Section 4) ---------- */
+    const couchBtn = document.getElementById('couchBtn');
+    const couchKiss = document.getElementById('couchKiss');
+
+    const KISS_ORIGIN_KEY = 'couchKissOrigin';
+    function getKissOrigin() {
+      try {
+        const s = localStorage.getItem(KISS_ORIGIN_KEY);
+        if (s) {
+          const { x, y } = JSON.parse(s);
+          if (typeof x === 'number' && typeof y === 'number') return { x, y };
+        }
+      } catch (_) {}
+      const rect = couchBtn.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width * 0.30,
+        y: rect.top + rect.height * 0.30 - 16
+      };
+    }
+    function setKissOrigin(x, y) {
+      localStorage.setItem(KISS_ORIGIN_KEY, JSON.stringify({ x, y }));
+    }
+
+    couchBtn.addEventListener('mouseenter', () => {
+      playSoundForElement(couchBtn, soundCouch);
+      const { x, y } = getKissOrigin();
+      couchKiss.style.left = x + 'px';
+      couchKiss.style.top = y + 'px';
+      couchKiss.classList.remove('animate');
+      couchKiss.offsetHeight;
+      couchKiss.classList.add('animate');
+      setTimeout(() => couchKiss.classList.remove('animate'), 1300);
+    });
+
+    couchBtn.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      setKissOrigin(e.clientX, e.clientY);
+    });
+
+    // Couch tooltip: BIO at the top of the couch
+    const couchTooltip = document.createElement('div');
+    couchTooltip.className = 'couch-tooltip';
+    couchTooltip.textContent = 'BIO';
+    document.body.appendChild(couchTooltip);
+
+    function positionCouchTooltip() {
+      const rect = couchBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const topY = rect.top;
+      couchTooltip.style.left = centerX + 'px';
+      couchTooltip.style.top = (topY - 36) + 'px';
+    }
+
+    couchBtn.addEventListener('mouseenter', () => {
+      positionCouchTooltip();
+      couchTooltip.classList.add('visible');
+    });
+    couchBtn.addEventListener('mousemove', () => {
+      positionCouchTooltip();
+    });
+    couchBtn.addEventListener('mouseleave', () => {
+      couchTooltip.classList.remove('visible');
+    });
+
+    function pressCouch() {
+      openSection(couchBtn, 3);
+    }
+
+    couchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pressCouch();
+    });
+
+    ringButtons.push({ el: couchBtn, press: pressCouch });
+
+    /* ---------- Frame swing on mousemove ---------- */
+    let frameAngle = 0;
+    let frameTarget = 0;
+
+    frameBtn.addEventListener('mousemove', (e) => {
+      const rect = frameBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const ratio = (e.clientX - centerX) / (rect.width / 2);
+      frameTarget = ratio * 6;
+    });
+
+    frameBtn.addEventListener('mouseleave', () => {
+      frameTarget = 0;
+    });
+
+    (function animateFrame() {
+      frameAngle += (frameTarget - frameAngle) * 0.08;
+      const t = `translate(-50%, 0) rotate(${frameAngle}deg)`;
+      frameBtn.style.transform = t;
+      if (frameArt) {
+        frameArt.style.transform = t;
+      }
+      requestAnimationFrame(animateFrame);
+    })();
+
+    /* ---------- Section open / close ---------- */
+    function openSection(btnEl, idx) {
+      if (sectionOpen) return;
+      sectionOpen = true;
+
+      // remove any falling cakes from previous cakes session
+      const oldFalling = document.getElementById('fallingCakesContainer');
+      if (oldFalling && oldFalling.parentNode) {
+        oldFalling.parentNode.removeChild(oldFalling);
+      }
+
+      // reset overlay classes and any closing state; clear inline styles so from-bottom animation works after cakes
+      sectionOverlay.className = 'section-overlay';
+      sectionOverlay.classList.remove('modal-closing', 'cakes-closing');
+      sectionOverlay.style.top = '';
+      sectionOverlay.style.left = '';
+      sectionOverlay.style.width = '';
+      sectionOverlay.style.height = '';
+      sectionOverlay.style.maxWidth = '';
+      sectionOverlay.style.transform = '';
+      sectionOverlay.style.opacity = '';
+      sectionOverlay.style.transition = '';
+      sectionOverlay.style.visibility = '';
+      sectionOverlay.style.borderRadius = '';
+
+      if (idx === 2) {
+        // Cakes: start off-screen above, full width; will slide down
+        sectionOverlay.style.top = '-100%';
+        sectionOverlay.style.left = '0';
+        sectionOverlay.style.width = '100vw';
+        sectionOverlay.style.height = '100vh';
+        sectionOverlay.style.maxWidth = '';
+        sectionOverlay.style.transform = 'none';
+      } else {
+        // Other modals: start from bottom of screen
+        sectionOverlay.style.top = '100%';
+        sectionOverlay.style.left = '50%';
+        sectionOverlay.style.width = '85%';
+        sectionOverlay.style.maxWidth = '800px';
+        sectionOverlay.style.height = '55vh';
+        sectionOverlay.style.transform = 'translate(-50%, -100%) scale(0.92)';
+      }
+      sectionOverlay.style.opacity = '1';
+
+      if (cakesOrderBtn) {
+        cakesOrderBtn.classList.toggle('visible', idx === 2);
+      }
+
+      // couch above modal during slide-up, then behind when done
+      if (couchBtn) couchBtn.style.zIndex = '950';
+
+      if (idx === 0) {
+        const galleryImages = [
+          'https://picsum.photos/seed/art1/400/400',
+          'https://picsum.photos/seed/art2/400/400',
+          'https://picsum.photos/seed/art3/400/400',
+          'https://picsum.photos/seed/art4/400/400',
+          'https://picsum.photos/seed/art5/400/400',
+          'https://picsum.photos/seed/art6/400/400',
+        ];
+        sectionOverlay.classList.add('paintings-modal');
+        sectionContent.innerHTML = `
+          <h2 class="gallery-title">Paintings</h2>
+          <div class="gallery" id="paintingsGallery">
+            ${galleryImages.map((src, i) => `
+              <div class="gallery-item" data-src="${src}">
+                <img src="${src}" alt="Painting ${i + 1}" loading="lazy">
+              </div>
+            `).join('')}
+          </div>
+        `;
+        let lightbox = document.getElementById('paintingsLightbox');
+        if (!lightbox) {
+          lightbox = document.createElement('div');
+          lightbox.id = 'paintingsLightbox';
+          lightbox.className = 'lightbox';
+          lightbox.innerHTML = '<button class="lightbox-close" aria-label="Close">&times;</button><img src="" alt=""><div class="lightbox-loupe" id="lightboxLoupe"><canvas id="lightboxLoupeCanvas" width="100" height="100"></canvas></div>';
+          document.body.appendChild(lightbox);
+          const lbImg = lightbox.querySelector('img');
+          const lbClose = lightbox.querySelector('.lightbox-close');
+          const loupe = document.getElementById('lightboxLoupe');
+          const loupeCanvas = document.getElementById('lightboxLoupeCanvas');
+          const closeLb = () => {
+            lightbox.classList.remove('open', 'tattoo-view');
+            if (loupe) loupe.classList.remove('visible');
+          };
+          lbClose.addEventListener('click', closeLb);
+          lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLb(); });
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLb(); });
+          lightbox.addEventListener('mousemove', (e) => {
+            if (!lightbox.classList.contains('tattoo-view') || !lightbox.classList.contains('open')) return;
+            const img = lightbox.querySelector('img');
+            if (!img || !img.complete || !img.naturalWidth) return;
+            const r = img.getBoundingClientRect();
+            if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+              if (loupe) loupe.classList.remove('visible');
+              return;
+            }
+            const relX = (e.clientX - r.left) / r.width;
+            const relY = (e.clientY - r.top) / r.height;
+            const px = relX * img.naturalWidth;
+            const py = relY * img.naturalHeight;
+            const zoom = 4;
+            const sampleSize = 25;
+            const sx = Math.max(0, Math.min(img.naturalWidth - sampleSize, px - sampleSize / 2));
+            const sy = Math.max(0, Math.min(img.naturalHeight - sampleSize, py - sampleSize / 2));
+            const ctx = loupeCanvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, sx, sy, sampleSize, sampleSize, 0, 0, 100, 100);
+            loupe.style.left = (e.clientX + 24) + 'px';
+            loupe.style.top = (e.clientY + 24) + 'px';
+            loupe.classList.add('visible');
+          });
+          lightbox.addEventListener('mouseleave', () => { if (loupe) loupe.classList.remove('visible'); });
+        }
+        const lbImg = lightbox.querySelector('img');
+        document.getElementById('paintingsGallery').querySelectorAll('.gallery-item').forEach(item => {
+          item.addEventListener('click', () => {
+            lbImg.src = item.dataset.src;
+            lightbox.classList.add('open');
+          });
+        });
+      } else if (idx === 2) {
+        const bakingEssentials = [
+          { label: 'love', value: '1kg' },
+          { label: 'anxiety', value: '69gr' },
+          { label: 'salz', value: '0,5gr' },
+          { label: 'dreams', value: '3.690kg' },
+          { label: 'reality', value: '0,1ml' },
+          { label: 'humor', value: '6,66L' },
+        ];
+        const cakesData = Array.from({ length: 9 }, (_, i) => ({ img: `img/cakes/cake${i + 1}.png` }));
+        sectionOverlay.classList.add('cakes-modal');
+        let activeIdx = null;
+        const essentialsHtml = `
+          <div class="cakes-recipe">
+            <h3 class="cakes-recipe-title">Baking essentials</h3>
+            <ul class="cakes-recipe-list">
+              ${bakingEssentials.map(n => `<li><span class="cakes-recipe-ingredient">${n.label}</span><span class="cakes-recipe-amount">${n.value}</span></li>`).join('')}
+            </ul>
+          </div>
+        `;
+        const updateCenterAndCorner = () => {
+          const centerSlot = document.getElementById('cakesCenterSlot');
+          const cornerSlot = document.getElementById('cakesCornerSlot');
+          if (!centerSlot || !cornerSlot) return;
+          centerSlot.innerHTML = activeIdx === null
+            ? `<div class="cakes-center cakes-center-essentials">${essentialsHtml}</div>`
+            : `<div class="cakes-center"><img src="${cakesData[activeIdx].img}" alt="Selected cake"></div>`;
+          cornerSlot.innerHTML = '';
+        };
+        sectionContent.innerHTML = `
+          <h2 class="gallery-title">Cakes</h2>
+          <div class="cakes-container" id="cakesContainer">
+            <div id="cakesCenterSlot"></div>
+            <div class="cakes-orbit" id="cakesOrbit">
+              ${cakesData.map((cake, i) => {
+                const angle = (i / 9) * 360 - 90;
+                const rad = angle * Math.PI / 180;
+                const r = 40;
+                const left = 50 + r * Math.cos(rad);
+                const top = 50 + r * Math.sin(rad);
+                return `<div class="cakes-orbit-item" data-idx="${i}" style="left:${left}%;top:${top}%"><img src="${cake.img}" alt="Cake ${i+1}"></div>`;
+              }).join('')}
+            </div>
+            <div id="cakesCornerSlot"></div>
+          </div>
+        `;
+        updateCenterAndCorner();
+        const orbit = document.getElementById('cakesOrbit');
+        const container = document.getElementById('cakesContainer');
+        orbit.querySelectorAll('.cakes-orbit-item').forEach(el => {
+          el.addEventListener('click', () => {
+            activeIdx = parseInt(el.dataset.idx, 10);
+            updateCenterAndCorner();
+          });
+        });
+        sectionOverlay._cakesSelect = (idx) => { activeIdx = idx; updateCenterAndCorner(); };
+
+        // Physics-based falling cakes using Nape
+        let cakesSpace = null;
+        let cakesBodies = [];
+        let cakesAnimating = false;
+
+        function initCakesPhysics() {
+          if (cakesSpace) return;
+          const gravity = new Vec2(0, 900);
+          cakesSpace = new Space(gravity);
+
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          const thickness = 80;
+
+          const floor = new Body(BodyType.STATIC, new Vec2(w / 2, h + thickness / 2));
+          floor.shapes.add(new Polygon(Polygon.box(w + 400, thickness)));
+          floor.space = cakesSpace;
+
+          const left = new Body(BodyType.STATIC, new Vec2(-thickness / 2, h / 2));
+          left.shapes.add(new Polygon(Polygon.box(thickness, h * 2)));
+          left.space = cakesSpace;
+
+          const right = new Body(BodyType.STATIC, new Vec2(w + thickness / 2, h / 2));
+          right.shapes.add(new Polygon(Polygon.box(thickness, h * 2)));
+          right.space = cakesSpace;
+        }
+
+        function animateCakes() {
+          if (!cakesSpace) return;
+          cakesSpace.step(1 / 60);
+
+          for (const cb of cakesBodies) {
+            const p = cb.body.position;
+            cb.el.style.left = (p.x - cb.size / 2) + 'px';
+            cb.el.style.top  = (p.y - cb.size / 2) + 'px';
+          }
+
+          if (cakesBodies.length) {
+            requestAnimationFrame(animateCakes);
+          } else {
+            cakesAnimating = false;
+          }
+        }
+
+        sectionOverlay._cakesSpawnFalling = (imgSrc) => {
+          initCakesPhysics();
+
+          let container = document.getElementById('fallingCakesContainer');
+          if (!container) {
+            container = document.createElement('div');
+            container.id = 'fallingCakesContainer';
+            container.className = 'falling-cakes-container';
+            sectionOverlay.appendChild(container);
+          }
+
+          const count = 12;
+          const baseSize = 60 + Math.random() * 40;
+
+          for (let i = 0; i < count; i++) {
+            const cakeSize = baseSize * (0.8 + Math.random() * 0.4);
+            const radius = cakeSize / 2;
+
+            const cake = document.createElement('div');
+            cake.className = 'falling-cake';
+            cake.innerHTML = `<img src="${imgSrc}" alt="">`;
+            cake.style.width = cakeSize + 'px';
+            cake.style.height = cakeSize + 'px';
+            container.appendChild(cake);
+
+            // Spawn in a tight column around screen center so cakes pile together
+            const centerX = window.innerWidth / 2;
+            const spread = cakeSize * 0.6;
+            const startX = centerX + (Math.random() - 0.5) * spread;
+            const startY = -cakeSize - Math.random() * 200;
+
+            const body = new Body(BodyType.DYNAMIC, new Vec2(startX, startY));
+            body.shapes.add(new Circle(radius));
+            body.space = cakesSpace;
+
+            cakesBodies.push({ body, el: cake, size: cakeSize });
+          }
+
+          if (!cakesAnimating) {
+            cakesAnimating = true;
+            requestAnimationFrame(animateCakes);
+          }
+        };
+      } else if (idx === 1) {
+        sectionOverlay.classList.add('sturmzx2-modal');
+        sectionContent.innerHTML = `
+          <div class="bio-content">
+            <h1 class="bio-title">STURMZX2</h1>
+            <p class="bio-tagline">Artwear · Berlin</p>
+            <div class="bio-text">
+              <p>Sturmzx2 is an artwear project founded by 2 sisters, Berlin based. Their vision is bold.</p>
+              <p>Rejecting the fast fashion industry, proposing a brave aesthetic inspired by trash, society, dreams, life, death, and pleasure.</p>
+              <p>Collecting materials from the streets of the city or whatever God provides, transforming them with mixed experimental naive techniques.</p>
+              <p>Enjoying the process of each piece, making unique products. Encouraging &ldquo;Never forget playing and dreaming hard &lt;3.&rdquo;</p>
+            </div>
+          </div>
+        `;
+      } else if (idx === 3) {
+        sectionOverlay.classList.add('bio-modal');
+        sectionContent.innerHTML = `
+          <div class="bio-content" style="padding-bottom:90px;">
+            <h1 class="bio-title">Barbi</h1>
+            <p class="bio-tagline">Art · Dreams · Vibes</p>
+            <div class="bio-scroll" id="bioScroll">
+              <div class="bio-text">
+                <p>Hi, I&rsquo;m Barbi.</p>
+                <p>Self‑expression has always been the force that keeps my mind alive and curious. Since childhood, I&rsquo;ve been drawing, moving, questioning, and pushing against rules that never made sense to me. As I grew older, I realized how much oppression and rigidity could silence people — and how deeply I needed creativity to release, transform, and make sense of the world around me. Art became the place where I could channel that energy, mix reality with imagination, and build a universe of my own. It&rsquo;s a universe that makes me feel safe, one I return to in my dreams, and one I hope to keep discovering throughout my life.</p>
+                <p>Feeling lost at times has guided me toward unexpected paths. Each path opens new doors, and exploring them has become one of my greatest passions. Asking questions, drawing my thoughts, and creating stories out of everyday objects helps me understand myself and the world. Even something as simple as finding a set of old keys can spark endless curiosity — who owned them, what spaces they opened, what lives they touched. I love imagining the stories behind things that pass through my hands.</p>
+                <p>My creative journey has never been linear. I studied interior design, completed a postgraduate degree in illustration, baked and sold cakes at school, made handmade scarves, tattooed, explored upcycling clothing and jewelry from street materials, returned to baking, and continued tattooing. I&rsquo;m happiest when I&rsquo;m learning, experimenting, and trying new things. Creating — in any form — is where I feel most myself.</p>
+              </div>
+            </div>
+            <div class="bio-photo-wrap">
+              <img src="img/barbi-bio.png" alt="Oye Estupida portrait">
+            </div>
+          </div>
+        `;
+
+        // invisible scroll + click-drag scrolling
+        requestAnimationFrame(() => {
+          const sc = document.getElementById('bioScroll');
+          if (!sc) return;
+          let dragging = false;
+          let startY = 0;
+          let startTop = 0;
+
+          sc.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            dragging = true;
+            sc.classList.add('dragging');
+            startY = e.clientY;
+            startTop = sc.scrollTop;
+          });
+          window.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            e.preventDefault();
+            sc.scrollTop = startTop - (e.clientY - startY);
+          });
+          window.addEventListener('mouseup', () => {
+            dragging = false;
+            sc.classList.remove('dragging');
+          });
+          sc.addEventListener('mouseleave', () => {
+            dragging = false;
+            sc.classList.remove('dragging');
+          });
+        });
+      } else if (idx === 4) {
+        sectionOverlay.classList.add('tarot-modal');
+        sectionContent.innerHTML = `
+          <div class="tarot-content">
+            <div class="tarot-video-wrap">
+              <video src="img/tarot/tarot-loop.mp4" class="tarot-hero" loop muted autoplay playsinline></video>
+            </div>
+            <div class="tarot-text-wrap">
+              <h2 class="tarot-title">Tarot</h2>
+              <p class="tarot-text">Discover your path through the cards. Each reading is a journey into the unknown — a moment to reflect, dream, and connect.</p>
+              <button class="tarot-contact-btn" id="tarotContactBtn">Get a reading</button>
+            </div>
+          </div>
+        `;
+        document.getElementById('tarotContactBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeSection();
+          setTimeout(() => openSection(sectionOverlay, 6), 600);
+        });
+      } else if (idx === 5) {
+        // Build tattoo list manually so we can skip tattoo13
+        const tattooImages = [];
+        for (let i = 1; i <= 22; i++) {
+          if (i === 13 || i === 17) continue;
+          tattooImages.push(`img/tatoos/tattoo${i}.jpeg`);
+        }
+        const particleCount = 15;
+        const makeParticles = () => Array.from({ length: particleCount }, () =>
+          `<div class="tattoo-ball-particle" style="left:${10 + Math.random() * 80}%;top:${10 + Math.random() * 80}%"></div>`
+        ).join('');
+        sectionOverlay.classList.add('tattoos-modal');
+        sectionContent.innerHTML = `
+          <h2 class="gallery-title">TATTOO</h2>
+          <div class="tattoos-gallery-scroll">
+            <div class="fluid-gallery" id="tattoosGallery">
+              ${tattooImages.map((src, i) => `
+                <div class="gallery-item" data-src="${src}">
+                  <img src="${src}" alt="Tattoo ${i + 1}" loading="lazy">
+                  <div class="tattoo-ball-particles">${makeParticles()}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        sectionOverlay.scrollTop = 0;
+        const scrollEl = sectionContent.querySelector('.tattoos-gallery-scroll');
+        if (scrollEl) scrollEl.scrollTop = 0;
+        let lightbox = document.getElementById('paintingsLightbox');
+        if (!lightbox) {
+          lightbox = document.createElement('div');
+          lightbox.id = 'paintingsLightbox';
+          lightbox.className = 'lightbox';
+          lightbox.innerHTML = '<button class="lightbox-close" aria-label="Close">&times;</button><img src="" alt=""><div class="lightbox-loupe" id="lightboxLoupe"><canvas id="lightboxLoupeCanvas" width="100" height="100"></canvas></div>';
+          document.body.appendChild(lightbox);
+          const lbClose = lightbox.querySelector('.lightbox-close');
+          const loupe = document.getElementById('lightboxLoupe');
+          const loupeCanvas = document.getElementById('lightboxLoupeCanvas');
+          const closeLb = () => {
+            lightbox.classList.remove('open', 'tattoo-view');
+            if (loupe) loupe.classList.remove('visible');
+          };
+          lbClose.addEventListener('click', closeLb);
+          lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLb(); });
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLb(); });
+          lightbox.addEventListener('mousemove', (e) => {
+            if (!lightbox.classList.contains('tattoo-view') || !lightbox.classList.contains('open')) return;
+            const img = lightbox.querySelector('img');
+            if (!img || !img.complete || !img.naturalWidth) return;
+            const r = img.getBoundingClientRect();
+            if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+              if (loupe) loupe.classList.remove('visible');
+              return;
+            }
+            const relX = (e.clientX - r.left) / r.width;
+            const relY = (e.clientY - r.top) / r.height;
+            const px = relX * img.naturalWidth;
+            const py = relY * img.naturalHeight;
+            const zoom = 2;
+            const sampleSize = 50;
+            const sx = Math.max(0, Math.min(img.naturalWidth - sampleSize, px - sampleSize / 2));
+            const sy = Math.max(0, Math.min(img.naturalHeight - sampleSize, py - sampleSize / 2));
+            const ctx = loupeCanvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, sx, sy, sampleSize, sampleSize, 0, 0, 100, 100);
+            loupe.style.left = (e.clientX + 50) + 'px';
+            loupe.style.top = e.clientY + 'px';
+            loupe.classList.add('visible');
+          });
+          lightbox.addEventListener('mouseleave', () => { if (loupe) loupe.classList.remove('visible'); });
+        }
+        const lbImg = lightbox.querySelector('img');
+        document.getElementById('tattoosGallery').querySelectorAll('.gallery-item').forEach(item => {
+          item.addEventListener('click', () => {
+            lbImg.src = item.dataset.src;
+            lightbox.classList.add('open', 'tattoo-view');
+          });
+        });
+      } else if (idx === 6) {
+        sectionOverlay.classList.add('contact-modal');
+        sectionContent.innerHTML = `
+          <form class="contact-form" id="contactForm">
+            <div class="form-step active" data-step="1">
+              <p class="form-prompt">Hey! What's your name?</p>
+              <input type="text" id="contactName" name="name" placeholder="Type here..." autocomplete="name">
+              <button type="button" class="form-btn" id="contactNext1">→</button>
+            </div>
+            <div class="form-step" data-step="2">
+              <p class="form-prompt">Nice to meet you! How can we reach you?</p>
+              <input type="text" id="contactContact" name="contact" placeholder="Email or phone..." autocomplete="email">
+              <button type="button" class="form-btn" id="contactNext2">→</button>
+            </div>
+            <div class="form-step" data-step="3">
+              <p class="form-prompt">Last thing — spell a dream to us. We're all ears.</p>
+              <textarea id="contactDream" name="dream" placeholder="Your dream..." rows="4"></textarea>
+              <button type="submit" class="form-btn">Send</button>
+            </div>
+          </form>
+        `;
+        const form = document.getElementById('contactForm');
+        const steps = form.querySelectorAll('.form-step');
+        const next1 = document.getElementById('contactNext1');
+        const next2 = document.getElementById('contactNext2');
+        const nameInput = document.getElementById('contactName');
+        const contactInput = document.getElementById('contactContact');
+        const dreamInput = document.getElementById('contactDream');
+
+        function goToStep(stepIdx) {
+          if (stepIdx === 1 && !nameInput.value.trim()) return;
+          if (stepIdx === 2 && !contactInput.value.trim()) return;
+          steps.forEach((s, i) => s.classList.toggle('active', i === stepIdx));
+          if (stepIdx === 1) nameInput.focus();
+          else if (stepIdx === 2) contactInput.focus();
+          else if (stepIdx === 3) dreamInput.focus();
+        }
+
+        next1.addEventListener('click', () => goToStep(1));
+        next2.addEventListener('click', () => goToStep(2));
+
+        [nameInput, contactInput].forEach((input, i) => {
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); goToStep(i + 1); }
+          });
+        });
+        dreamInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+        });
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!dreamInput.value.trim()) return;
+          console.log('Contact:', { name: nameInput.value, contact: contactInput.value, dream: dreamInput.value });
+          closeSection();
+        });
+
+        setTimeout(() => nameInput.focus(), 500);
+      } else {
+        sectionContent.textContent = sectionNames[idx];
+      }
+
+      requestAnimationFrame(() => {
+        sectionOverlay.classList.add('expanding');
+        const isModal =
+          sectionOverlay.classList.contains('contact-modal') ||
+          sectionOverlay.classList.contains('bio-modal') ||
+          sectionOverlay.classList.contains('sturmzx2-modal') ||
+          sectionOverlay.classList.contains('tarot-modal') ||
+          sectionOverlay.classList.contains('paintings-modal') ||
+          sectionOverlay.classList.contains('tattoos-modal') ||
+          sectionOverlay.classList.contains('cakes-modal');
+        if (isModal && modalBackdrop) {
+          modalBackdrop.classList.add('visible');
+        }
+        document.querySelectorAll('.ring-btn').forEach(b => {
+          b.style.opacity = '0';
+          b.style.pointerEvents = 'none';
+        });
+        // when modal finish sliding up, put couch behind it
+        setTimeout(() => {
+          if (couchBtn) couchBtn.style.zIndex = '';
+        }, 520);
+      });
+
+      setTimeout(() => {
+        exitBtn.classList.add('visible');
+      }, 400);
+    }
+
+    function closeSection() {
+      if (!sectionOpen) return;
+      exitBtn.classList.remove('visible');
+      if (cakesOrderBtn) {
+        cakesOrderBtn.classList.remove('visible');
+      }
+      if (cakesOrderOverlay) {
+        cakesOrderOverlay.classList.remove('visible');
+      }
+      if (modalBackdrop) {
+        modalBackdrop.classList.remove('visible');
+      }
+
+      // couch above modal during slide-down close
+      if (couchBtn) couchBtn.style.zIndex = '950';
+
+      // animate out: cakes slides down, others slide to bottom
+      sectionOverlay.classList.remove('expanding');
+      if (sectionOverlay.classList.contains('cakes-modal')) {
+        sectionOverlay.classList.add('cakes-closing');
+      } else {
+        sectionOverlay.classList.add('modal-closing');
+      }
+
+      // also clear any falling cakes when closing any modal
+      const oldFalling = document.getElementById('fallingCakesContainer');
+      if (oldFalling && oldFalling.parentNode) {
+        oldFalling.parentNode.removeChild(oldFalling);
+      }
+
+      delete sectionOverlay._cakesSelect;
+      document.querySelectorAll('.ring-btn').forEach(b => {
+        b.style.opacity = '1';
+        b.style.pointerEvents = 'auto';
+      });
+
+      setTimeout(() => {
+        sectionOverlay.style.transition = 'none';
+        sectionOverlay.style.opacity = '0';
+        sectionOverlay.classList.remove('modal-closing', 'cakes-closing', 'contact-modal', 'bio-modal', 'sturmzx2-modal', 'tarot-modal', 'paintings-modal', 'tattoos-modal', 'cakes-modal');
+        sectionOpen = false;
+        document.querySelectorAll('.ring-btn').forEach(b => b.classList.remove('selected'));
+        if (couchBtn) couchBtn.style.zIndex = '';
+        sectionOverlay.style.top = '';
+        sectionOverlay.style.left = '';
+        sectionOverlay.style.width = '';
+        sectionOverlay.style.height = '';
+        sectionOverlay.style.maxWidth = '';
+        sectionOverlay.style.transform = '';
+        sectionOverlay.style.borderRadius = '';
+        sectionOverlay.style.visibility = 'hidden';
+        requestAnimationFrame(() => {
+          sectionOverlay.style.transition = '';
+          sectionOverlay.style.visibility = '';
+        });
+      }, 500);
+    }
+
+    exitBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeSection();
+    });
+
+    if (cakesOrderBtn && cakesOrderOverlay && cakesOrderForm && cakesOrderCancel) {
+      cakesOrderBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cakesOrderOverlay.classList.add('visible');
+        cakesOrderOverlay.setAttribute('aria-hidden', 'false');
+      });
+
+      const cakesOrderPrompt = document.getElementById('cakesOrderPrompt');
+      const cakesOrderNext = document.getElementById('cakesOrderNext');
+      const cakesOrderBack = document.getElementById('cakesOrderBack');
+      const cakeName = document.getElementById('cakeName');
+      const cakeInspiration = document.getElementById('cakeInspiration');
+      const cakeColor1 = document.getElementById('cakeColor1');
+      const cakeColor2 = document.getElementById('cakeColor2');
+      const cakeColor3 = document.getElementById('cakeColor3');
+      const cakeConditions = document.getElementById('cakeConditions');
+      const cakeDate = document.getElementById('cakeDate');
+
+      const cakeSteps = Array.from(cakesOrderForm.querySelectorAll('.cakes-order-step'));
+      const cakePrompts = [
+        "Hey! What’s your name?",
+        "What’s your inspiration for the cake? / mood / concept",
+        "Pick your 3 favorite colors for this cake",
+        "Any specific alimentary condition? or anything to add?",
+        "For when do you need the cake? (7 weeks before works for me.)"
+      ];
+      let cakeStepIdx = 0;
+
+      function colorNameFromHex(hex) {
+        const h = (hex || '').trim().toLowerCase();
+        const map = {
+          '#000000': 'black',
+          '#ffffff': 'white',
+          '#ff00c0': 'pink',
+          '#ff69b4': 'hot pink',
+          '#ff0000': 'red',
+          '#00ff00': 'lime',
+          '#0000ff': 'blue',
+          '#ffff00': 'yellow',
+          '#00ffff': 'cyan',
+          '#ff00ff': 'magenta',
+          '#ffa500': 'orange',
+          '#800080': 'purple',
+          '#a52a2a': 'brown',
+          '#808080': 'gray'
+        };
+        return map[h] || h;
+      }
+
+      function setCakeStep(nextIdx) {
+        cakeStepIdx = Math.max(0, Math.min(cakeSteps.length - 1, nextIdx));
+        cakeSteps.forEach((s, i) => s.classList.toggle('active', i === cakeStepIdx));
+        if (cakesOrderPrompt) cakesOrderPrompt.textContent = cakePrompts[cakeStepIdx] || '';
+        if (cakesOrderBack) cakesOrderBack.style.display = cakeStepIdx === 0 ? 'none' : '';
+        if (cakesOrderNext) cakesOrderNext.textContent = cakeStepIdx === cakeSteps.length - 1 ? 'Send' : '→';
+
+        const focusEl = [cakeName, cakeInspiration, cakeColor1, cakeConditions, cakeDate][cakeStepIdx];
+        if (focusEl) setTimeout(() => focusEl.focus(), 80);
+      }
+
+      function validateCakeStep() {
+        if (cakeStepIdx === 0) return cakeName && cakeName.value.trim().length > 0;
+        if (cakeStepIdx === 1) return cakeInspiration && cakeInspiration.value.trim().length > 0;
+        if (cakeStepIdx === 4) return cakeDate && cakeDate.value;
+        return true;
+      }
+
+      function openCakeOverlay() {
+        cakesOrderOverlay.classList.add('visible');
+        cakesOrderOverlay.setAttribute('aria-hidden', 'false');
+        setCakeStep(0);
+      }
+
+      cakesOrderCancel.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cakesOrderOverlay.classList.remove('visible');
+        cakesOrderOverlay.setAttribute('aria-hidden', 'true');
+      });
+
+      cakesOrderOverlay.addEventListener('click', (e) => {
+        if (e.target === cakesOrderOverlay) {
+          cakesOrderOverlay.classList.remove('visible');
+          cakesOrderOverlay.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      if (cakesOrderBtn) {
+        cakesOrderBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openCakeOverlay();
+        });
+      }
+
+      if (cakesOrderBack) {
+        cakesOrderBack.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setCakeStep(cakeStepIdx - 1);
+        });
+      }
+
+      if (cakesOrderNext) {
+        cakesOrderNext.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!validateCakeStep()) return;
+          if (cakeStepIdx < cakeSteps.length - 1) setCakeStep(cakeStepIdx + 1);
+          else cakesOrderForm.requestSubmit();
+        });
+      }
+
+      [cakeName, cakeInspiration, cakeConditions].filter(Boolean).forEach((el) => {
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !(el.tagName === 'TEXTAREA' && e.shiftKey)) {
+            e.preventDefault();
+            if (cakesOrderNext) cakesOrderNext.click();
+          }
+        });
+      });
+
+      cakesOrderForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validateCakeStep()) return;
+
+        const c1 = cakeColor1 ? cakeColor1.value : '';
+        const c2 = cakeColor2 ? cakeColor2.value : '';
+        const c3 = cakeColor3 ? cakeColor3.value : '';
+        const body = [
+          `Name: ${cakeName ? cakeName.value.trim() : ''}`,
+          `Inspiration / mood / concept: ${cakeInspiration ? cakeInspiration.value.trim() : ''}`,
+          `Colors:`,
+          `- ${colorNameFromHex(c1)} (${c1})`,
+          `- ${colorNameFromHex(c2)} (${c2})`,
+          `- ${colorNameFromHex(c3)} (${c3})`,
+          `Alimentary conditions / add: ${cakeConditions ? cakeConditions.value.trim() : ''}`,
+          `Needed for: ${cakeDate ? cakeDate.value : ''}`
+        ].join('\n');
+
+        // Opens user email client with prefilled text (no backend yet)
+        window.location.href = `mailto:?subject=${encodeURIComponent('Personalized cake order')}&body=${encodeURIComponent(body)}`;
+
+        cakesOrderForm.innerHTML = `
+          <h3>Recipe received</h3>
+          <p>Im processing your recipe, thanks for your message i will get back to you soon.</p>
+        `;
+      });
+
+      // init
+      setCakeStep(0);
+    }
+
+    /* ---------- Instagram icons (Tattoo / Visual Art) ---------- */
+    const instagramTattoo = document.getElementById('instagramTattoo');
+    const instagramArt = document.getElementById('instagramArt');
+
+    if (instagramTattoo) {
+      instagramTattoo.addEventListener('mouseenter', () =>
+        playSoundForElement(instagramTattoo, ringSounds.Tattoos)
+      );
+    }
+
+    /* ---------- Collision detection ---------- */
+    function checkAllCollisions(bx, by, ballSize) {
+      const ballCx = bx + ballSize / 2;
+      const ballCy = by + ballSize / 2;
+
+      if (exitBtn.classList.contains('visible')) {
+        const r = exitBtn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(ballCx - cx, ballCy - cy);
+        if (dist < r.width / 2 + ballSize / 2) {
+          return { el: exitBtn, press: closeSection, isExit: true };
+        }
+      }
+
+      if (!sectionOpen) {
+        for (const b of ringButtons) {
+          const r = b.el.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dist = Math.hypot(ballCx - cx, ballCy - cy);
+          if (dist < r.width / 2 + ballSize / 2) {
+            return b;
+          }
+        }
+      }
+
+      const socialLinks = document.querySelectorAll('.social-icons a');
+      for (const link of socialLinks) {
+        const r = link.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(ballCx - cx, ballCy - cy);
+        if (dist < r.width / 2 + ballSize / 2) {
+          return { el: link, press: () => window.open(link.href, '_blank') };
+        }
+      }
+
+      if (sectionOverlay.classList.contains('cakes-modal') && sectionOverlay.classList.contains('expanding')) {
+        const centerCake = document.querySelector('.cakes-center:has(img)');
+        if (centerCake) {
+          const r = centerCake.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dist = Math.hypot(ballCx - cx, ballCy - cy);
+          if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2) {
+            const imgSrc = centerCake.querySelector('img')?.src;
+            const spawnFalling = sectionOverlay._cakesSpawnFalling;
+            if (imgSrc && spawnFalling) {
+              return { el: centerCake, press: () => spawnFalling(imgSrc) };
+            }
+          }
+        }
+        const orbitItems = document.querySelectorAll('.cakes-orbit-item');
+        for (const el of orbitItems) {
+          const r = el.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dist = Math.hypot(ballCx - cx, ballCy - cy);
+          if (dist < r.width / 2 + ballSize / 2) {
+            const cakesSelect = sectionOverlay._cakesSelect;
+            if (cakesSelect) {
+              return { el, press: () => cakesSelect(parseInt(el.dataset.idx, 10)) };
+            }
+          }
+        }
+      }
+
+      return null;
+    }
+
+    /* ---------- Shooting balls ---------- */
+    const gunSound = document.getElementById('soundGun');
+
+    function shootBall(startX, startY) {
+      if (gunSound && !siteMuted) {
+        gunSound.volume = UI_VOLUME;
+        gunSound.currentTime = 0;
+        gunSound.play().catch(() => {});
+      }
+      const flash = document.createElement('div');
+      flash.className = 'muzzle-flash';
+      flash.style.left = startX + 'px';
+      flash.style.top = startY + 'px';
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 200);
+
+      const ball = document.createElement('div');
+      ball.className = 'ball';
+      ball.innerHTML = '<img src="ball.png" alt="">';
+      document.body.appendChild(ball);
+
+      const fireAngle = shootAngle + (Math.random() - 0.5) * 0.08;
+      const speed = 35 + Math.random() * 8;
+      const ballSize = 24;
+      let bx = startX - ballSize / 2;
+      let by = startY - ballSize / 2;
+      let vx = Math.cos(fireAngle) * speed;
+      let vy = Math.sin(fireAngle) * speed;
+      const gravity = 0.02;
+      let life = 0;
+
+      function animate() {
+        vx *= 0.999;
+        vy += gravity;
+        bx += vx;
+        by += vy;
+        life++;
+
+        ball.style.left = bx + 'px';
+        ball.style.top = by + 'px';
+        ball.style.transform = `rotate(${life * 8}deg)`;
+        ball.style.opacity = Math.max(0, 1 - life / 140);
+
+        const hit = checkAllCollisions(bx, by, ballSize);
+        if (hit) {
+          hit.el.classList.remove('hit');
+          void hit.el.offsetWidth;
+          hit.el.classList.add('hit');
+          hit.press();
+          ball.remove();
+          return;
+        }
+
+        if (life < 140 && by < window.innerHeight + 60 && by > -200
+            && bx > -60 && bx < window.innerWidth + 60) {
+          requestAnimationFrame(animate);
+        } else {
+          ball.remove();
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    document.body.addEventListener('click', (e) => {
+      if (draggingHot || draggingVec) return;
+      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn')) return;
+      shootBall(e.clientX, e.clientY);
+    });
+
+    const laserLine = document.getElementById('laserLine');
+    const laserDot = document.getElementById('laserDot');
+    let mouseX = 0, mouseY = 0;
+
+    function getCollidables() {
+      const els = [];
+      document.querySelectorAll('.ring-btn').forEach(el => els.push(el));
+      if (exitBtn.classList.contains('visible')) els.push(exitBtn);
+      els.push(frameBtn);
+      els.push(couchBtn);
+      document.querySelectorAll('.social-icons a').forEach(el => els.push(el));
+      if (sectionOverlay.classList.contains('cakes-modal') && sectionOverlay.classList.contains('expanding')) {
+        document.querySelectorAll('.cakes-orbit-item, .cakes-center').forEach(el => els.push(el));
+      }
+      if (sectionOverlay.classList.contains('paintings-modal') && sectionOverlay.classList.contains('expanding')) {
+        document.querySelectorAll('.paintings-modal .gallery-item').forEach(el => els.push(el));
+      }
+      if (sectionOverlay.classList.contains('tattoos-modal') && sectionOverlay.classList.contains('expanding')) {
+        document.querySelectorAll('.tattoos-modal .gallery-item').forEach(el => els.push(el));
+      }
+      return els;
+    }
+
+    function getElementUnderPoint(px, py) {
+      for (const el of getCollidables()) {
+        const r = el.getBoundingClientRect();
+        if (r.width === 0) continue;
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const radius = Math.max(r.width, r.height) / 2;
+        if (Math.hypot(px - cx, py - cy) <= radius) return el;
+      }
+      return null;
+    }
+
+    function raycastLaser(ox, oy, angle) {
+      const under = getElementUnderPoint(ox, oy);
+      if (under) return { dist: 0, el: under };
+
+      const dx = Math.cos(angle);
+      const dy = Math.sin(angle);
+      const maxLen = Math.max(window.innerWidth, window.innerHeight) * 2;
+      let closest = maxLen;
+      let hitEl = null;
+
+      for (const el of getCollidables()) {
+        const r = el.getBoundingClientRect();
+        if (r.width === 0) continue;
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const radius = Math.max(r.width, r.height) / 2;
+
+        const fx = ox - cx;
+        const fy = oy - cy;
+        const a = dx * dx + dy * dy;
+        const b = 2 * (fx * dx + fy * dy);
+        const c = fx * fx + fy * fy - radius * radius;
+        let disc = b * b - 4 * a * c;
+        if (disc < 0) continue;
+        disc = Math.sqrt(disc);
+        const t = (-b - disc) / (2 * a);
+        if (t > 5 && t < closest) {
+          closest = t;
+          hitEl = el;
+        }
+      }
+      return { dist: closest, el: hitEl };
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    (function shakeToGrayscale() {
+      const SHAKE_WINDOW_MS = 250;
+      const SHAKE_DIR_CHANGES = 3;
+      const SHAKE_DURATION_MS = 1000;
+      const MIN_DELTA = 2;
+      const buffer = [];
+      let shakeStartTime = null;
+      let grayscaleApplied = false;
+
+      function isShaking() {
+        const now = performance.now();
+        const cutoff = now - SHAKE_WINDOW_MS;
+        const recent = buffer.filter(p => p.t >= cutoff);
+        if (recent.length < 3) return false;
+        let dirChanges = 0;
+        for (let i = 1; i < recent.length - 1; i++) {
+          const dx1 = recent[i].x - recent[i - 1].x;
+          const dx2 = recent[i + 1].x - recent[i].x;
+          const dy1 = recent[i].y - recent[i - 1].y;
+          const dy2 = recent[i + 1].y - recent[i].y;
+          if (Math.abs(dx1) >= MIN_DELTA && Math.abs(dx2) >= MIN_DELTA && (dx1 > 0) !== (dx2 > 0)) dirChanges++;
+          if (Math.abs(dy1) >= MIN_DELTA && Math.abs(dy2) >= MIN_DELTA && (dy1 > 0) !== (dy2 > 0)) dirChanges++;
+        }
+        return dirChanges >= SHAKE_DIR_CHANGES;
+      }
+
+      document.addEventListener('mousemove', (e) => {
+        if (grayscaleApplied) return;
+        const now = performance.now();
+        buffer.push({ x: e.clientX, y: e.clientY, t: now });
+        while (buffer.length > 0 && buffer[0].t < now - 400) buffer.shift();
+
+        if (isShaking()) {
+          if (shakeStartTime == null) shakeStartTime = now;
+          else if (now - shakeStartTime >= SHAKE_DURATION_MS) {
+            document.body.classList.add('grayscale-mode');
+            grayscaleApplied = true;
+          }
+        } else {
+          shakeStartTime = null;
+        }
+      });
+    })();
+
+    let laserHoverEl = null;
+    (function animateLaser() {
+      const inTattoosGallery = sectionOverlay.classList.contains('tattoos-modal') && sectionOverlay.classList.contains('expanding');
+      if (inTattoosGallery) {
+        laserLine.setAttribute('opacity', '0');
+        laserDot.setAttribute('opacity', '0');
+        if (laserHoverEl) {
+          laserHoverEl.classList.remove('laser-hover');
+          laserHoverEl = null;
+        }
+      } else {
+        const { dist, el } = raycastLaser(mouseX, mouseY, shootAngle);
+        const x2 = mouseX + Math.cos(shootAngle) * dist;
+        const y2 = mouseY + Math.sin(shootAngle) * dist;
+        laserLine.setAttribute('x1', mouseX);
+        laserLine.setAttribute('y1', mouseY);
+        laserLine.setAttribute('x2', x2);
+        laserLine.setAttribute('y2', y2);
+
+        laserDot.setAttribute('cx', x2);
+        laserDot.setAttribute('cy', y2);
+
+        const pulse = 0.35 + Math.sin(performance.now() * 0.008) * 0.15
+                           + Math.sin(performance.now() * 0.023) * 0.1;
+        laserLine.setAttribute('opacity', pulse);
+        laserDot.setAttribute('opacity', pulse + 0.25);
+
+        if (el !== laserHoverEl) {
+          if (laserHoverEl) laserHoverEl.classList.remove('laser-hover');
+          laserHoverEl = el;
+          if (el) el.classList.add('laser-hover');
+        }
+      }
+
+      requestAnimationFrame(animateLaser);
+    })();
+
+    if (!tmpImg.complete) {
+      applyCursor(hotX, hotY);
+      updatePreview();
+    }
+  </script>
+
+</body>
+</html>
