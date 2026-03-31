@@ -7,9 +7,38 @@
   <link rel="icon" type="image/png" href="img/favico.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { corePlugins: { ringWidth: false, ringColor: false, ringOpacity: false, ringOffsetWidth: false } }</script>
+  <style id="gunCursorStyle"></style>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     *:focus { outline: none; }
+
+    body { background: #000; overflow: hidden; }
+
+    body.hide-native-cursor {
+      cursor: none !important;
+    }
+
+    body.hide-native-cursor *:not(.hotspot-dot):not(.vector-dot) {
+      cursor: none !important;
+    }
+
+    #gunCursor {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate3d(0,0,0);
+    }
+    #gunCursor img {
+      display: block;
+      width: 64px;
+      height: 64px;
+      transform-origin: 0 0;
+      image-rendering: auto;
+    }
 
     .site-logo {
       position: fixed;
@@ -93,9 +122,13 @@
       font-size: 10px; font-weight: bold;
       text-align: center;
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.25s ease, opacity 0.4s ease, left 0.4s ease, top 0.4s ease;
+      transition: all 0.25s ease, opacity 0.4s ease;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    .ring-btn.dragging {
+      transition: none !important;
     }
 
     .ring-btn .tarot-button-label,
@@ -106,115 +139,137 @@
 
     .ring-btn-tooltip {
       position: absolute;
-      bottom: 120%;
+      bottom: 130%;
       left: 50%;
-      transform: translateX(-50%) translateY(4px);
+      transform: translateX(-50%) translateY(4px) scale(0.85);
       white-space: nowrap;
       font-size: 20px;
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 6px 12px;
-      border-radius: 999px;
+      padding: 10px 22px;
+      border-radius: 0;
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      font-weight: bold;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
     .ring-btn:hover .ring-btn-tooltip,
     .ring-btn.laser-hover .ring-btn-tooltip {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     .frame-tooltip {
       position: fixed;
-      transform: translateX(-50%) translateY(4px);
+      transform: translateX(-50%) translateY(4px) scale(0.85);
       white-space: nowrap;
       font-size: 20px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 6px 12px;
-      border-radius: 999px;
+      padding: 10px 22px;
+      border-radius: 0;
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
       z-index: 40;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
     .frame-tooltip.visible {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     .couch-tooltip {
       position: fixed;
-      transform: translateX(-50%) translateY(4px);
+      transform: translateX(-50%) translateY(4px) scale(0.85);
       white-space: nowrap;
       font-size: 20px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 6px 12px;
-      border-radius: 999px;
+      padding: 10px 22px;
+      border-radius: 0;
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
       z-index: 40;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
     .couch-tooltip.visible {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    /* Day/Night interruptor */
-    .daynight-switch {
-      position: fixed;
-      right: 22px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 64px;
-      border-radius: 999px;
-      border: 1.5px solid #ff00c0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 1200;
-      box-shadow: 0 0 12px rgba(255,0,192,0.4);
+    /* Center-right fixed image (e.g. toggle/branding) */
+    .center-right-img {
+      width: 72px;
+      height: auto;
+      cursor: inherit;
+      filter: none;
     }
-    .daynight-toggle {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #ff0;
-      box-shadow: 0 0 10px rgba(255,255,0,0.8);
-      transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-      transform: translateY(-12px);
+
+    @media (max-width: 640px) {
+      #laserSvg {
+        display: none;
+      }
     }
-    .daynight-switch.night .daynight-toggle {
-      transform: translateY(12px);
-      background: #0ff;
-      box-shadow: 0 0 10px rgba(0,255,255,0.8);
+
+    @media (hover: none), (pointer: coarse) {
+      #laserSvg {
+        display: none;
+      }
     }
 
     /* Tarot tooltip: nudge slightly up */
     .ring-btn.tarot-btn .ring-btn-tooltip {
-      bottom: calc(120% + 15px);
+      bottom: auto;
+      top: calc(100% + 10px);
     }
 
     /* CAKES button tooltip: lift a bit */
     .ring-btn.cakes-btn .ring-btn-tooltip {
-      bottom: calc(120% + 50px);
+      top: auto;
+      bottom: calc(100% + 14px);
+      left: 0;
+      transform: translateX(-100%) translateY(-10px) scale(0.9);
+    }
+
+    .ring-btn.cakes-btn:hover .ring-btn-tooltip,
+    .ring-btn.cakes-btn.laser-hover .ring-btn-tooltip {
+      transform: translateX(-100%) translateY(0) scale(1);
     }
 
     /* CONTACT button tooltip: nudge up */
@@ -229,7 +284,7 @@
 
     /* STURM button is huge → lift tooltip more */
     .ring-btn.sturm-btn .ring-btn-tooltip {
-      bottom: calc(120% + 80px);
+      bottom: calc(120% + 60px);
     }
 
     .ring-btn:hover,
@@ -268,13 +323,14 @@
     }
 
     .ring-btn.tarot-btn {
-      width: 80px;
-      height: 56px;
+      width: 120px;
+      height: 120px;
       border-radius: 12px;
       padding: 0;
       background: transparent;
       border-color: transparent;
       box-shadow: none;
+      overflow: visible;
     }
 
     .ring-btn.tarot-btn:hover {
@@ -321,6 +377,26 @@
       color: inherit;
     }
 
+    .ring-btn.tattoos-btn {
+      z-index: 3000 !important;
+    }
+
+    .ring-btn.tarot-btn {
+      z-index: 3000 !important;
+    }
+
+    .ring-btn.sturm-btn {
+      z-index: 3000 !important;
+    }
+
+    .ring-btn.contact-btn {
+      z-index: 3000 !important;
+    }
+
+    .ring-btn.cakes-btn {
+      z-index: 3000 !important;
+    }
+
     /* STURMZX2 & TATTOOS buttons: never show pink selected/hover glow */
     .ring-btn.sturm-btn,
     .ring-btn.sturm-btn:hover,
@@ -335,20 +411,39 @@
       box-shadow: none !important;
     }
 
+    .ring-btn.contact-btn,
+    .ring-btn.contact-btn:hover,
+    .ring-btn.contact-btn.laser-hover,
+    .ring-btn.contact-btn.selected,
+    .ring-btn.contact-btn.hit,
+    .ring-btn.tarot-btn,
+    .ring-btn.tarot-btn:hover,
+    .ring-btn.tarot-btn.laser-hover,
+    .ring-btn.tarot-btn.selected,
+    .ring-btn.tarot-btn.hit {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      color: inherit !important;
+    }
+
     .tarot-button-cards {
       position: relative;
       width: 100%;
       height: 100%;
+      overflow: visible;
+      z-index: 2;
     }
 
     .tarot-button-card {
       position: absolute;
       width: 28px;
-      height: 42px;
+      height: 48px;
       border-radius: 4px;
       overflow: hidden;
-      background-size: cover;
+      background-size: contain;
       background-position: center;
+      background-repeat: no-repeat;
       box-shadow: none;
       filter: hue-rotate(-20deg) saturate(1.6);
       transition: transform 0.3s ease, opacity 0.3s ease;
@@ -357,18 +452,18 @@
       transform: translate(-50%, -50%) scale(1.6);
     }
 
-    /* Slight resting offsets so all cards peek out a bit */
+    /* Resting = spread (old hover position) */
     .ring-btn.tarot-btn .tarot-button-card.c1 {
-      transform: translate(-80%, -40%) scale(1.6);
+      transform: translate(-90%, -30%) rotate(-18deg) scale(2);
     }
     .ring-btn.tarot-btn .tarot-button-card.c2 {
-      transform: translate(-60%, -55%) scale(1.6);
+      transform: translate(-50%, -60%) rotate(-6deg) scale(2);
     }
     .ring-btn.tarot-btn .tarot-button-card.c3 {
-      transform: translate(-40%, -60%) scale(1.6);
+      transform: translate(-10%, -60%) rotate(6deg) scale(2);
     }
     .ring-btn.tarot-btn .tarot-button-card.c4 {
-      transform: translate(-20%, -40%) scale(1.6);
+      transform: translate(30%, -30%) rotate(18deg) scale(2);
     }
 
     .tarot-button-card.c1 { background-image: url('img/tarot/tarot4.png'); z-index: 1; }
@@ -394,6 +489,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      z-index: 2;
     }
 
     .contact-button-icon {
@@ -434,6 +530,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      z-index: 2;
     }
 
     .mini-btn-label {
@@ -470,23 +567,23 @@
     }
 
     .ring-btn.tarot-btn:hover .tarot-button-card.c1 {
-      transform: translate(-90%, -30%) rotate(-18deg) scale(2);
+      transform: translate(-120%, -20%) rotate(-28deg) scale(2.5);
     }
 
     .ring-btn.tarot-btn:hover .tarot-button-card.c2 {
-      transform: translate(-50%, -60%) rotate(-6deg) scale(2);
+      transform: translate(-55%, -80%) rotate(-9deg) scale(2.5);
     }
 
     .ring-btn.tarot-btn:hover .tarot-button-card.c3 {
-      transform: translate(-10%, -60%) rotate(6deg) scale(2);
+      transform: translate(10%, -80%) rotate(9deg) scale(2.5);
     }
 
     .ring-btn.tarot-btn:hover .tarot-button-card.c4 {
-      transform: translate(30%, -30%) rotate(18deg) scale(2);
+      transform: translate(55%, -20%) rotate(28deg) scale(2.5);
     }
 
     @keyframes btnHit {
-      0%   { transform: scale(1.3); background: #fff; box-shadow: 0 0 30px #fff, 0 0 60px #ff00c0; }
+      0%   { transform: scale(1.3); box-shadow: 0 0 20px rgba(255,0,192,0.6); }
       50%  { transform: scale(0.85); }
       100% { transform: scale(1); }
     }
@@ -495,6 +592,26 @@
       pointer-events: auto !important;
       transform-origin: top center;
       transition: filter 0.2s, width 0.4s ease, max-width 0.4s ease;
+    }
+
+    .frame-btn.dragging {
+      transition: none !important;
+    }
+
+    #frameArt.dragging {
+      transition: none !important;
+    }
+
+    #frameArt {
+      object-fit: contain;
+      border-radius: 0;
+      clip-path: none;
+      opacity: 1;
+      transition: opacity 0.5s ease, width 0.4s ease, max-width 0.4s ease;
+    }
+
+    #frameArt.fading {
+      opacity: 0;
     }
 
     .frame-btn.laser-hover {
@@ -509,6 +626,8 @@
       object-fit: contain;
       border-radius: 0;
       clip-path: none;
+      opacity: 1;
+      transition: opacity 0.5s ease, width 0.4s ease, max-width 0.4s ease;
     }
 
     @keyframes frameHit {
@@ -712,7 +831,7 @@
     /* ---------- Section overlay ---------- */
     .section-overlay {
       position: fixed;
-      border-radius: 50%;
+      border-radius: 12px;
       border: none;
       background: rgba(20, 0, 15, 0.95);
       display: flex;
@@ -722,7 +841,7 @@
       pointer-events: none;
       opacity: 0;
       z-index: 900;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.35s ease;
     }
 
     .modal-backdrop {
@@ -743,11 +862,6 @@
     .section-overlay.expanding {
       pointer-events: auto;
       opacity: 1;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      border-radius: 0;
     }
 
     .section-overlay.bio-modal.expanding,
@@ -768,21 +882,33 @@
       overflow: auto;
     }
 
+    /* Shared size: bio + sturm modals */
+    .section-overlay.bio-modal.expanding,
     .section-overlay.sturmzx2-modal.expanding {
-      width: 50vw !important;
-      height: 50vh !important;
+      width: clamp(300px, 88vw, 520px) !important;
+      height: clamp(400px, 80vh, 680px) !important;
       max-width: none;
       max-height: none;
     }
 
-    .section-overlay.sturmzx2-modal.expanding::-webkit-scrollbar {
-      width: 60px;
+    /* Bio: internal scroll handles overflow, hide modal scrollbar */
+    .section-overlay.bio-modal.expanding {
+      overflow: hidden !important;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 24px;
+      box-sizing: border-box;
     }
 
-    .section-overlay.bio-modal.expanding {
-      width: min(94vw, 520px) !important;
-      height: min(78vh, 720px) !important;
-      overflow: hidden !important; /* modal itself should not scroll */
+    /* Sturm: hide scrollbar visually but keep scrollability */
+    .section-overlay.sturmzx2-modal.expanding {
+      overflow: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      z-index: 1300 !important;
+    }
+    .section-overlay.sturmzx2-modal.expanding::-webkit-scrollbar {
+      display: none;
     }
 
     .section-overlay.sturmzx2-modal .bio-content {
@@ -794,21 +920,18 @@
     }
 
     .section-overlay.tarot-modal.expanding {
-      max-width: min(94vw, 520px);
+      overflow: visible !important;
+      padding: 48px 16px 24px 16px !important;
+      max-width: min(94vw, 400px);
+      width: min(94vw, 400px) !important;
+      z-index: 2000 !important;
     }
 
-    /* All modals: close animation — slide down to bottom */
-    .section-overlay.modal-closing {
-      top: 100% !important;
-      left: 50% !important;
-      width: 85% !important;
-      max-width: 420px !important;
-      height: 55vh !important;
-      transform: translate(-50%, -100%) scale(0.92) !important;
-      border-radius: 12px;
+    .section-overlay.contact-modal.expanding {
+      z-index: 1300 !important;
     }
 
-    /* Cakes modal: slide in from top, out to bottom, full width */
+    /* Cakes modal: full screen */
     .section-overlay.cakes-modal.expanding {
       border: none;
       border-radius: 0;
@@ -817,41 +940,36 @@
       width: 100vw !important;
       height: 100vh !important;
       transform: none !important;
-    }
-
-    .section-overlay.cakes-modal.cakes-closing {
-      border: none !important;
-      border-radius: 0 !important;
-      top: 100% !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      transform: none !important;
+      z-index: 1300 !important;
     }
 
     .tarot-hero {
       width: 100%;
-      max-width: 260px;
-      height: 200px;
-      object-fit: contain;
-      border-radius: 8px;
-      margin: 0 auto;
+      height: 240px;
+      object-fit: cover;
       display: block;
-      background: #fff;
     }
 
     .tarot-title {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
+      padding: 10px 22px;
+      border-radius: 0;
       background: #ff00c0;
       color: #000;
       font-size: 20px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 16px;
       text-align: center;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     .tarot-text {
@@ -887,22 +1005,106 @@
 
     .tarot-content {
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tarot-content > .tarot-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
     }
 
     .tarot-video-wrap {
       background: #fff;
-      padding: 20px;
+      padding: 0 0 46px 0;
       border-radius: 8px 8px 0 0;
+      border: 2px solid #000;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
+
+    .tarot-roll-btn {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 18px 36px;
+      border: none;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    .tarot-roll-btn:hover {
+      background: #39ff14;
+      color: #000;
+      box-shadow: 0 0 16px rgba(57,255,20,0.9), 0 0 36px rgba(57,255,20,0.5);
+    }
+
+    .tarot-modal-cards {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      z-index: 1;
+    }
+
+    .tarot-modal-card {
+      position: absolute;
+      width: 52px;
+      height: 88px;
+      border-radius: 5px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: hue-rotate(-20deg) saturate(1.6);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Closed / stacked */
+    .tarot-modal-card.c1 { background-image: url('img/tarot/tarot4.png'); z-index: 1; transform: translate(-50%, -50%) rotate(-6deg); }
+    .tarot-modal-card.c2 { background-image: url('img/tarot/tarot3.png'); z-index: 2; transform: translate(-50%, -50%) rotate(-2deg); }
+    .tarot-modal-card.c3 { background-image: url('img/tarot/tarot2.png'); z-index: 3; transform: translate(-50%, -50%) rotate(2deg); }
+    .tarot-modal-card.c4 { background-image: url('img/tarot/tarot1.png'); z-index: 4; transform: translate(-50%, -50%) rotate(6deg); }
+
+    /* Fanned open on button hover */
+    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c1 { transform: translate(-160%, -60%) rotate(-22deg); }
+    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c2 { transform: translate(-80%,  -70%) rotate(-7deg); }
+    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c3 { transform: translate(-20%,  -70%) rotate(7deg); }
+    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c4 { transform: translate(60%,   -60%) rotate(22deg); }
 
     .tarot-text-wrap {
       background: #000;
-      padding: 24px;
+      padding: 20px 16px 20px 16px;
       border-radius: 0 0 8px 8px;
-    }
-
-    .tarot-text-wrap .tarot-title {
-      margin-top: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .section-overlay.paintings-modal.expanding {
@@ -911,13 +1113,14 @@
     }
 
     .section-overlay.tattoos-modal.expanding {
+      overflow: visible !important;
+      padding-top: 48px !important;
       max-width: 98vw !important;
       height: 90vh !important;
       max-height: 90vh !important;
-      padding: 24px 20px 20px;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      z-index: 1300 !important;
     }
 
     .tattoos-modal .section-content {
@@ -925,16 +1128,36 @@
       flex-direction: column;
       flex: 1;
       min-height: 0;
-      overflow: hidden;
+      overflow: visible;
       padding: 0;
     }
 
-    /* Tattoos: fixed title + scrollable gallery */
+    /* Tattoos: title on border + scrollable gallery */
     .tattoos-modal .gallery-title {
-      letter-spacing: 8px;
-      margin: 0 0 16px 0;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
       text-align: center;
-      flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     .tattoos-modal .tattoos-gallery-scroll {
@@ -944,6 +1167,24 @@
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       padding: 4px 0 0;
+    }
+
+    .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar {
+      width: 36px;
+    }
+    .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-track {
+      background: #050505;
+      border-left: 3px solid #ff00c0;
+    }
+    .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-thumb {
+      background: #ff00c0;
+      border: 3px solid #000;
+      min-height: 64px;
+      box-shadow: inset 0 0 0 2px #000;
+    }
+    .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-thumb:hover {
+      background: #ff00c0;
+      box-shadow: inset 0 0 0 3px #000;
     }
 
     /* ---------- Fluid gallery (tattoos) ---------- */
@@ -1478,7 +1719,8 @@
       max-width: 420px;
       width: 100%;
       padding: 8px 0;
-      height: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
       position: relative;
     }
 
@@ -1511,25 +1753,49 @@
     .bio-scroll {
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      height: calc(100% - 110px);
-      padding: 0 6px 10px 6px;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE/Edge legacy */
+      height: clamp(220px, 36vh, 320px);
+      padding: 10px 16px 18px 16px;
+      width: min(420px, 92%);
+      margin: 0 auto;
+      scrollbar-width: auto; /* Firefox */
+      scrollbar-color: #ff00c0 #0a0a0a;
       cursor: grab;
       user-select: none;
       overscroll-behavior: contain;
       touch-action: pan-y;
     }
+
     .bio-scroll::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-      display: none;
+      width: 36px;
+    }
+    .bio-scroll::-webkit-scrollbar-track {
+      background: #050505;
+      border-left: 3px solid #ff00c0;
+    }
+    .bio-scroll::-webkit-scrollbar-thumb {
+      background: #ff00c0;
+      border: 3px solid #000;
+      min-height: 64px;
+      box-shadow: inset 0 0 0 2px #000;
+    }
+    .bio-scroll::-webkit-scrollbar-thumb:hover {
+      background: #ff00c0;
+      box-shadow: inset 0 0 0 3px #000;
     }
     .bio-scroll.dragging {
       cursor: grabbing;
     }
     .bio-content .bio-text p {
       margin-bottom: 16px;
+    }
+
+    .section-overlay.bio-modal .bio-intro {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 18px;
+      text-align: center;
+      color: rgba(255, 105, 180, 0.95);
     }
 
     .bio-content .bio-text p:last-child {
@@ -1648,17 +1914,23 @@
       top: 30px; right: 30px;
       width: 56px; height: 56px;
       border-radius: 50%;
-      border: 2px solid #ff00c0;
-      background: rgba(255, 105, 180, 0.15);
-      color: #ff00c0;
-      font-family: 'Courier New', monospace;
-      font-size: 22px; font-weight: bold;
+      border: none;
+      background: transparent;
+      padding: 0;
       display: flex; align-items: center; justify-content: center;
       z-index: 950;
       opacity: 0;
       pointer-events: none;
       transform: scale(0.5);
       transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .exit-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
     }
 
     .exit-btn.visible {
@@ -1669,10 +1941,8 @@
 
     .exit-btn:hover,
     .exit-btn.laser-hover {
-      background: #ff00c0;
-      color: #000;
-      box-shadow: 0 0 20px rgba(255,0,192,0.6), 0 0 40px rgba(255,0,192,0.3);
       transform: scale(1.15);
+      filter: drop-shadow(0 0 8px #ff00c0);
     }
 
     .exit-btn.hit {
@@ -1680,28 +1950,92 @@
     }
 
     .mute-btn {
-      position: fixed;
-      top: 20px;
-      right: 20px;
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      border: 2px solid #ff00c0;
-      background: rgba(0, 0, 0, 0.7);
-      color: #ff00c0;
-      font-size: 22px;
+      border: none;
+      background: transparent;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 951;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: transform 0.25s ease;
     }
-    .mute-btn:hover {
+
+    .mute-btn:not(.muted) {
+      animation: beat 1.2s ease-in-out infinite;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .mute-btn-wrap {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 951;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mute-tooltip,
+    .toggle-tooltip {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px) scale(0.85);
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      padding: 8px 18px;
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 16px rgba(255,0,192,0.5);
-      transform: scale(1.1);
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    /* mute tooltip: above the icon */
+    .mute-tooltip {
+      bottom: 110%;
+      top: auto;
+    }
+
+    /* light toggle tooltip: above the icon */
+    .toggle-tooltip {
+      bottom: 110%;
+      top: auto;
+    }
+
+    .mute-btn-wrap:hover .mute-tooltip,
+    .toggle-btn-wrap:hover .toggle-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .toggle-btn-wrap {
+      position: fixed;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Cakes button tiny fire animation */
@@ -1871,28 +2205,24 @@
     .social-icons {
       position: fixed;
       bottom: 28px;
-      left: 25%;
+      left: 20px;
       display: flex;
       flex-direction: row;
       gap: 14px;
       z-index: 800;
     }
-    @media (min-width: 1024px) {
-      .social-icons {
-        left: 6%;
-      }
-    }
+
 
     .social-icons a {
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      border: 1.5px solid #ff00c0;
-      background: #000;
+      border: none;
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.25s ease;
+      transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
       color: #ff00c0;
       cursor: inherit !important;
       position: relative;
@@ -1922,12 +2252,12 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      border: 1.5px solid #ff00c0;
-      background: #000;
+      border: none;
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.25s ease;
+      transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
       color: #ff00c0;
       cursor: inherit !important;
       position: relative;
@@ -1950,21 +2280,30 @@
 
     .social-tooltip {
       position: absolute;
-      bottom: 120%;
+      bottom: 130%;
       left: 50%;
-      transform: translateX(-50%) translateY(4px);
+      transform: translateX(-50%) translateY(4px) scale(0.85);
       white-space: nowrap;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 4px 8px;
-      border-radius: 999px;
+      padding: 8px 18px;
+      border-radius: 0;
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 12px rgba(255,0,192,0.5);
+      font-weight: bold;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     .social-ig-btn:hover .social-tooltip,
@@ -1972,7 +2311,39 @@
     .social-icons a:hover .social-tooltip,
     .social-icons a.laser-hover .social-tooltip {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    /* ---------- Rat tooltip ---------- */
+    .rat-noo {
+      position: fixed;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      padding: 8px 18px;
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      pointer-events: none;
+      transform: translateX(-50%) translateY(-4px) scale(0.85);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 9998;
+    }
+    .rat-noo.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     /* ---------- Balls ---------- */
@@ -1980,7 +2351,7 @@
       position: fixed;
       pointer-events: none;
       z-index: 9999;
-      width: 24px; height: 24px;
+      width: 14px; height: 14px;
     }
 
     .ball img { width: 100%; height: 100%; }
@@ -1999,6 +2370,42 @@
     @keyframes flash {
       0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
       100% { opacity: 0; transform: translate(-50%,-50%) scale(2); }
+    }
+
+    @keyframes kissRise {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -130%) scale(1.15); }
+    }
+
+    #couchClothes {
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+      cursor: inherit;
+      z-index: 11;
+      height: auto;
+    }
+
+    #bioHoverSlide {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100vw;
+      pointer-events: none;
+      z-index: 1100;
+      transform: translateY(100%);
+      transition: transform 0.55s ease;
+    }
+    #bioHoverSlide.visible {
+      transform: translateY(0);
+    }
+    #bioHoverSlide img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   </style>
 </head>
@@ -2021,17 +2428,23 @@
   <audio id="soundCakes" src="sound/celebration-1.mp3" preload="auto"></audio>
   <audio id="soundFrame" src="sound/frame-1.mp3" preload="auto"></audio>
   <audio id="soundCouch" src="sound/kiss-1.mp3" preload="auto"></audio>
+  <audio id="soundSocial1" src="sound/1-fart-D.mp3" preload="auto"></audio>
+  <audio id="soundSocial2" src="sound/2-fart-D.mp3" preload="auto"></audio>
+  <audio id="soundSocial3" src="sound/2-fart-F.mp3" preload="auto"></audio>
   <audio id="soundGun" src="audio/gun-shot.mp3" preload="auto"></audio>
   <audio id="soundTheme" src="sound/oye-estupida-theme.mp3" preload="auto" loop></audio>
 
-  <button type="button" class="mute-btn" id="muteBtn" aria-label="Mute site sound" title="Mute / Unmute">
-    <span class="mute-icon" aria-hidden="true">🔊</span>
-  </button>
+  <div class="mute-btn-wrap">
+    <img id="muteBtn" class="mute-btn" src="img/sound_on.png" alt="Toggle sound" title="Mute / Unmute" draggable="false">
+    <span class="mute-tooltip">SOUND ON</span>
+  </div>
 
   <svg id="laserSvg" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index:9990;">
     <line id="laserLine" stroke="#0f0" stroke-width="1" opacity="0.5" />
     <circle id="laserDot" r="3" fill="#0f0" opacity="0.8" />
   </svg>
+
+  <div id="gunCursor" aria-hidden="true"><img src="mouse.png" alt="" draggable="false"></div>
 
   <div class="modal-backdrop" id="modalBackdrop"></div>
 
@@ -2039,7 +2452,7 @@
     <div class="section-content" id="sectionContent"></div>
   </div>
 
-  <button class="exit-btn" id="exitBtn">&times;</button>
+  <button class="exit-btn" id="exitBtn"><img src="img/close.png" alt="Close" draggable="false"></button>
 
   <button id="cakesOrderBtn" class="cakes-order-btn">
     ORDER YOUR PERSONALIZED CAKE
@@ -2085,29 +2498,32 @@
     </form>
   </div>
 
-  <img src="couch.png" alt="couch" id="couchBtn" class="frame-btn fixed bottom-0 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[60vw] md:w-[40vw] max-w-[500px] z-10" draggable="false">
+  <img src="img/couch.png" alt="couch" id="couchBtn" class="frame-btn fixed bottom-0 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[60vw] md:w-[40vw] max-w-[500px] z-10" draggable="false">
+  <img src="img/oyestupida_clothes.png" alt="" id="couchClothes" draggable="false" aria-hidden="true">
+  <div id="bioHoverSlide" aria-hidden="true"><img src="img/barbi-bio.png" alt="" draggable="false"></div>
   <div class="couch-kiss" id="couchKiss" aria-hidden="true">💋</div>
 
   <div class="social-icons">
     <a href="#" id="instagramTattoo" class="social-ig-btn" aria-label="Instagram Tattoo">
-      <svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.25-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
+      <img src="img/insta1.png" alt="Instagram Tattoo" draggable="false" style="width:34px;height:34px;object-fit:contain;">
       <span class="social-tooltip">TATTOO</span>
     </a>
     <a href="#" id="instagramArt" class="social-ig-btn" aria-label="Instagram Visual Art">
-      <svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.25-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
+      <img src="img/insta2.png" alt="Instagram Art" draggable="false" style="width:34px;height:34px;object-fit:contain;">
       <span class="social-tooltip">ART</span>
     </a>
     <a href="https://soundcloud.com" target="_blank" rel="noopener" aria-label="Soundcloud" title="Soundcloud">
-      <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 13.2 2h-3v13.4a2.59 2.59 0 0 1-2.6 2.6 2.59 2.59 0 0 1-2.6-2.6 2.59 2.59 0 0 1 2.6-2.6c.28 0 .56.04.82.12V9.2A6.2 6.2 0 0 0 4 15.4a6.2 6.2 0 0 0 6.2 6.2 6.2 6.2 0 0 0 6.2-6.2V9.06a7.7 7.7 0 0 0 4.6 1.52V7.04a4.28 4.28 0 0 1-4.4-1.22Z"/></svg>
+      <img src="img/soundcloud.png" alt="Soundcloud" draggable="false" style="width:34px;height:34px;object-fit:contain;">
       <span class="social-tooltip">Soundcloud</span>
     </a>
   </div>
 
-  <div class="daynight-switch" id="dayNightSwitch" title="Toggle day / night">
-    <div class="daynight-toggle"></div>
+  <div class="toggle-btn-wrap">
+    <img id="centerRightToggle" class="center-right-img" src="img/light_off.png" alt="Toggle" draggable="false">
+    <span class="toggle-tooltip">LIGHTS OFF</span>
   </div>
 
-  <div class="preview-box" id="preview">
+  <div class="preview-box folded" id="preview" style="display:none;">
     <div class="preview-container" id="previewContainer">
       <img src="mouse.png" id="previewImg" class="gun-preview" alt="cursor preview" draggable="false">
       <svg class="preview-svg" id="previewSvg">
@@ -2126,6 +2542,11 @@
       <span><span class="dot-red"></span><span style="color:#ff4500">direction</span></span>
     </div>
     <button class="save-btn" id="saveBtn">save config</button>
+    <div id="calibValues" style="margin-top:6px;font-size:10px;color:#aaa;font-family:monospace;letter-spacing:0.5px;text-align:center;line-height:1.7;">
+      hotX: <span id="valHotX">0.000</span> &nbsp;
+      hotY: <span id="valHotY">0.000</span> &nbsp;
+      angle: <span id="valAngle">0.000</span>
+    </div>
   </div>
 
   <script type="module">
@@ -2219,10 +2640,13 @@
     const exitBtn = document.getElementById('exitBtn');
 
     let imgW = 32, imgH = 32;
-    let hotX = 0, hotY = 0;
-    let shootAngle = -0.78;
+    let hotX = 0.974, hotY = 0.459;
+    let shootAngle = 0.229;
     const ARROW_LEN = 60;
     let sectionOpen = false;
+    // Prevent firing the gun immediately after dragging UI elements
+    let isDraggingUI = false;
+    let lastDragEnd = 0;
 
     const tmpImg = new Image();
     tmpImg.onload = () => {
@@ -2259,6 +2683,23 @@
       };
     }
 
+    const gunCursorStyle = document.getElementById('gunCursorStyle');
+    let normalCursorRule = '';
+    let flippedCursorRule = '';
+    const gunCursorEl = document.getElementById('gunCursor');
+    const gunCursorImgEl = gunCursorEl ? gunCursorEl.querySelector('img') : null;
+    let cursorHX = 0;
+    let cursorHY = 0;
+    let cursorW = 64;
+    let cursorH = 64;
+    let cursorEnabled = true;
+    window.addEventListener('pointerdown', (e) => {
+      if (e && e.pointerType === 'touch') {
+        cursorEnabled = false;
+        console.log('[gunCursor] disabled via pointerdown touch');
+      }
+    }, { passive: true });
+
     function applyCursor(xRatio, yRatio) {
       hotX = Math.max(0, Math.min(1, xRatio));
       hotY = Math.max(0, Math.min(1, yRatio));
@@ -2266,11 +2707,62 @@
       const maxH = Math.min(imgH, 128);
       const hx = Math.round(hotX * (maxW - 1));
       const hy = Math.round(hotY * (maxH - 1));
-      const rule = `url('mouse.png') ${hx} ${hy}, auto`;
-      document.body.style.cursor = rule;
-      document.querySelectorAll('.ring-btn, .exit-btn, .mute-btn, .frame-btn, .social-icons a, .tarot-contact-btn, .gallery-item, .cakes-orbit-item, .cakes-center').forEach(b => b.style.cursor = rule);
+
+      normalCursorRule = `url('mouse.png') ${hx} ${hy}, auto`;
+
+      // Cross-browser stability: avoid data-URL flipped cursors (can fail and fall back to arrow)
+      flippedCursorRule = normalCursorRule;
+
+      cursorHX = hx;
+      cursorHY = hy;
+      cursorW = maxW;
+      cursorH = maxH;
+      if (gunCursorEl) {
+        gunCursorEl.style.width = cursorW + 'px';
+        gunCursorEl.style.height = cursorH + 'px';
+      }
+      if (gunCursorImgEl) {
+        gunCursorImgEl.style.width = cursorW + 'px';
+        gunCursorImgEl.style.height = cursorH + 'px';
+        gunCursorImgEl.style.transformOrigin = (cursorW / 2) + 'px 0';
+      }
+
+      document.body.style.cursor = normalCursorRule;
+      document.querySelectorAll('.ring-btn, .exit-btn, .mute-btn, .frame-btn, .social-icons a, .tarot-contact-btn, .gallery-item, .cakes-orbit-item, .cakes-center').forEach(b => b.style.cursor = normalCursorRule);
+      updateCursorSide();
       hotspotDot.style.cursor = 'grab';
     }
+
+    function updateCursorSide() {
+      if (!normalCursorRule) return;
+      gunCursorStyle.textContent = '';
+    }
+
+    function updateGunCursor(targetEl) {
+      if (!gunCursorEl || !gunCursorImgEl) return;
+      const isFormField = !!(targetEl && targetEl.closest && targetEl.closest('input, textarea, select, [contenteditable="true"]'));
+      if (!cursorEnabled || isFormField) {
+        gunCursorEl.style.display = 'none';
+        document.body.classList.remove('hide-native-cursor');
+        return;
+      }
+
+      const flipped = mouseX > window.innerWidth / 2;
+      if (flipped) {
+        document.body.classList.add('hide-native-cursor');
+        gunCursorEl.style.left = (mouseX - (cursorW - cursorHX)) + 'px';
+        gunCursorEl.style.top = (mouseY - cursorHY) + 'px';
+        gunCursorImgEl.style.transform = 'scaleX(-1)';
+        gunCursorEl.style.display = 'block';
+      } else {
+        document.body.classList.remove('hide-native-cursor');
+        gunCursorEl.style.display = 'none';
+      }
+    }
+
+    const valHotX  = document.getElementById('valHotX');
+    const valHotY  = document.getElementById('valHotY');
+    const valAngle = document.getElementById('valAngle');
 
     function updatePreview() {
       const r = getImgRect();
@@ -2286,6 +2778,10 @@
       vectorLine.setAttribute('y1', hpy);
       vectorLine.setAttribute('x2', vEndX);
       vectorLine.setAttribute('y2', vEndY);
+      // Live readout
+      valHotX.textContent  = hotX.toFixed(3);
+      valHotY.textContent  = hotY.toFixed(3);
+      valAngle.textContent = shootAngle.toFixed(3);
     }
 
     /* ---------- Dragging ---------- */
@@ -2368,11 +2864,17 @@
     };
     const soundFrame = document.getElementById('soundFrame');
     const soundCouch = document.getElementById('soundCouch');
+    const soundSocial1 = document.getElementById('soundSocial1');
+    const soundSocial2 = document.getElementById('soundSocial2');
+    const soundSocial3 = document.getElementById('soundSocial3');
     const soundTheme = document.getElementById('soundTheme');
 
     let siteMuted = JSON.parse(localStorage.getItem('siteMuted') || 'false');
     const UI_VOLUME = 0.2;
     const THEME_VOLUME = 0.22;
+
+    const HOVER_SOUND_COOLDOWN_MS = 3000;
+    const lastHoverSoundAt = new WeakMap();
 
     function updateMuteState() {
       localStorage.setItem('siteMuted', JSON.stringify(siteMuted));
@@ -2383,14 +2885,25 @@
       if (muteBtn) {
         muteBtn.classList.toggle('muted', siteMuted);
         muteBtn.setAttribute('aria-label', siteMuted ? 'Unmute site sound' : 'Mute site sound');
-        const icon = muteBtn.querySelector('.mute-icon');
-        if (icon) icon.textContent = siteMuted ? '🔇' : '🔊';
+        muteBtn.setAttribute('src', siteMuted ? 'img/sound_off.png' : 'img/sound_on.png');
+        muteBtn.setAttribute('alt', siteMuted ? 'Sound off' : 'Sound on');
+        const muteTip = muteBtn.parentElement && muteBtn.parentElement.querySelector('.mute-tooltip');
+        if (muteTip) muteTip.textContent = siteMuted ? 'SOUND OFF' : 'SOUND ON';
       }
     }
 
     function playSoundForElement(el, audio) {
       if (!audio) return;
       if (siteMuted) return;
+
+      // 3s cooldown on rollover for all UI buttons, but NOT for social media icons
+      if (el && !el.closest('.social-icons')) {
+        const now = Date.now();
+        const lastAt = lastHoverSoundAt.get(el) || 0;
+        if (now - lastAt < HOVER_SOUND_COOLDOWN_MS) return;
+        lastHoverSoundAt.set(el, now);
+      }
+
       audio.volume = UI_VOLUME;
       audio.currentTime = 0;
       audio.play().catch(() => {});
@@ -2404,6 +2917,33 @@
       soundTheme.play().catch(() => {});
     }
 
+    function positionLoupe(e, loupe) {
+      if (!loupe) return;
+      const w = loupe.offsetWidth || 100;
+      const h = loupe.offsetHeight || 100;
+      const margin = 12;
+      const offset = 24;
+
+      const halfW = w / 2;
+      const halfH = h / 2;
+
+      // loupe uses transform: translate(-50%, -50%), so left/top are CENTER coords
+      let left = e.clientX + offset + halfW;
+      if (e.clientX > window.innerWidth / 2) {
+        left = e.clientX - offset - halfW;
+      }
+      left = Math.max(margin + halfW, Math.min(window.innerWidth - halfW - margin, left));
+
+      let top = e.clientY + offset + halfH;
+      if (top + halfH + margin > window.innerHeight) {
+        top = e.clientY - offset - halfH;
+      }
+      top = Math.max(margin + halfH, Math.min(window.innerHeight - halfH - margin, top));
+
+      loupe.style.left = left + 'px';
+      loupe.style.top = top + 'px';
+    }
+
     document.getElementById('muteBtn').addEventListener('click', (e) => {
       e.stopPropagation();
       siteMuted = !siteMuted;
@@ -2414,6 +2954,27 @@
     document.body.addEventListener('click', () => startThemeOnce(), { once: true });
     document.body.addEventListener('keydown', () => startThemeOnce(), { once: true });
     document.body.addEventListener('touchstart', () => startThemeOnce(), { once: true });
+
+    const centerRightToggle = document.getElementById('centerRightToggle');
+    const THEME_KEY = 'bgTheme';
+
+    function setToggleIcon(isNight) {
+      if (!centerRightToggle) return;
+      centerRightToggle.setAttribute('src', isNight ? 'img/light_on.png' : 'img/light_off.png');
+      const tip = centerRightToggle.parentElement && centerRightToggle.parentElement.querySelector('.toggle-tooltip');
+      if (tip) tip.textContent = isNight ? 'LIGHTS ON' : 'LIGHTS OFF';
+    }
+
+    if (centerRightToggle) {
+      const isNightInitial = document.body.classList.contains('night-mode');
+      setToggleIcon(isNightInitial);
+
+      centerRightToggle.addEventListener('click', () => {
+        const isNight = document.body.classList.toggle('night-mode');
+        setToggleIcon(isNight);
+        localStorage.setItem(THEME_KEY, isNight ? 'night' : 'day');
+      });
+    }
 
     const ringSections = [
       { label: 'STURMZX2', idx: 1, xPct: 0.72, yPct: 0.38 },
@@ -2526,6 +3087,7 @@
       btn.addEventListener('mousedown', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        btn.classList.add('dragging');
         isDragging = false;
         dragStartX = e.clientX;
         dragStartY = e.clientY;
@@ -2535,7 +3097,10 @@
         function onMove(ev) {
           const dx = ev.clientX - dragStartX;
           const dy = ev.clientY - dragStartY;
-          if (!isDragging && Math.hypot(dx, dy) > 5) isDragging = true;
+          if (!isDragging && Math.hypot(dx, dy) > 5) {
+            isDragging = true;
+            isDraggingUI = true;
+          }
           if (isDragging) {
             const newLeft = btnStartX + dx;
             const newTop  = btnStartY + dy;
@@ -2549,8 +3114,14 @@
         function onUp() {
           window.removeEventListener('mousemove', onMove);
           window.removeEventListener('mouseup', onUp);
-          if (isDragging) saveBtnPositions();
-          else pressButton();
+          btn.classList.remove('dragging');
+          if (isDragging) {
+            saveBtnPositions();
+            lastDragEnd = Date.now();
+            setTimeout(() => { isDraggingUI = false; }, 40);
+          } else {
+            pressButton();
+          }
         }
 
         window.addEventListener('mousemove', onMove);
@@ -2594,11 +3165,28 @@
       // small hit animation + cycle artwork, no modal
       frameBtn.classList.add('hit');
       setTimeout(() => frameBtn.classList.remove('hit'), 350);
-      if (frameArt) {
-        frameArtIndex = (frameArtIndex + 1) % FRAME_IMAGES.length;
-        frameArt.src = FRAME_IMAGES[frameArtIndex];
-      }
+      if (!frameArt) return;
+      frameArtIndex = (frameArtIndex + 1) % FRAME_IMAGES.length;
+      const nextSrc = FRAME_IMAGES[frameArtIndex];
+      frameArt.classList.add('fading');
+      setTimeout(() => {
+        frameArt.src = nextSrc;
+        requestAnimationFrame(() => frameArt.classList.remove('fading'));
+      }, 260);
+      restartFrameAutoCycle();
     }
+
+    let frameAutoTimer = null;
+    function restartFrameAutoCycle() {
+      if (frameAutoTimer) clearInterval(frameAutoTimer);
+      frameAutoTimer = setInterval(() => {
+        if (!frameArt) return;
+        if (frameBtn.classList.contains('dragging')) return;
+        pressFrame();
+      }, 3000);
+    }
+
+    restartFrameAutoCycle();
 
     frameBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -2611,6 +3199,79 @@
     (function enableFrameDrag() {
       if (!frameBtn) return;
       frameBtn.style.position = 'fixed';
+      // Neutralise Tailwind's -translate-x-1/2 so JS pixel positioning works cleanly
+      frameBtn.style.transform = 'none';
+      if (frameArt) {
+        frameArt.style.transform = 'none';
+        frameArt.style.transformOrigin = 'top center';
+      }
+
+      const savedFramePosX = parseFloat(localStorage.getItem('framePosX'));
+      const savedFramePosY = parseFloat(localStorage.getItem('framePosY'));
+      const hasSavedFramePos = Number.isFinite(savedFramePosX) && Number.isFinite(savedFramePosY);
+
+      let framePctX = hasSavedFramePos ? savedFramePosX : 0.5;
+      let framePctY = hasSavedFramePos ? savedFramePosY : 0.1;
+
+      function updateFramePctFromRect() {
+        const left = parseFloat(frameBtn.style.left);
+        const top = parseFloat(frameBtn.style.top);
+        if (Number.isFinite(left) && Number.isFinite(top)) {
+          framePctX = (left + frameBtn.offsetWidth / 2) / window.innerWidth;
+          framePctY = (top + frameBtn.offsetHeight / 2) / window.innerHeight;
+          return;
+        }
+        const rect = frameBtn.getBoundingClientRect();
+        framePctX = (rect.left + rect.width / 2) / window.innerWidth;
+        framePctY = (rect.top + rect.height / 2) / window.innerHeight;
+      }
+
+      function applyFramePosition() {
+        const centerX = window.innerWidth * framePctX;
+        const centerY = window.innerHeight * framePctY;
+
+        const btnLeft = centerX - frameBtn.offsetWidth / 2;
+        const btnTop = centerY - frameBtn.offsetHeight / 2;
+        frameBtn.style.left = btnLeft + 'px';
+        frameBtn.style.top = btnTop + 'px';
+
+        if (frameArt) {
+          const artLeft = centerX - frameArt.offsetWidth / 2;
+          const artTop = centerY - frameArt.offsetHeight / 2;
+          frameArt.style.left = artLeft + 'px';
+          frameArt.style.top = artTop + 'px';
+        }
+      }
+
+      if (!hasSavedFramePos) updateFramePctFromRect();
+      applyFramePosition();
+
+      let resizeRaf = 0;
+      let resizeUntil = 0;
+      let lastW = 0;
+      let lastH = 0;
+      function scheduleFrameRelayout() {
+        resizeUntil = performance.now() + 650;
+        if (resizeRaf) return;
+        const tick = () => {
+          resizeRaf = 0;
+          applyFramePosition();
+
+          const w = frameBtn.offsetWidth;
+          const h = frameBtn.offsetHeight;
+          const now = performance.now();
+          const sizeChanged = (w !== lastW) || (h !== lastH);
+          lastW = w;
+          lastH = h;
+
+          if (now < resizeUntil || sizeChanged) {
+            resizeRaf = requestAnimationFrame(tick);
+          }
+        };
+        resizeRaf = requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('resize', scheduleFrameRelayout);
 
       let draggingFrame = false;
       let startX = 0;
@@ -2621,12 +3282,20 @@
       frameBtn.addEventListener('mousedown', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        frameBtn.classList.add('dragging');
         const rect = frameBtn.getBoundingClientRect();
         draggingFrame = true;
+        isDraggingUI = true;
         startX = e.clientX;
         startY = e.clientY;
         startLeft = rect.left;
         startTop = rect.top;
+        if (frameArt) frameArt.classList.add('dragging');
+
+        if (resizeRaf) {
+          cancelAnimationFrame(resizeRaf);
+          resizeRaf = 0;
+        }
 
         function onMove(ev) {
           if (!draggingFrame) return;
@@ -2637,8 +3306,12 @@
           frameBtn.style.left = newLeft + 'px';
           frameBtn.style.top = newTop + 'px';
           if (frameArt) {
-            frameArt.style.left = newLeft + 'px';
-            frameArt.style.top = newTop + 'px';
+            const btnW = frameBtn.offsetWidth;
+            const btnH = frameBtn.offsetHeight;
+            const artW = frameArt.offsetWidth;
+            const artH = frameArt.offsetHeight;
+            frameArt.style.left = (newLeft + (btnW - artW) / 2) + 'px';
+            frameArt.style.top = (newTop + (btnH - artH) / 2) + 'px';
           }
         }
 
@@ -2646,6 +3319,25 @@
           draggingFrame = false;
           window.removeEventListener('mousemove', onMove);
           window.removeEventListener('mouseup', onUp);
+          frameBtn.classList.remove('dragging');
+          if (frameArt) frameArt.classList.remove('dragging');
+
+          // Keep relative position after resize + persist across page loads
+          const left = parseFloat(frameBtn.style.left);
+          const top = parseFloat(frameBtn.style.top);
+          if (Number.isFinite(left) && Number.isFinite(top)) {
+            framePctX = (left + frameBtn.offsetWidth / 2) / window.innerWidth;
+            framePctY = (top + frameBtn.offsetHeight / 2) / window.innerHeight;
+          } else {
+            const rect = frameBtn.getBoundingClientRect();
+            framePctX = (rect.left + rect.width / 2) / window.innerWidth;
+            framePctY = (rect.top + rect.height / 2) / window.innerHeight;
+          }
+          localStorage.setItem('framePosX', framePctX);
+          localStorage.setItem('framePosY', framePctY);
+
+          lastDragEnd = Date.now();
+          setTimeout(() => { isDraggingUI = false; }, 40);
         }
 
         window.addEventListener('mousemove', onMove);
@@ -2681,6 +3373,28 @@
     /* ---------- Couch = BIO (Section 4) ---------- */
     const couchBtn = document.getElementById('couchBtn');
     const couchKiss = document.getElementById('couchKiss');
+    const couchClothes = document.getElementById('couchClothes');
+    const bioHoverSlide = document.getElementById('bioHoverSlide');
+    const toggleBtnWrap = document.querySelector('.toggle-btn-wrap');
+    const muteBtnWrap = document.querySelector('.mute-btn-wrap');
+
+    if (couchBtn) couchBtn.style.pointerEvents = 'none';
+
+    function positionCouchClothes() {
+      if (!couchBtn || !couchClothes) return;
+      const rect = couchBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height * 0.25;
+
+      couchClothes.style.left = centerX + 'px';
+      couchClothes.style.top = centerY + 'px';
+
+      const targetW = rect.width * 0.55;
+      couchClothes.style.width = Math.max(220, Math.min(520, targetW)) + 'px';
+    }
+
+    positionCouchClothes();
+    window.addEventListener('resize', positionCouchClothes);
 
     const KISS_ORIGIN_KEY = 'couchKissOrigin';
     function getKissOrigin() {
@@ -2691,9 +3405,9 @@
           if (typeof x === 'number' && typeof y === 'number') return { x, y };
         }
       } catch (_) {}
-      const rect = couchBtn.getBoundingClientRect();
+      const rect = couchClothes ? couchClothes.getBoundingClientRect() : couchBtn.getBoundingClientRect();
       return {
-        x: rect.left + rect.width * 0.30,
+        x: rect.left + rect.width * 0.30 - 10,
         y: rect.top + rect.height * 0.30 - 16
       };
     }
@@ -2701,8 +3415,15 @@
       localStorage.setItem(KISS_ORIGIN_KEY, JSON.stringify({ x, y }));
     }
 
-    couchBtn.addEventListener('mouseenter', () => {
-      playSoundForElement(couchBtn, soundCouch);
+    couchClothes.addEventListener('mouseenter', () => {
+      if (
+        bioHoverSlide &&
+        sectionOverlay.classList.contains('bio-modal') &&
+        sectionOverlay.classList.contains('expanding')
+      ) {
+        bioHoverSlide.classList.add('visible');
+      }
+      playSoundForElement(couchClothes, soundCouch);
       const { x, y } = getKissOrigin();
       couchKiss.style.left = x + 'px';
       couchKiss.style.top = y + 'px';
@@ -2712,7 +3433,7 @@
       setTimeout(() => couchKiss.classList.remove('animate'), 1300);
     });
 
-    couchBtn.addEventListener('contextmenu', (e) => {
+    couchClothes.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       setKissOrigin(e.clientX, e.clientY);
     });
@@ -2724,34 +3445,35 @@
     document.body.appendChild(couchTooltip);
 
     function positionCouchTooltip() {
-      const rect = couchBtn.getBoundingClientRect();
+      const rect = couchClothes ? couchClothes.getBoundingClientRect() : couchBtn.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const topY = rect.top;
       couchTooltip.style.left = centerX + 'px';
-      couchTooltip.style.top = (topY - 36) + 'px';
+      couchTooltip.style.top = (topY - 26) + 'px';
     }
 
-    couchBtn.addEventListener('mouseenter', () => {
+    couchClothes.addEventListener('mouseenter', () => {
       positionCouchTooltip();
       couchTooltip.classList.add('visible');
     });
-    couchBtn.addEventListener('mousemove', () => {
+    couchClothes.addEventListener('mousemove', () => {
       positionCouchTooltip();
     });
-    couchBtn.addEventListener('mouseleave', () => {
+    couchClothes.addEventListener('mouseleave', () => {
       couchTooltip.classList.remove('visible');
+      if (bioHoverSlide) bioHoverSlide.classList.remove('visible');
     });
 
     function pressCouch() {
-      openSection(couchBtn, 3);
+      openSection(couchClothes, 3);
     }
 
-    couchBtn.addEventListener('click', (e) => {
+    couchClothes.addEventListener('click', (e) => {
       e.stopPropagation();
       pressCouch();
     });
 
-    ringButtons.push({ el: couchBtn, press: pressCouch });
+    ringButtons.push({ el: couchClothes, press: pressCouch });
 
     /* ---------- Frame swing on mousemove ---------- */
     let frameAngle = 0;
@@ -2770,7 +3492,7 @@
 
     (function animateFrame() {
       frameAngle += (frameTarget - frameAngle) * 0.08;
-      const t = `translate(-50%, 0) rotate(${frameAngle}deg)`;
+      const t = `rotate(${frameAngle}deg)`;
       frameBtn.style.transform = t;
       if (frameArt) {
         frameArt.style.transform = t;
@@ -2804,23 +3526,29 @@
       sectionOverlay.style.borderRadius = '';
 
       if (idx === 2) {
-        // Cakes: start off-screen above, full width; will slide down
-        sectionOverlay.style.top = '-100%';
+        // Cakes: full screen
+        sectionOverlay.style.top = '0';
         sectionOverlay.style.left = '0';
         sectionOverlay.style.width = '100vw';
         sectionOverlay.style.height = '100vh';
         sectionOverlay.style.maxWidth = '';
         sectionOverlay.style.transform = 'none';
       } else {
-        // Other modals: start from bottom of screen
-        sectionOverlay.style.top = '100%';
+        // Other modals: centered
+        sectionOverlay.style.top = '50%';
         sectionOverlay.style.left = '50%';
-        sectionOverlay.style.width = '85%';
-        sectionOverlay.style.maxWidth = '800px';
-        sectionOverlay.style.height = '55vh';
-        sectionOverlay.style.transform = 'translate(-50%, -100%) scale(0.92)';
+        if (idx === 1) {
+          sectionOverlay.style.width = '50vw';
+          sectionOverlay.style.height = '50vh';
+          sectionOverlay.style.maxWidth = 'none';
+          sectionOverlay.style.maxHeight = 'none';
+        } else {
+          sectionOverlay.style.width = '85%';
+          sectionOverlay.style.maxWidth = '800px';
+          sectionOverlay.style.height = '55vh';
+        }
+        sectionOverlay.style.transform = 'translate(-50%, -50%)';
       }
-      sectionOverlay.style.opacity = '1';
 
       if (cakesOrderBtn) {
         cakesOrderBtn.classList.toggle('visible', idx === 2);
@@ -2828,6 +3556,7 @@
 
       // couch above modal during slide-up, then behind when done
       if (couchBtn) couchBtn.style.zIndex = '950';
+      if (couchClothes) couchClothes.style.zIndex = '951';
 
       if (idx === 0) {
         const galleryImages = [
@@ -2887,8 +3616,7 @@
             const ctx = loupeCanvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
             ctx.drawImage(img, sx, sy, sampleSize, sampleSize, 0, 0, 100, 100);
-            loupe.style.left = (e.clientX + 24) + 'px';
-            loupe.style.top = (e.clientY + 24) + 'px';
+            positionLoupe(e, loupe);
             loupe.classList.add('visible');
           });
           lightbox.addEventListener('mouseleave', () => { if (loupe) loupe.classList.remove('visible'); });
@@ -3060,13 +3788,19 @@
         `;
       } else if (idx === 3) {
         sectionOverlay.classList.add('bio-modal');
+        if (couchClothes) couchClothes.src = 'img/oyestupida_naked.png';
+        // Layering: bio modal above mid-right toggle; couch + overlay above bio modal
+        sectionOverlay.style.zIndex = '1300';
+        if (couchBtn) couchBtn.style.zIndex = '1400';
+        if (couchClothes) couchClothes.style.zIndex = '1401';
+        if (bioHoverSlide) bioHoverSlide.classList.remove('visible');
+        if (toggleBtnWrap) toggleBtnWrap.style.display = 'none';
+        if (muteBtnWrap) muteBtnWrap.style.display = 'none';
         sectionContent.innerHTML = `
           <div class="bio-content" style="padding-bottom:90px;">
-            <h1 class="bio-title">Barbi</h1>
-            <p class="bio-tagline">Art · Dreams · Vibes</p>
+            <div class="bio-intro">Hi, I&rsquo;m Barbi.</div>
             <div class="bio-scroll" id="bioScroll">
               <div class="bio-text">
-                <p>Hi, I&rsquo;m Barbi.</p>
                 <p>Self‑expression has always been the force that keeps my mind alive and curious. Since childhood, I&rsquo;ve been drawing, moving, questioning, and pushing against rules that never made sense to me. As I grew older, I realized how much oppression and rigidity could silence people — and how deeply I needed creativity to release, transform, and make sense of the world around me. Art became the place where I could channel that energy, mix reality with imagination, and build a universe of my own. It&rsquo;s a universe that makes me feel safe, one I return to in my dreams, and one I hope to keep discovering throughout my life.</p>
                 <p>Feeling lost at times has guided me toward unexpected paths. Each path opens new doors, and exploring them has become one of my greatest passions. Asking questions, drawing my thoughts, and creating stories out of everyday objects helps me understand myself and the world. Even something as simple as finding a set of old keys can spark endless curiosity — who owned them, what spaces they opened, what lives they touched. I love imagining the stories behind things that pass through my hands.</p>
                 <p>My creative journey has never been linear. I studied interior design, completed a postgraduate degree in illustration, baked and sold cakes at school, made handmade scarves, tattooed, explored upcycling clothing and jewelry from street materials, returned to baking, and continued tattooing. I&rsquo;m happiest when I&rsquo;m learning, experimenting, and trying new things. Creating — in any form — is where I feel most myself.</p>
@@ -3111,11 +3845,18 @@
         sectionOverlay.classList.add('tarot-modal');
         sectionContent.innerHTML = `
           <div class="tarot-content">
+            <h2 class="tarot-title">Tarot</h2>
             <div class="tarot-video-wrap">
-              <video src="img/tarot/tarot-loop.mp4" class="tarot-hero" loop muted autoplay playsinline></video>
+              <video src="img/tarot/tarot-loop.mp4" class="tarot-hero" id="tarotVideo" loop muted playsinline></video>
+              <button class="tarot-roll-btn" id="tarotRollBtn">Roll the cards!</button>
+              <div class="tarot-modal-cards">
+                <div class="tarot-modal-card c1"></div>
+                <div class="tarot-modal-card c2"></div>
+                <div class="tarot-modal-card c3"></div>
+                <div class="tarot-modal-card c4"></div>
+              </div>
             </div>
             <div class="tarot-text-wrap">
-              <h2 class="tarot-title">Tarot</h2>
               <p class="tarot-text">Discover your path through the cards. Each reading is a journey into the unknown — a moment to reflect, dream, and connect.</p>
               <button class="tarot-contact-btn" id="tarotContactBtn">Get a reading</button>
             </div>
@@ -3126,6 +3867,32 @@
           closeSection();
           setTimeout(() => openSection(sectionOverlay, 6), 600);
         });
+        (function() {
+          const vid = document.getElementById('tarotVideo');
+          let rollTimer = null;
+          function doRoll() {
+            const dur = vid.duration;
+            if (!dur || isNaN(dur) || dur <= 0) return;
+            if (rollTimer) { clearTimeout(rollTimer); rollTimer = null; }
+            vid.currentTime = Math.random() * dur;
+            vid.play();
+            // Play for a random duration between 2.5s and 3.8s so it always stops at a different frame
+            const playMs = 2500 + Math.random() * 1300;
+            rollTimer = setTimeout(() => {
+              vid.pause();
+              rollTimer = null;
+            }, playMs);
+          }
+          document.getElementById('tarotRollBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!vid.duration || isNaN(vid.duration)) {
+              vid.addEventListener('loadedmetadata', doRoll, { once: true });
+              vid.load();
+            } else {
+              doRoll();
+            }
+          });
+        })();
       } else if (idx === 5) {
         // Build tattoo list manually so we can skip tattoo13
         const tattooImages = [];
@@ -3191,8 +3958,7 @@
             const ctx = loupeCanvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
             ctx.drawImage(img, sx, sy, sampleSize, sampleSize, 0, 0, 100, 100);
-            loupe.style.left = (e.clientX + 50) + 'px';
-            loupe.style.top = e.clientY + 'px';
+            positionLoupe(e, loupe);
             loupe.classList.add('visible');
           });
           lightbox.addEventListener('mouseleave', () => { if (loupe) loupe.classList.remove('visible'); });
@@ -3284,9 +4050,12 @@
           b.style.pointerEvents = 'none';
         });
         // when modal finish sliding up, put couch behind it
-        setTimeout(() => {
-          if (couchBtn) couchBtn.style.zIndex = '';
-        }, 520);
+        if (!sectionOverlay.classList.contains('bio-modal')) {
+          setTimeout(() => {
+            if (couchBtn) couchBtn.style.zIndex = '';
+            if (couchClothes) couchClothes.style.zIndex = '';
+          }, 520);
+        }
       });
 
       setTimeout(() => {
@@ -3297,6 +4066,15 @@
     function closeSection() {
       if (!sectionOpen) return;
       exitBtn.classList.remove('visible');
+      if (sectionOverlay.classList.contains('bio-modal') && couchClothes) {
+        couchClothes.src = 'img/oyestupida_clothes.png';
+        sectionOverlay.style.zIndex = '';
+        if (couchBtn) couchBtn.style.zIndex = '';
+        if (couchClothes) couchClothes.style.zIndex = '';
+        if (bioHoverSlide) bioHoverSlide.classList.remove('visible');
+        if (toggleBtnWrap) toggleBtnWrap.style.display = '';
+        if (muteBtnWrap) muteBtnWrap.style.display = '';
+      }
       if (cakesOrderBtn) {
         cakesOrderBtn.classList.remove('visible');
       }
@@ -3309,14 +4087,10 @@
 
       // couch above modal during slide-down close
       if (couchBtn) couchBtn.style.zIndex = '950';
+      if (couchClothes) couchClothes.style.zIndex = '951';
 
-      // animate out: cakes slides down, others slide to bottom
+      // fade out
       sectionOverlay.classList.remove('expanding');
-      if (sectionOverlay.classList.contains('cakes-modal')) {
-        sectionOverlay.classList.add('cakes-closing');
-      } else {
-        sectionOverlay.classList.add('modal-closing');
-      }
 
       // also clear any falling cakes when closing any modal
       const oldFalling = document.getElementById('fallingCakesContainer');
@@ -3333,10 +4107,11 @@
       setTimeout(() => {
         sectionOverlay.style.transition = 'none';
         sectionOverlay.style.opacity = '0';
-        sectionOverlay.classList.remove('modal-closing', 'cakes-closing', 'contact-modal', 'bio-modal', 'sturmzx2-modal', 'tarot-modal', 'paintings-modal', 'tattoos-modal', 'cakes-modal');
+        sectionOverlay.classList.remove('contact-modal', 'bio-modal', 'sturmzx2-modal', 'tarot-modal', 'paintings-modal', 'tattoos-modal', 'cakes-modal');
         sectionOpen = false;
         document.querySelectorAll('.ring-btn').forEach(b => b.classList.remove('selected'));
         if (couchBtn) couchBtn.style.zIndex = '';
+        if (couchClothes) couchClothes.style.zIndex = '';
         sectionOverlay.style.top = '';
         sectionOverlay.style.left = '';
         sectionOverlay.style.width = '';
@@ -3344,12 +4119,10 @@
         sectionOverlay.style.maxWidth = '';
         sectionOverlay.style.transform = '';
         sectionOverlay.style.borderRadius = '';
-        sectionOverlay.style.visibility = 'hidden';
         requestAnimationFrame(() => {
           sectionOverlay.style.transition = '';
-          sectionOverlay.style.visibility = '';
         });
-      }, 500);
+      }, 380);
     }
 
     exitBtn.addEventListener('click', (e) => {
@@ -3509,10 +4282,21 @@
     /* ---------- Instagram icons (Tattoo / Visual Art) ---------- */
     const instagramTattoo = document.getElementById('instagramTattoo');
     const instagramArt = document.getElementById('instagramArt');
+    const soundcloudLink = document.querySelector('.social-icons a[aria-label="Soundcloud"]');
 
     if (instagramTattoo) {
       instagramTattoo.addEventListener('mouseenter', () =>
-        playSoundForElement(instagramTattoo, ringSounds.Tattoos)
+        playSoundForElement(instagramTattoo, soundSocial1)
+      );
+    }
+    if (instagramArt) {
+      instagramArt.addEventListener('mouseenter', () =>
+        playSoundForElement(instagramArt, soundSocial2)
+      );
+    }
+    if (soundcloudLink) {
+      soundcloudLink.addEventListener('mouseenter', () =>
+        playSoundForElement(soundcloudLink, soundSocial3)
       );
     }
 
@@ -3608,57 +4392,150 @@
       ball.innerHTML = '<img src="ball.png" alt="">';
       document.body.appendChild(ball);
 
-      const fireAngle = shootAngle + (Math.random() - 0.5) * 0.08;
+      const fireAngle = effectiveShootAngle() + (Math.random() - 0.5) * 0.08;
       const speed = 35 + Math.random() * 8;
-      const ballSize = 24;
+      const ballSize = 14;
       let bx = startX - ballSize / 2;
       let by = startY - ballSize / 2;
       let vx = Math.cos(fireAngle) * speed;
       let vy = Math.sin(fireAngle) * speed;
-      const gravity = 0.02;
+      const gravity = 0.35;
+      const friction = 0.965;
+      const bounce = 0.55;
       let life = 0;
+      let ratHitAt = 0; // timestamp of last rat hit for this ball
 
       function animate() {
-        vx *= 0.999;
+        vx *= friction;
+        vy *= friction;
         vy += gravity;
         bx += vx;
         by += vy;
         life++;
 
+        // Bounce off screen edges
+        if (bx < 0) { bx = 0; vx = Math.abs(vx) * bounce; }
+        if (bx + ballSize > window.innerWidth) { bx = window.innerWidth - ballSize; vx = -Math.abs(vx) * bounce; }
+        if (by < 0) { by = 0; vy = Math.abs(vy) * bounce; }
+        if (by + ballSize > window.innerHeight) { by = window.innerHeight - ballSize; vy = -Math.abs(vy) * bounce; }
+
         ball.style.left = bx + 'px';
         ball.style.top = by + 'px';
         ball.style.transform = `rotate(${life * 8}deg)`;
-        ball.style.opacity = Math.max(0, 1 - life / 140);
+
+        const currentSpeed = Math.sqrt(vx * vx + vy * vy);
 
         const hit = checkAllCollisions(bx, by, ballSize);
         if (hit) {
+          // Visual flash only — no action triggered
           hit.el.classList.remove('hit');
           void hit.el.offsetWidth;
           hit.el.classList.add('hit');
-          hit.press();
-          ball.remove();
-          return;
+          // Reflect velocity off the element's surface normal
+          const r = hit.el.getBoundingClientRect();
+          const ecx = r.left + r.width / 2;
+          const ecy = r.top + r.height / 2;
+          const ballCx = bx + ballSize / 2;
+          const ballCy = by + ballSize / 2;
+          const nx = ballCx - ecx;
+          const ny = ballCy - ecy;
+          const len = Math.hypot(nx, ny) || 1;
+          const ndx = nx / len;
+          const ndy = ny / len;
+          const dot = vx * ndx + vy * ndy;
+          vx = (vx - 2 * dot * ndx) * bounce;
+          vy = (vy - 2 * dot * ndy) * bounce;
+          // Push ball out of collision zone so it doesn't re-trigger next frame
+          const minDist = Math.max(r.width, r.height) / 2 + ballSize / 2 + 2;
+          bx = ecx + ndx * minDist - ballSize / 2;
+          by = ecy + ndy * minDist - ballSize / 2;
         }
 
-        if (life < 140 && by < window.innerHeight + 60 && by > -200
-            && bx > -60 && bx < window.innerWidth + 60) {
-          requestAnimationFrame(animate);
-        } else {
-          ball.remove();
+        // Rat collision — skip while any modal is open
+        const ratEl = !sectionOpen ? document.getElementById('site-rat') : null;
+        if (ratEl) {
+          const rr = ratEl.getBoundingClientRect();
+          const now = Date.now();
+          if (rr.width > 0 &&
+              bx + ballSize > rr.left && bx < rr.right &&
+              by + ballSize > rr.top  && by < rr.bottom &&
+              now - ratHitAt > 1000) {
+            ratHitAt = now;
+            // Bounce off rat
+            const ecx = rr.left + rr.width / 2;
+            const ecy = rr.top  + rr.height / 2;
+            const ballCx = bx + ballSize / 2;
+            const ballCy = by + ballSize / 2;
+            const nx = ballCx - ecx, ny = ballCy - ecy;
+            const len = Math.hypot(nx, ny) || 1;
+            const ndx = nx / len, ndy = ny / len;
+            const dot = vx * ndx + vy * ndy;
+            vx = (vx - 2 * dot * ndx) * bounce;
+            vy = (vy - 2 * dot * ndy) * bounce;
+            bx = ecx + ndx * (rr.width / 2 + ballSize / 2 + 2) - ballSize / 2;
+            by = ecy + ndy * (rr.height / 2 + ballSize / 2 + 2) - ballSize / 2;
+            // Spawn a single floating "noo" above the rat
+            const noo = document.createElement('div');
+            noo.className = 'rat-noo visible';
+            noo.textContent = 'noo';
+            noo.style.left = (rr.left + rr.width / 2) + 'px';
+            noo.style.top  = (rr.top - 36) + 'px';
+            document.body.appendChild(noo);
+            setTimeout(() => noo.classList.remove('visible'), 900);
+            setTimeout(() => noo.remove(), 1100);
+          }
         }
+
+        requestAnimationFrame(animate);
       }
       requestAnimationFrame(animate);
     }
 
+    // Single click — one shot
     document.body.addEventListener('click', (e) => {
       if (draggingHot || draggingVec) return;
+      if (isDraggingUI || Date.now() - lastDragEnd < 120) return;
       if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn')) return;
       shootBall(e.clientX, e.clientY);
+    });
+
+    // Hold — uzi mode
+    let uziInterval = null;
+    const UZI_RATE_MS = 80; // ~12 shots/sec
+
+    document.body.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn')) return;
+      // Only start uzi after holding 200ms so a quick click stays a single shot
+      const holdStart = Date.now();
+      uziInterval = setTimeout(() => {
+        uziInterval = setInterval(() => {
+          if (draggingHot || draggingVec || isDraggingUI) return;
+          shootBall(mouseX, mouseY);
+        }, UZI_RATE_MS);
+      }, 200);
+    });
+
+    document.body.addEventListener('mouseup', () => {
+      clearTimeout(uziInterval);
+      clearInterval(uziInterval);
+      uziInterval = null;
+    });
+
+    document.body.addEventListener('mouseleave', () => {
+      clearTimeout(uziInterval);
+      clearInterval(uziInterval);
+      uziInterval = null;
     });
 
     const laserLine = document.getElementById('laserLine');
     const laserDot = document.getElementById('laserDot');
     let mouseX = 0, mouseY = 0;
+    let laserActive = true;
+
+    function effectiveShootAngle() {
+      return mouseX > window.innerWidth / 2 ? Math.PI - shootAngle : shootAngle;
+    }
 
     function getCollidables() {
       const els = [];
@@ -3728,6 +4605,47 @@
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      laserActive = true;
+      updateCursorSide();
+      updateGunCursor(e.target);
+    });
+
+    window.addEventListener('mouseenter', () => {
+      updateGunCursor(null);
+    });
+
+    document.addEventListener('mouseleave', () => {
+      laserActive = false;
+      if (laserLine) laserLine.setAttribute('opacity', '0');
+      if (laserDot) laserDot.setAttribute('opacity', '0');
+      if (laserHoverEl) {
+        laserHoverEl.classList.remove('laser-hover');
+        laserHoverEl = null;
+      }
+    });
+
+    window.addEventListener('blur', () => {
+      laserActive = false;
+      if (laserLine) laserLine.setAttribute('opacity', '0');
+      if (laserDot) laserDot.setAttribute('opacity', '0');
+      if (laserHoverEl) {
+        laserHoverEl.classList.remove('laser-hover');
+        laserHoverEl = null;
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) return;
+      laserActive = false;
+      if (laserLine) laserLine.setAttribute('opacity', '0');
+      if (laserDot) laserDot.setAttribute('opacity', '0');
+      if (laserHoverEl) {
+        laserHoverEl.classList.remove('laser-hover');
+        laserHoverEl = null;
+      }
+      console.log('[gunCursor] visibilitychange hidden -> hide');
+      if (gunCursorEl) gunCursorEl.style.display = 'none';
+      document.body.classList.remove('hide-native-cursor');
     });
 
     (function shakeToGrayscale() {
@@ -3777,7 +4695,7 @@
     let laserHoverEl = null;
     (function animateLaser() {
       const inTattoosGallery = sectionOverlay.classList.contains('tattoos-modal') && sectionOverlay.classList.contains('expanding');
-      if (inTattoosGallery) {
+      if (inTattoosGallery || !laserActive) {
         laserLine.setAttribute('opacity', '0');
         laserDot.setAttribute('opacity', '0');
         if (laserHoverEl) {
@@ -3785,9 +4703,10 @@
           laserHoverEl = null;
         }
       } else {
-        const { dist, el } = raycastLaser(mouseX, mouseY, shootAngle);
-        const x2 = mouseX + Math.cos(shootAngle) * dist;
-        const y2 = mouseY + Math.sin(shootAngle) * dist;
+        const _angle = effectiveShootAngle();
+        const { dist, el } = raycastLaser(mouseX, mouseY, _angle);
+        const x2 = mouseX + Math.cos(_angle) * dist;
+        const y2 = mouseY + Math.sin(_angle) * dist;
         laserLine.setAttribute('x1', mouseX);
         laserLine.setAttribute('y1', mouseY);
         laserLine.setAttribute('x2', x2);
@@ -3815,6 +4734,79 @@
       applyCursor(hotX, hotY);
       updatePreview();
     }
+  </script>
+
+  <!-- RAT -->
+  <img id="site-rat" src="img/rat.png" alt=""
+    style="
+      position: fixed;
+      top: 0;
+      left: -120px;
+      width: 80px;
+      height: auto;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      image-rendering: pixelated;
+    "
+  >
+  <script>
+    (function() {
+      const rat = document.getElementById('site-rat');
+      const speed = 0.5;
+      let x, y, dirX, dirY, running = false;
+
+      function initPos() {
+        const rw = rat.offsetWidth || 80;
+        const rh = rat.offsetHeight || 50;
+        const vh = window.innerHeight;
+        x = -rw;
+        y = vh - rh;         // start at floor
+        dirX = 1;
+        dirY = -1;           // initially drifting up
+      }
+
+      const overlay = document.getElementById('sectionOverlay');
+
+      function stepRat() {
+        if (!running) return;
+
+        const modalOpen = overlay && overlay.classList.contains('expanding');
+        rat.style.opacity = modalOpen ? '0' : '1';
+
+        if (!modalOpen) {
+          const rw = rat.offsetWidth || 80;
+          const rh = rat.offsetHeight || 50;
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const floorY  = vh - rh;
+          const ceilY   = vh * 0.75 - rh;
+
+          x += speed * dirX;
+          y += speed * 0.4 * dirY;
+
+          if (dirX === 1  && x > vw + 10)   { x = vw + 10;  dirX = -1; }
+          if (dirX === -1 && x < -rw - 10)  { x = -rw - 10; dirX = 1; }
+
+          if (y < ceilY)  { y = ceilY;  dirY = 1; }
+          if (y > floorY) { y = floorY; dirY = -1; }
+
+          rat.style.left = x + 'px';
+          rat.style.top  = y + 'px';
+          rat.style.transform = dirX === 1 ? 'scaleX(-1)' : 'scaleX(1)';
+        }
+
+        requestAnimationFrame(stepRat);
+      }
+
+      setTimeout(function() {
+        initPos();
+        rat.style.opacity = '1';
+        running = true;
+        requestAnimationFrame(stepRat);
+      }, 2000);
+    })();
   </script>
 
 </body>
