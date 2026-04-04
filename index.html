@@ -3,14 +3,164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oye Estupida</title>
+  
+  <!-- SEO Meta Tags -->
+  <title>Oye Estupida | Tattoos, Cakes, Tarot Readings & Visual Art</title>
+  <meta name="description" content="Oye Estupida - Creative studio offering custom tattoos, artisan cakes, tarot readings, and visual art. Express yourself through unique body art, delicious creations, and spiritual guidance.">
+  <meta name="keywords" content="tattoos, custom tattoos, cakes, artisan cakes, tarot readings, tarot cards, visual art, body art, tattoo studio, cake designer, tarot reader, spiritual guidance">
+  <meta name="author" content="Oye Estupida">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://oyeestupida.com/">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://oyeestupida.com/">
+  <meta property="og:title" content="Oye Estupida | Tattoos, Cakes, Tarot Readings & Visual Art">
+  <meta property="og:description" content="Express yourself through custom tattoos, artisan cakes, tarot readings, and visual art. Book your appointment today.">
+  <meta property="og:image" content="https://oyeestupida.com/img/oyestupida-logo1.png">
+  <meta property="og:image:alt" content="Oye Estupida Logo">
+  <meta property="og:site_name" content="Oye Estupida">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://oyeestupida.com/">
+  <meta name="twitter:title" content="Oye Estupida | Tattoos, Cakes, Tarot Readings & Visual Art">
+  <meta name="twitter:description" content="Express yourself through custom tattoos, artisan cakes, tarot readings, and visual art. Book your appointment today.">
+  <meta name="twitter:image" content="https://oyeestupida.com/img/oyestupida-logo1.png">
+  <meta name="twitter:image:alt" content="Oye Estupida Logo">
+  
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="img/favico.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/oyestupida-logo1.png">
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#ff00c0">
+  <meta name="msapplication-TileColor" content="#ff00c0">
+  
+  <!-- Geo Location -->
+  <meta name="geo.region" content="ES">
+  <meta name="geo.placename" content="Spain">
+  
+  <!-- Critical Asset Preloads -->
+  <link rel="preload" href="styles.css" as="style">
+  <link rel="preload" href="mouse.png" as="image">
+  <link rel="preload" href="img/bg1.png" as="image">
+  <link rel="preload" href="img/bg_night.png" as="image">
+  <link rel="preload" href="img/frame-mask.png" as="image">
+  <link rel="preload" href="img/couch.png" as="image">
+  <link rel="preload" href="img/oyestupida_clothes.png" as="image">
+  <link rel="preload" href="img/oyestupida-logo1.svg" as="image">
+  <link rel="preload" href="img/oyestupida-logo2.svg" as="image">
+  
+  <!-- Button Images Preload -->
+  <link rel="preload" href="img/contact-button.png" as="image">
+  <link rel="preload" href="img/cakes-button.png" as="image">
+  <link rel="preload" href="img/tatoo-button.png" as="image">
+  <link rel="preload" href="img/sturmz-button.png" as="image">
+  
+  <!-- UI Elements Preload -->
+  <link rel="preload" href="img/close.png" as="image">
+  <link rel="preload" href="img/sound_on.png" as="image">
+  <link rel="preload" href="img/sound_off.png" as="image">
+  <link rel="preload" href="img/light_off.png" as="image">
+  <link rel="preload" href="img/light_on.png" as="image">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { corePlugins: { ringWidth: false, ringColor: false, ringOpacity: false, ringOffsetWidth: false } }</script>
   <style id="gunCursorStyle"></style>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <!-- Dithering Shader Canvas Overlay -->
+  <canvas id="ditherCanvas" class="dither-canvas"></canvas>
+
+  <!-- Dithering Control Menu -->
+  <div class="dither-menu" id="ditherMenu">
+    <button class="dither-toggle" id="ditherToggle" aria-label="Toggle dithering">⚡</button>
+    <div class="dither-controls">
+      <label class="dither-label">DITHER</label>
+      <input type="range" id="ditherIntensity" min="0" max="100" value="0" aria-label="Dither intensity">
+      <span class="dither-value" id="ditherValue">0%</span>
+    </div>
+  </div>
+
+  <!-- Preloader -->
+  <div id="preloader" class="preloader">
+    <div class="preloader-content">
+      <div class="preloader-spinner"></div>
+      <div class="preloader-text">DID YOU KNOW THAT...</div>
+    </div>
+  </div>
+
+  <button id="fontToggleDot" class="font-toggle-dot" type="button" aria-label="Toggle font selector" aria-expanded="false"></button>
+
+  <!-- Font Selector Dropdown -->
+  <div class="font-selector-wrap">
+    <select id="fontSelector" class="font-selector" aria-label="Select font">
+      <option value="'Courier New', monospace">Courier New</option>
+      <option value="'Roboto', sans-serif">Roboto</option>
+      <option value="'Playfair Display', serif">Playfair Display</option>
+      <option value="'Oswald', sans-serif">Oswald</option>
+      <option value="'Lobster', cursive">Lobster</option>
+      <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+      <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+      <option value="'VT323', monospace">VT323</option>
+      <option value="'Permanent Marker', cursive">Permanent Marker</option>
+      <option value="'Inter', sans-serif">Inter</option>
+      <option value="'Poppins', sans-serif">Poppins</option>
+      <option value="'Montserrat', sans-serif">Montserrat</option>
+      <option value="'Raleway', sans-serif">Raleway</option>
+      <option value="'Nunito', sans-serif">Nunito</option>
+      <option value="'Ubuntu', sans-serif" selected>Ubuntu</option>
+      <option value="'Work Sans', sans-serif">Work Sans</option>
+      <option value="'DM Sans', sans-serif">DM Sans</option>
+      <option value="'Crimson Text', serif">Crimson Text</option>
+      <option value="'Libre Baskerville', serif">Libre Baskerville</option>
+      <option value="'Source Serif 4', serif">Source Serif 4</option>
+      <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+      <option value="'Fira Code', monospace">Fira Code</option>
+      <option value="'Rubik', sans-serif">Rubik</option>
+      <option value="'Barlow', sans-serif">Barlow</option>
+      <option value="'Syne', sans-serif">Syne</option>
+      <option value="'Outfit', sans-serif">Outfit</option>
+      <option value="'Manrope', sans-serif">Manrope</option>
+      <option value="'Jura', sans-serif">Jura</option>
+      <option value="'Rajdhani', sans-serif">Rajdhani</option>
+      <option value="'Orbitron', sans-serif">Orbitron</option>
+      <option value="'Bangers', cursive">Bangers</option>
+      <option value="'Righteous', cursive">Righteous</option>
+      <option value="'Fredoka One', cursive">Fredoka One</option>
+      <option value="'Press Start 2P', cursive">Press Start 2P</option>
+      <option value="'Zen Dots', cursive">Zen Dots</option>
+      <option value="'Audiowide', cursive">Audiowide</option>
+      <option value="'Share Tech Mono', monospace">Share Tech Mono</option>
+      <option value="'Saira Stencil One', cursive">Saira Stencil One</option>
+      <option value="'Rubik Mono One', sans-serif">Rubik Mono One</option>
+      <option value="'Abril Fatface', cursive">Abril Fatface</option>
+      <option value="'Unbounded', sans-serif">Unbounded</option>
+      <option value="'Space Mono', monospace">Space Mono</option>
+      <option value="'IBM Plex Mono', monospace">IBM Plex Mono</option>
+      <option value="'Anonymous Pro', monospace">Anonymous Pro</option>
+      <option value="'Spectral', serif">Spectral</option>
+      <option value="'Literata', serif">Literata</option>
+      <option value="'Bodoni Moda', serif">Bodoni Moda</option>
+      <option value="'Cormorant Garamond', serif">Cormorant Garamond</option>
+      <option value="'Noto Sans', sans-serif">Noto Sans</option>
+      <option value="'Noto Serif', serif">Noto Serif</option>
+      <option value="'Atkinson Hyperlegible', sans-serif">Atkinson Hyperlegible</option>
+      <option value="'Lexend', sans-serif">Lexend</option>
+      <option value="'Geologica', sans-serif">Geologica</option>
+      <option value="'Instrument Sans', sans-serif">Instrument Sans</option>
+      <option value="'Instrument Serif', serif">Instrument Serif</option>
+      <option value="'Inclusive Sans', sans-serif">Inclusive Sans</option>
+    </select>
+  </div>
 
   <div class="site-logo" id="siteLogo">
     <img src="" alt="Oye Estupida" id="siteLogoImg">
@@ -32,7 +182,11 @@
   <audio id="soundSocial1" src="sound/1-fart-D.mp3" preload="auto"></audio>
   <audio id="soundSocial2" src="sound/2-fart-D.mp3" preload="auto"></audio>
   <audio id="soundSocial3" src="sound/2-fart-F.mp3" preload="auto"></audio>
-  <audio id="soundGun" src="audio/gun-shot.mp3" preload="auto"></audio>
+  <audio id="soundGun" src="sound/gun-shot.mp3" preload="auto"></audio>
+  <audio id="soundExplodes" src="sound/explodes.mp3" preload="auto"></audio>
+  <audio id="soundRatSpeaks" src="sound/rat-speaks.mp3" preload="auto"></audio>
+  <audio id="soundRatFly" src="sound/rat-fly.mp3" preload="auto"></audio>
+  <audio id="soundButtonHover" src="sound/button-hover.mp3" preload="auto"></audio>
   <audio id="soundTheme" src="sound/oye-estupida-theme.mp3" preload="auto" loop></audio>
 
   <div class="mute-btn-wrap">
@@ -55,48 +209,161 @@
 
   <button class="exit-btn" id="exitBtn"><img src="img/close.png" alt="Close" draggable="false"></button>
 
-  <button id="cakesOrderBtn" class="cakes-order-btn">
-    ORDER YOUR PERSONALIZED CAKE
-  </button>
+  <!-- TATTOO ORDER FORM OVERLAY -->
+  <div id="tattooOrderOverlay" class="tattoo-order-form-overlay" aria-hidden="true">
+    <div class="tattoo-order-container">
+      <button class="tattoo-order-close" aria-label="Close">&times;</button>
+      <h2 class="tattoo-order-title">GET YOUR TATTOO</h2>
+      <form id="tattooOrderForm" class="tattoo-order-form">
+        <div class="tattoo-order-step active" data-step="1">
+          <p class="tattoo-order-prompt"><span>Hey!</span><span>What's your name?</span></p>
+          <input type="text" id="tattooName" name="name" placeholder="Type here..." autocomplete="name" />
+          <button type="button" class="tattoo-order-btn" id="tattooOrderNext1">Next</button>
+        </div>
+
+        <div class="tattoo-order-step" data-step="2">
+          <p class="tattoo-order-prompt">How can I contact you?</p>
+          <input type="text" id="tattooContact" name="contact" placeholder="Email or phone..." autocomplete="email" />
+          <button type="button" class="tattoo-order-btn" id="tattooOrderNext2">Next</button>
+        </div>
+
+        <div class="tattoo-order-step" data-step="3">
+          <p class="tattoo-order-prompt">Describe your tattoo design idea</p>
+          <textarea id="tattooDesign" name="design" placeholder="What do you want? Style, subject, references..." rows="4"></textarea>
+          <small>Examples: minimalist, realistic, geometric, tribal, floral, portrait</small>
+          <button type="button" class="tattoo-order-btn" id="tattooOrderNext3">Next</button>
+        </div>
+
+        <div class="tattoo-order-step" data-step="4">
+          <p class="tattoo-order-prompt">What size are you thinking?</p>
+          <select id="tattooSize" name="size" class="tattoo-order-select">
+            <option value="">Select size...</option>
+            <option value="small">Small (5-10cm)</option>
+            <option value="medium">Medium (10-15cm)</option>
+            <option value="large">Large (15-25cm)</option>
+            <option value="xl">Extra Large (25cm+)</option>
+          </select>
+          <button type="button" class="tattoo-order-btn" id="tattooOrderNext4">Next</button>
+        </div>
+
+        <div class="tattoo-order-step" data-step="5">
+          <p class="tattoo-order-prompt">Where on your body?</p>
+          <input type="text" id="tattooArea" name="area" placeholder="Arm, leg, back, chest, etc..." />
+          <button type="button" class="tattoo-order-btn" id="tattooOrderNext5">Next</button>
+        </div>
+
+        <div class="tattoo-order-step" data-step="6">
+          <p class="tattoo-order-prompt">Color preference</p>
+          <div class="tattoo-color-options">
+            <label class="tattoo-color-option">
+              <input type="radio" name="color" value="black" checked>
+              <span>Black & Grey</span>
+            </label>
+            <label class="tattoo-color-option">
+              <input type="radio" name="color" value="color">
+              <span>Full Color</span>
+            </label>
+            <label class="tattoo-color-option">
+              <input type="radio" name="color" value="both">
+              <span>Both</span>
+            </label>
+          </div>
+          <button type="submit" class="tattoo-order-btn">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <div id="cakesOrderOverlay" class="cakes-order-form-overlay" aria-hidden="true">
-    <form id="cakesOrderForm" class="cakes-order-form">
-      <h3>Personalized cake</h3>
-      <p id="cakesOrderPrompt">Hey! WhatÔÇÖs your name?</p>
-
-      <div class="cakes-order-step active" data-step="1">
-        <input type="text" id="cakeName" name="name" placeholder="Type here..." autocomplete="name" />
-      </div>
-
-      <div class="cakes-order-step" data-step="2">
-        <textarea id="cakeInspiration" name="inspiration" placeholder="Tell me the story, mood, references..." rows="4"></textarea>
-        <small>Concept ideas: scarry, spooky, spicy, cheesy, cute, creepy, funny</small>
-      </div>
-
-      <div class="cakes-order-step" data-step="3">
-        <div class="colors-row">
-          <input type="color" id="cakeColor1" name="color1" value="#ff00c0" aria-label="Color 1">
-          <input type="color" id="cakeColor2" name="color2" value="#000000" aria-label="Color 2">
-          <input type="color" id="cakeColor3" name="color3" value="#ffffff" aria-label="Color 3">
+    <div class="cakes-order-container">
+      <button class="cakes-order-close" aria-label="Close">&times;</button>
+      <h2 class="cakes-order-title">ORDER YOUR CAKE</h2>
+      <form id="cakesOrderForm" class="cakes-order-form">
+        <div class="cakes-order-step active" data-step="1">
+          <p class="cakes-order-prompt"><span>Hey!</span><span>What's your name?</span></p>
+          <input type="text" id="cakeName" name="name" placeholder="Type here..." autocomplete="name" />
+          <button type="button" class="cakes-order-btn" id="cakesOrderNext1">Next</button>
         </div>
-        <small>Pick 3 colors. IÔÇÖll translate them into frosting energy.</small>
-      </div>
 
-      <div class="cakes-order-step" data-step="4">
-        <textarea id="cakeConditions" name="conditions" placeholder="Allergies, intolerances, vegan, or anything to add..." rows="4"></textarea>
-      </div>
+        <div class="cakes-order-step" data-step="2">
+          <p class="cakes-order-prompt">What's your inspiration for the cake? / mood / concept</p>
+          <textarea id="cakeInspiration" name="inspiration" placeholder="Tell me the story, mood, references..." rows="4"></textarea>
+          <small>Concept ideas: scarry, spooky, spicy, cheesy, cute, creepy, funny</small>
+          <button type="button" class="cakes-order-btn" id="cakesOrderNext2">Next</button>
+        </div>
 
-      <div class="cakes-order-step" data-step="5">
-        <input type="date" id="cakeDate" name="date" />
-        <small>7 weeks before works for me.</small>
-      </div>
+        <div class="cakes-order-step" data-step="3">
+          <p class="cakes-order-prompt">Pick your 3 favorite colors for this cake</p>
+          <div class="colors-row">
+            <input type="color" id="cakeColor1" name="color1" value="#ff00c0" aria-label="Color 1">
+            <input type="color" id="cakeColor2" name="color2" value="#000000" aria-label="Color 2">
+            <input type="color" id="cakeColor3" name="color3" value="#ffffff" aria-label="Color 3">
+          </div>
+          <small>I'll translate them into frosting energy.</small>
+          <button type="button" class="cakes-order-btn" id="cakesOrderNext3">Next</button>
+        </div>
 
-      <div class="cakes-order-actions">
-        <button type="button" class="cakes-order-cancel" id="cakesOrderCancel">Cancel</button>
-        <button type="button" class="cakes-order-cancel" id="cakesOrderBack">Back</button>
-        <button type="button" class="cakes-order-submit" id="cakesOrderNext">ÔåÆ</button>
-      </div>
-    </form>
+        <div class="cakes-order-step" data-step="4">
+          <p class="cakes-order-prompt">Any specific alimentary condition? or anything to add?</p>
+          <textarea id="cakeConditions" name="conditions" placeholder="Allergies, intolerances, vegan, or anything to add..." rows="4"></textarea>
+          <button type="button" class="cakes-order-btn" id="cakesOrderNext4">Next</button>
+        </div>
+
+        <div class="cakes-order-step" data-step="5">
+          <p class="cakes-order-prompt">For when do you need the cake? (7 weeks before works for me.)</p>
+          <input type="date" id="cakeDate" name="date" />
+          <small>7 weeks before works for me.</small>
+          <button type="submit" class="cakes-order-btn">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="tarotReadingOverlay" class="tarot-reading-form-overlay" aria-hidden="true">
+    <div class="tarot-reading-container">
+      <button class="tarot-reading-close" aria-label="Close">&times;</button>
+      <h2 class="tarot-reading-title">GET A READING</h2>
+      <form id="tarotReadingForm" class="tarot-reading-form">
+        <div class="tarot-reading-step active" data-step="1">
+          <p class="tarot-reading-prompt"><span>Hey!</span><span>What's your name?</span></p>
+          <input type="text" id="tarotReadingName" name="name" placeholder="Type here..." autocomplete="name" />
+          <button type="button" class="tarot-reading-btn" id="tarotReadingNext1">Next</button>
+        </div>
+
+        <div class="tarot-reading-step" data-step="2">
+          <p class="tarot-reading-prompt">What area do you want guidance on?</p>
+          <select id="tarotReadingTopic" name="topic" class="tarot-reading-select">
+            <option value="">Select one...</option>
+            <option value="love">Love</option>
+            <option value="career">Career</option>
+            <option value="money">Money</option>
+            <option value="family">Family</option>
+            <option value="spiritual">Spiritual path</option>
+            <option value="other">Other</option>
+          </select>
+          <button type="button" class="tarot-reading-btn" id="tarotReadingNext2">Next</button>
+        </div>
+
+        <div class="tarot-reading-step" data-step="3">
+          <p class="tarot-reading-prompt">When were you born?</p>
+          <input type="date" id="tarotReadingBirth" name="birthDate" />
+          <button type="button" class="tarot-reading-btn" id="tarotReadingNext3">Next</button>
+        </div>
+
+        <div class="tarot-reading-step" data-step="4">
+          <p class="tarot-reading-prompt">What is your question for the cards?</p>
+          <textarea id="tarotReadingQuestion" name="question" placeholder="Tell me what you want clarity about..." rows="4"></textarea>
+          <button type="button" class="tarot-reading-btn" id="tarotReadingNext4">Next</button>
+        </div>
+
+        <div class="tarot-reading-step" data-step="5">
+          <p class="tarot-reading-prompt">How should I contact you?</p>
+          <input type="text" id="tarotReadingContact" name="contact" placeholder="Email or phone..." autocomplete="email" />
+          <small>I'll answer with your personalized reading.</small>
+          <button type="submit" class="tarot-reading-btn">Send</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <img src="img/couch.png" alt="couch" id="couchBtn" class="frame-btn fixed bottom-0 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[60vw] md:w-[40vw] max-w-[500px] z-10" draggable="false">
@@ -135,6 +402,23 @@
         </defs>
         <line id="vectorLine" stroke="#ff4500" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrowhead)" />
       </svg>
+      <!-- SVG Filter for Logo Glow -->
+  <svg width="0" height="0" style="position: absolute; visibility: hidden;">
+    <defs>
+      <filter id="gemma-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feMorphology operator="dilate" radius="0" in="SourceAlpha" result="BEVEL_10" />
+        <feOffset dx="0.5" dy="-1.5" in="BEVEL_10" result="BEVEL_20"/>
+        <feComposite operator="out" in="BEVEL_20" in2="BEVEL_10" result="BEVEL_30"/>
+        <feFlood flood-color="#D874FF" result="COLOR-glow" />
+        <feComposite in="COLOR-glow" in2="BEVEL_30" operator="in" result="BEVEL_40" />
+        <feGaussianBlur in="BEVEL_40" stdDeviation="3" result="BLUR-glow"/>
+        <feMerge result="BEVEL_50">
+          <feMergeNode in="BLUR-glow" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
       <div class="hotspot-dot" id="hotspotDot"></div>
       <div class="vector-dot" id="vectorDot"></div>
     </div>
@@ -154,6 +438,8 @@
     import {
       Space, Body, BodyType, Vec2, Circle, Polygon,
     } from "https://cdn.jsdelivr.net/npm/@newkrok/nape-js/dist/index.js";
+
+    const FONT_STORAGE_KEY = 'siteFont';
 
     // Recolor favicon to pink while preserving transparency
     (function tintFaviconToPink() {
@@ -185,7 +471,7 @@
     })();
 
     (function() {
-      const logos = ['img/oyestupida-logo1.png', 'img/oyestupida-logo2.png'];
+      const logos = ['img/oyestupida-logo1.svg', 'img/oyestupida-logo2.svg'];
       const img = document.getElementById('siteLogoImg');
       if (img) img.src = logos[Math.random() < 0.5 ? 0 : 1];
     })();
@@ -224,6 +510,189 @@
         });
       }
     })();
+    /* ---------- Font Selector ---------- */
+    (function initFontSelector() {
+      const DEFAULT_FONT = "'Ubuntu', sans-serif";
+      const fontSelector = document.getElementById('fontSelector');
+      const fontSelectorWrap = document.querySelector('.font-selector-wrap');
+      const fontToggleDot = document.getElementById('fontToggleDot');
+      if (!fontSelector || !fontSelectorWrap) return;
+
+      function setSelectorOpen(isOpen) {
+        fontSelectorWrap.classList.toggle('is-open', isOpen);
+        if (fontToggleDot) {
+          fontToggleDot.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+      }
+
+      setSelectorOpen(false);
+      if (fontToggleDot) {
+        fontToggleDot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setSelectorOpen(!fontSelectorWrap.classList.contains('is-open'));
+        });
+      }
+
+      // Google Fonts to load dynamically
+      const googleFonts = {
+        "'Roboto', sans-serif": { family: 'Roboto', weights: ['400', '700'] },
+        "'Playfair Display', serif": { family: 'Playfair Display', weights: ['400', '700'] },
+        "'Oswald', sans-serif": { family: 'Oswald', weights: ['400', '700'] },
+        "'Lobster', cursive": { family: 'Lobster', weights: ['400'] },
+        "'Bebas Neue', sans-serif": { family: 'Bebas Neue', weights: ['400'] },
+        "'Space Grotesk', sans-serif": { family: 'Space Grotesk', weights: ['400', '700'] },
+        "'VT323', monospace": { family: 'VT323', weights: ['400'] },
+        "'Permanent Marker', cursive": { family: 'Permanent Marker', weights: ['400'] },
+        "'Inter', sans-serif": { family: 'Inter', weights: ['400', '700'] },
+        "'Poppins', sans-serif": { family: 'Poppins', weights: ['400', '700'] },
+        "'Montserrat', sans-serif": { family: 'Montserrat', weights: ['400', '700'] },
+        "'Raleway', sans-serif": { family: 'Raleway', weights: ['400', '700'] },
+        "'Nunito', sans-serif": { family: 'Nunito', weights: ['400', '700'] },
+        "'Ubuntu', sans-serif": { family: 'Ubuntu', weights: ['400', '700'] },
+        "'Work Sans', sans-serif": { family: 'Work Sans', weights: ['400', '700'] },
+        "'DM Sans', sans-serif": { family: 'DM Sans', weights: ['400', '700'] },
+        "'Crimson Text', serif": { family: 'Crimson Text', weights: ['400', '700'] },
+        "'Libre Baskerville', serif": { family: 'Libre Baskerville', weights: ['400', '700'] },
+        "'Source Serif 4', serif": { family: 'Source Serif 4', weights: ['400', '700'] },
+        "'JetBrains Mono', monospace": { family: 'JetBrains Mono', weights: ['400', '700'] },
+        "'Fira Code', monospace": { family: 'Fira Code', weights: ['400', '700'] },
+        "'Rubik', sans-serif": { family: 'Rubik', weights: ['400', '700'] },
+        "'Barlow', sans-serif": { family: 'Barlow', weights: ['400', '700'] },
+        "'Syne', sans-serif": { family: 'Syne', weights: ['400', '700'] },
+        "'Outfit', sans-serif": { family: 'Outfit', weights: ['400', '700'] },
+        "'Manrope', sans-serif": { family: 'Manrope', weights: ['400', '700'] },
+        "'Jura', sans-serif": { family: 'Jura', weights: ['400', '700'] },
+        "'Rajdhani', sans-serif": { family: 'Rajdhani', weights: ['400', '700'] },
+        "'Orbitron', sans-serif": { family: 'Orbitron', weights: ['400', '700'] },
+        "'Bangers', cursive": { family: 'Bangers', weights: ['400'] },
+        "'Righteous', cursive": { family: 'Righteous', weights: ['400'] },
+        "'Fredoka One', cursive": { family: 'Fredoka One', weights: ['400'] },
+        "'Press Start 2P', cursive": { family: 'Press Start 2P', weights: ['400'] },
+        "'Zen Dots', cursive": { family: 'Zen Dots', weights: ['400'] },
+        "'Audiowide', cursive": { family: 'Audiowide', weights: ['400'] },
+        "'Share Tech Mono', monospace": { family: 'Share Tech Mono', weights: ['400'] },
+        "'Saira Stencil One', cursive": { family: 'Saira Stencil One', weights: ['400'] },
+        "'Rubik Mono One', sans-serif": { family: 'Rubik Mono One', weights: ['400'] },
+        "'Abril Fatface', cursive": { family: 'Abril Fatface', weights: ['400'] },
+        "'Unbounded', sans-serif": { family: 'Unbounded', weights: ['400', '700'] },
+        "'Space Mono', monospace": { family: 'Space Mono', weights: ['400', '700'] },
+        "'IBM Plex Mono', monospace": { family: 'IBM Plex Mono', weights: ['400', '700'] },
+        "'Anonymous Pro', monospace": { family: 'Anonymous Pro', weights: ['400', '700'] },
+        "'Spectral', serif": { family: 'Spectral', weights: ['400', '700'] },
+        "'Literata', serif": { family: 'Literata', weights: ['400', '700'] },
+        "'Bodoni Moda', serif": { family: 'Bodoni Moda', weights: ['400', '700'] },
+        "'Cormorant Garamond', serif": { family: 'Cormorant Garamond', weights: ['400', '700'] },
+        "'Noto Sans', sans-serif": { family: 'Noto Sans', weights: ['400', '700'] },
+        "'Noto Serif', serif": { family: 'Noto Serif', weights: ['400', '700'] },
+        "'Atkinson Hyperlegible', sans-serif": { family: 'Atkinson Hyperlegible', weights: ['400', '700'] },
+        "'Lexend', sans-serif": { family: 'Lexend', weights: ['400', '700'] },
+        "'Geologica', sans-serif": { family: 'Geologica', weights: ['400', '700'] },
+        "'Instrument Sans', sans-serif": { family: 'Instrument Sans', weights: ['400', '700'] },
+        "'Instrument Serif', serif": { family: 'Instrument Serif', weights: ['400', '700'] },
+        "'Inclusive Sans', sans-serif": { family: 'Inclusive Sans', weights: ['400', '700'] }
+      };
+
+      // Load Google Font dynamically
+      function loadGoogleFont(fontData) {
+        if (!fontData) return;
+        const { family, weights } = fontData;
+        const linkId = 'google-font-' + family.toLowerCase().replace(/\s+/g, '-');
+        
+        // Check if already loaded
+        if (document.getElementById(linkId)) return;
+
+        const link = document.createElement('link');
+        link.id = linkId;
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weights.join(';')}&display=swap`;
+        document.head.appendChild(link);
+      }
+
+      // Apply font to entire site
+      function applyFont(fontValue) {
+        // Set body font
+        document.body.style.fontFamily = fontValue;
+        
+        // Create a style element to override CSS with !important
+        let fontStyleEl = document.getElementById('dynamic-font-style');
+        if (!fontStyleEl) {
+          fontStyleEl = document.createElement('style');
+          fontStyleEl.id = 'dynamic-font-style';
+          document.head.appendChild(fontStyleEl);
+        }
+        
+        // Add CSS rules that override everything with !important
+        fontStyleEl.textContent = `
+          .cakes-recipe,
+          .cakes-recipe-title,
+          .cakes-recipe-list,
+          .cakes-recipe-list li,
+          .cakes-recipe-ingredient,
+          .cakes-recipe-amount {
+            font-family: ${fontValue} !important;
+          }
+        `;
+        
+        // Also apply inline styles to existing elements
+        document.querySelectorAll('.cakes-recipe, .cakes-recipe-title, .cakes-recipe-list, .cakes-recipe-list li, .cakes-recipe-ingredient, .cakes-recipe-amount').forEach(el => {
+          el.style.fontFamily = fontValue;
+        });
+
+        // Update all elements that might have inline font-family from Courier New
+        document.querySelectorAll('*').forEach(el => {
+          const computed = window.getComputedStyle(el);
+          if (computed.fontFamily.includes('Courier New') || computed.fontFamily.includes('monospace')) {
+            // Only update elements using the default site font
+            el.style.fontFamily = fontValue;
+          }
+        });
+
+        // Load Google Font if needed
+        const fontData = googleFonts[fontValue];
+        if (fontData) {
+          loadGoogleFont(fontData);
+        }
+      }
+
+      // Restore saved font on load with proper Google Font loading
+      const fontValues = new Set(Array.from(fontSelector.options).map(option => option.value));
+      const savedFont = localStorage.getItem(FONT_STORAGE_KEY);
+      const initialFont = fontValues.has(savedFont) ? savedFont : DEFAULT_FONT;
+      fontSelector.value = initialFont;
+
+      // First load the Google Font, then apply
+      const fontData = googleFonts[initialFont];
+      if (fontData) {
+        loadGoogleFont(fontData);
+        // Use Font Loading API if available, otherwise fallback to timeout
+        if (document.fonts) {
+          document.fonts.load(`1em ${fontData.family}`).then(() => {
+            applyFont(initialFont);
+          }).catch(() => {
+            // Fallback: apply after delay
+            setTimeout(() => applyFont(initialFont), 300);
+          });
+        } else {
+          // Fallback for browsers without Font Loading API
+          setTimeout(() => applyFont(initialFont), 300);
+        }
+      } else {
+        // Default font - apply immediately
+        applyFont(initialFont);
+      }
+
+      if (!fontValues.has(savedFont)) {
+        localStorage.setItem(FONT_STORAGE_KEY, initialFont);
+      }
+
+      // Handle font change
+      fontSelector.addEventListener('change', (e) => {
+        const selectedFont = e.target.value;
+        applyFont(selectedFont);
+        localStorage.setItem(FONT_STORAGE_KEY, selectedFont);
+      });
+    })();
+
     const ring = document.getElementById('ring');
     const previewImg = document.getElementById('previewImg');
     const previewContainer = document.getElementById('previewContainer');
@@ -235,10 +704,34 @@
     const cakesOrderOverlay = document.getElementById('cakesOrderOverlay');
     const cakesOrderForm = document.getElementById('cakesOrderForm');
     const cakesOrderCancel = document.getElementById('cakesOrderCancel');
+    const tarotReadingOverlay = document.getElementById('tarotReadingOverlay');
+    const tarotReadingForm = document.getElementById('tarotReadingForm');
     const modalBackdrop = document.getElementById('modalBackdrop');
     const sectionOverlay = document.getElementById('sectionOverlay');
     const sectionContent = document.getElementById('sectionContent');
     const exitBtn = document.getElementById('exitBtn');
+    const modalHoverInvertSelector = '.section-overlay button, .cakes-order-form-overlay button, .tattoo-order-form-overlay button, .tarot-reading-form-overlay button';
+
+    function isModalHoverInvertTarget(el) {
+      return !!(el && el.closest && el.closest(modalHoverInvertSelector));
+    }
+
+    document.addEventListener('mouseover', (e) => {
+      if (isModalHoverInvertTarget(e.target) && document.body.classList.contains('hide-native-cursor')) {
+        document.body.classList.add('cursor-invert-close');
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      if (!isModalHoverInvertTarget(e.target)) return;
+      if (!isModalHoverInvertTarget(e.relatedTarget)) {
+        document.body.classList.remove('cursor-invert-close');
+      }
+    });
+
+    document.addEventListener('click', () => {
+      document.body.classList.remove('cursor-invert-close');
+    });
 
     let imgW = 32, imgH = 32;
     let hotX = 0.974, hotY = 0.459;
@@ -328,6 +821,13 @@
         gunCursorImgEl.style.transformOrigin = (cursorW / 2) + 'px 0';
       }
 
+      // Don't apply gun cursor on small screens
+      if (window.innerWidth <= 768) {
+        document.body.style.cursor = 'default';
+        document.querySelectorAll('.ring-btn, .exit-btn, .mute-btn, .frame-btn, .social-icons a, .tarot-contact-btn, .gallery-item, .cakes-orbit-item, .cakes-center').forEach(b => b.style.cursor = 'inherit');
+        return;
+      }
+
       document.body.style.cursor = normalCursorRule;
       document.querySelectorAll('.ring-btn, .exit-btn, .mute-btn, .frame-btn, .social-icons a, .tarot-contact-btn, .gallery-item, .cakes-orbit-item, .cakes-center').forEach(b => b.style.cursor = normalCursorRule);
       updateCursorSide();
@@ -341,6 +841,18 @@
 
     function updateGunCursor(targetEl) {
       if (!gunCursorEl || !gunCursorImgEl) return;
+      // Show green dot in modals (regardless of screen size) - hide native cursor
+      if (sectionOpen) {
+        gunCursorEl.style.display = 'none';
+        document.body.classList.add('hide-native-cursor');
+        return;
+      }
+      // Show green dot on small screens - hide native cursor
+      if (window.innerWidth <= 768) {
+        gunCursorEl.style.display = 'none';
+        document.body.classList.add('hide-native-cursor');
+        return;
+      }
       const isFormField = !!(targetEl && targetEl.closest && targetEl.closest('input, textarea, select, [contenteditable="true"]'));
       if (!cursorEnabled || isFormField) {
         gunCursorEl.style.display = 'none';
@@ -356,8 +868,11 @@
         gunCursorImgEl.style.transform = 'scaleX(-1)';
         gunCursorEl.style.display = 'block';
       } else {
-        document.body.classList.remove('hide-native-cursor');
-        gunCursorEl.style.display = 'none';
+        document.body.classList.add('hide-native-cursor');
+        gunCursorEl.style.left = (mouseX - cursorHX) + 'px';
+        gunCursorEl.style.top = (mouseY - cursorHY) + 'px';
+        gunCursorImgEl.style.transform = 'scaleX(1)';
+        gunCursorEl.style.display = 'block';
       }
     }
 
@@ -520,29 +1035,9 @@
 
     function positionLoupe(e, loupe) {
       if (!loupe) return;
-      const w = loupe.offsetWidth || 100;
-      const h = loupe.offsetHeight || 100;
-      const margin = 12;
-      const offset = 24;
-
-      const halfW = w / 2;
-      const halfH = h / 2;
-
-      // loupe uses transform: translate(-50%, -50%), so left/top are CENTER coords
-      let left = e.clientX + offset + halfW;
-      if (e.clientX > window.innerWidth / 2) {
-        left = e.clientX - offset - halfW;
-      }
-      left = Math.max(margin + halfW, Math.min(window.innerWidth - halfW - margin, left));
-
-      let top = e.clientY + offset + halfH;
-      if (top + halfH + margin > window.innerHeight) {
-        top = e.clientY - offset - halfH;
-      }
-      top = Math.max(margin + halfH, Math.min(window.innerHeight - halfH - margin, top));
-
-      loupe.style.left = left + 'px';
-      loupe.style.top = top + 'px';
+      // Position directly at mouse - CSS handles the gun tip offset
+      loupe.style.left = e.clientX + 'px';
+      loupe.style.top = e.clientY + 'px';
     }
 
     document.getElementById('muteBtn').addEventListener('click', (e) => {
@@ -684,6 +1179,8 @@
 
       let isDragging = false;
       let dragStartX, dragStartY, btnStartX, btnStartY;
+      let trailLastX = 0, trailLastY = 0;
+      const TRAIL_INTERVAL = 20; // px distance between trail elements
 
       btn.addEventListener('mousedown', (e) => {
         e.preventDefault();
@@ -694,6 +1191,29 @@
         dragStartY = e.clientY;
         btnStartX = parseFloat(btn.style.left);
         btnStartY = parseFloat(btn.style.top);
+        trailLastX = btnStartX + btn.offsetWidth / 2;
+        trailLastY = btnStartY + btn.offsetHeight / 2;
+
+        function spawnTrailElement(x, y) {
+          const trail = btn.cloneNode(true);
+          trail.classList.add('ring-btn-trail');
+          trail.style.left = (x - btn.offsetWidth / 2) + 'px';
+          trail.style.top = (y - btn.offsetHeight / 2) + 'px';
+          document.body.appendChild(trail);
+          
+          // Force reflow
+          trail.offsetHeight;
+          
+          // Trigger fade out after 2.5 seconds (total 3s lifetime)
+          setTimeout(() => {
+            trail.classList.add('fading');
+          }, 2500);
+          
+          // Remove after 3 seconds
+          setTimeout(() => {
+            if (trail.parentNode) trail.parentNode.removeChild(trail);
+          }, 3000);
+        }
 
         function onMove(ev) {
           const dx = ev.clientX - dragStartX;
@@ -709,6 +1229,17 @@
             btn.style.top  = newTop + 'px';
             pctX = (newLeft + 32) / window.innerWidth;
             pctY = (newTop + 32) / window.innerHeight;
+            
+            // Spawn trail element at intervals
+            const centerX = newLeft + btn.offsetWidth / 2;
+            const centerY = newTop + btn.offsetHeight / 2;
+            const distFromLast = Math.hypot(centerX - trailLastX, centerY - trailLastY);
+            
+            if (distFromLast >= TRAIL_INTERVAL) {
+              spawnTrailElement(centerX, centerY);
+              trailLastX = centerX;
+              trailLastY = centerY;
+            }
           }
         }
 
@@ -956,6 +1487,8 @@
       let startY = 0;
       let startLeft = 0;
       let startTop = 0;
+      let frameTrailLastX = 0, frameTrailLastY = 0;
+      const FRAME_TRAIL_INTERVAL = 20;
 
       frameBtn.addEventListener('mousedown', (e) => {
         e.preventDefault();
@@ -968,11 +1501,34 @@
         startY = e.clientY;
         startLeft = rect.left;
         startTop = rect.top;
+        frameTrailLastX = rect.left + rect.width / 2;
+        frameTrailLastY = rect.top + rect.height / 2;
         if (frameArt) frameArt.classList.add('dragging');
 
         if (resizeRaf) {
           cancelAnimationFrame(resizeRaf);
           resizeRaf = 0;
+        }
+
+        function spawnFrameTrail(x, y) {
+          const trail = frameBtn.cloneNode(true);
+          trail.classList.add('frame-btn-trail');
+          trail.style.left = (x - frameBtn.offsetWidth / 2) + 'px';
+          trail.style.top = (y - frameBtn.offsetHeight / 2) + 'px';
+          document.body.appendChild(trail);
+          
+          // Force reflow
+          trail.offsetHeight;
+          
+          // Trigger fade out after 2.5 seconds (total 3s lifetime)
+          setTimeout(() => {
+            trail.classList.add('fading');
+          }, 2500);
+          
+          // Remove after 3 seconds
+          setTimeout(() => {
+            if (trail.parentNode) trail.parentNode.removeChild(trail);
+          }, 3000);
         }
 
         function onMove(ev) {
@@ -990,6 +1546,17 @@
             const artH = frameArt.offsetHeight;
             frameArt.style.left = (newLeft + (btnW - artW) / 2) + 'px';
             frameArt.style.top = (newTop + (btnH - artH) / 2) + 'px';
+          }
+          
+          // Spawn trail element at intervals
+          const centerX = newLeft + frameBtn.offsetWidth / 2;
+          const centerY = newTop + frameBtn.offsetHeight / 2;
+          const distFromLast = Math.hypot(centerX - frameTrailLastX, centerY - frameTrailLastY);
+          
+          if (distFromLast >= FRAME_TRAIL_INTERVAL) {
+            spawnFrameTrail(centerX, centerY);
+            frameTrailLastX = centerX;
+            frameTrailLastY = centerY;
           }
         }
 
@@ -1034,7 +1601,7 @@
       const centerX = rect.left + rect.width / 2;
       const bottomY = rect.bottom;
       frameTooltip.style.left = centerX + 'px';
-      frameTooltip.style.top = (bottomY + 8) + 'px';
+      frameTooltip.style.top = (bottomY - 62) + 'px';
     }
 
     frameBtn.addEventListener('mouseenter', () => {
@@ -1053,10 +1620,15 @@
     const couchKiss = document.getElementById('couchKiss');
     const couchClothes = document.getElementById('couchClothes');
     const bioHoverSlide = document.getElementById('bioHoverSlide');
+    const bioHoverSlideHome = bioHoverSlide ? bioHoverSlide.parentElement : null;
     const toggleBtnWrap = document.querySelector('.toggle-btn-wrap');
     const muteBtnWrap = document.querySelector('.mute-btn-wrap');
 
     if (couchBtn) couchBtn.style.pointerEvents = 'none';
+
+    // Store resting position for when modal closes
+    let restingLeft = 0;
+    let restingTop = 0;
 
     function positionCouchClothes() {
       if (!couchBtn || !couchClothes) return;
@@ -1067,6 +1639,10 @@
       couchClothes.style.left = centerX + 'px';
       couchClothes.style.top = centerY + 'px';
 
+      // Store resting position for modal close
+      restingLeft = centerX;
+      restingTop = centerY;
+
       const targetW = rect.width * 0.55;
       couchClothes.style.width = Math.max(220, Math.min(520, targetW)) + 'px';
     }
@@ -1076,17 +1652,11 @@
 
     const KISS_ORIGIN_KEY = 'couchKissOrigin';
     function getKissOrigin() {
-      try {
-        const s = localStorage.getItem(KISS_ORIGIN_KEY);
-        if (s) {
-          const { x, y } = JSON.parse(s);
-          if (typeof x === 'number' && typeof y === 'number') return { x, y };
-        }
-      } catch (_) {}
+      // Always calculate from current couch position (ignore stored position)
       const rect = couchClothes ? couchClothes.getBoundingClientRect() : couchBtn.getBoundingClientRect();
       return {
         x: rect.left + rect.width * 0.30 - 10,
-        y: rect.top + rect.height * 0.30 - 16
+        y: rect.top + rect.height * 0.15 - 16
       };
     }
     function setKissOrigin(x, y) {
@@ -1126,11 +1696,13 @@
       const rect = couchClothes ? couchClothes.getBoundingClientRect() : couchBtn.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const topY = rect.top;
-      couchTooltip.style.left = centerX + 'px';
+      couchTooltip.style.left = (centerX - 140) + 'px';
       couchTooltip.style.top = (topY - 26) + 'px';
     }
 
     couchClothes.addEventListener('mouseenter', () => {
+      // Don't show tooltip if a modal is open
+      if (document.body.classList.contains('modal-open')) return;
       positionCouchTooltip();
       couchTooltip.classList.add('visible');
     });
@@ -1195,16 +1767,23 @@
     function openSection(btnEl, idx) {
       if (sectionOpen) return;
       sectionOpen = true;
-
-      // remove any falling cakes from previous cakes session
-      const oldFalling = document.getElementById('fallingCakesContainer');
-      if (oldFalling && oldFalling.parentNode) {
-        oldFalling.parentNode.removeChild(oldFalling);
-      }
+      document.body.classList.add('modal-open');
 
       // reset overlay classes and any closing state; clear inline styles so from-bottom animation works after cakes
       sectionOverlay.className = 'section-overlay';
       sectionOverlay.classList.remove('modal-closing', 'cakes-closing');
+
+      // Always slide in from top
+      sectionOverlay.classList.add('slide-from-top');
+
+      const cs0 = getComputedStyle(sectionOverlay);
+      console.log('%c[MODAL OPEN] t=0 (before inline styles)', 'color: lime; font-weight: bold');
+      console.log('  classes:', sectionOverlay.className);
+      console.log('  transition:', cs0.transitionProperty, cs0.transitionDuration);
+      console.log('  animation:', cs0.animationName, cs0.animationDuration);
+      console.log('  transform:', cs0.transform);
+      console.log('  opacity:', cs0.opacity);
+      
       sectionOverlay.style.top = '';
       sectionOverlay.style.left = '';
       sectionOverlay.style.width = '';
@@ -1216,18 +1795,16 @@
       sectionOverlay.style.visibility = '';
       sectionOverlay.style.borderRadius = '';
 
+      // All modals use top/left centering; animation controls transform
+      sectionOverlay.style.top = '50%';
+      sectionOverlay.style.left = '50%';
       if (idx === 2) {
-        // Cakes: full screen
-        sectionOverlay.style.top = '0';
-        sectionOverlay.style.left = '0';
+        // Cakes: full screen base, CSS expanding rules take over
         sectionOverlay.style.width = '100vw';
         sectionOverlay.style.height = '100vh';
         sectionOverlay.style.maxWidth = '';
-        sectionOverlay.style.transform = 'none';
       } else {
         // Other modals: centered
-        sectionOverlay.style.top = '50%';
-        sectionOverlay.style.left = '50%';
         if (idx === 1) {
           sectionOverlay.style.width = '50vw';
           sectionOverlay.style.height = '50vh';
@@ -1238,7 +1815,6 @@
           sectionOverlay.style.maxWidth = '800px';
           sectionOverlay.style.height = '55vh';
         }
-        sectionOverlay.style.transform = 'translate(-50%, -50%)';
       }
 
       if (cakesOrderBtn) {
@@ -1321,22 +1897,33 @@
         });
       } else if (idx === 2) {
         const bakingEssentials = [
-          { label: 'love', value: '1kg' },
-          { label: 'anxiety', value: '69gr' },
-          { label: 'salz', value: '0,5gr' },
-          { label: 'dreams', value: '3.690kg' },
-          { label: 'reality', value: '0,1ml' },
-          { label: 'humor', value: '6,66L' },
+          { label: 'love',    value: '1kg',      pct: '100%' },
+          { label: 'anxiety', value: '69gr',     pct: '69%'  },
+          { label: 'salz',    value: '0,5gr',    pct: '1%'   },
+          { label: 'dreams',  value: '3.690kg',  pct: '369%' },
+          { label: 'reality', value: '0,1ml',    pct: '0%'   },
+          { label: 'humor',   value: '6,66L',    pct: '666%' },
         ];
         const cakesData = Array.from({ length: 9 }, (_, i) => ({ img: `img/cakes/cake${i + 1}.png` }));
         sectionOverlay.classList.add('cakes-modal');
         let activeIdx = null;
         const essentialsHtml = `
-          <div class="cakes-recipe">
-            <h3 class="cakes-recipe-title">Baking essentials</h3>
-            <ul class="cakes-recipe-list">
-              ${bakingEssentials.map(n => `<li><span class="cakes-recipe-ingredient">${n.label}</span><span class="cakes-recipe-amount">${n.value}</span></li>`).join('')}
+          <div class="nutrition-facts">
+            <div class="nf-title">Nutrition Fucks</div>
+            <div class="nf-servings">6 servings per batch</div>
+            <div class="nf-serving-size"><span>Serving size</span><span>1 Dream</span></div>
+            <div class="nf-rule nf-rule--thick"></div>
+            <div class="nf-calories-row">
+              <span class="nf-cal-label">Calories</span>
+              <span class="nf-cal-num">∞</span>
+            </div>
+            <div class="nf-rule nf-rule--medium"></div>
+            <div class="nf-dv-header">% Daily Value*</div>
+            <ul class="nf-list">
+              ${bakingEssentials.map(n => `<li><span class="nf-name">${n.label}</span><span class="nf-amount">${n.value}</span><span class="nf-pct">${n.pct}</span></li>`).join('')}
             </ul>
+            <div class="nf-rule nf-rule--thin"></div>
+            <div class="nf-footnote">*% based on what you deserve.</div>
           </div>
         `;
         const updateCenterAndCorner = () => {
@@ -1349,6 +1936,7 @@
           cornerSlot.innerHTML = '';
         };
         sectionContent.innerHTML = `
+          <button class="cakes-modal-close" aria-label="Close">&times;</button>
           <h2 class="gallery-title">Cakes</h2>
           <div class="cakes-container" id="cakesContainer">
             <div id="cakesCenterSlot"></div>
@@ -1364,8 +1952,47 @@
             </div>
             <div id="cakesCornerSlot"></div>
           </div>
+          <button class="cakes-order-modal-btn">ORDER YOURS!</button>
         `;
         updateCenterAndCorner();
+        
+        // Re-apply font to catch dynamically created baking essentials elements
+        const savedFont = localStorage.getItem(FONT_STORAGE_KEY);
+        if (savedFont) {
+          setTimeout(() => applyFont(savedFont), 0);
+        }
+        
+        const cakesCloseBtn = sectionContent.querySelector('.cakes-modal-close');
+        if (cakesCloseBtn) {
+          cakesCloseBtn.addEventListener('click', () => closeSection());
+          // Hover sound
+          cakesCloseBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
+        const cakesOrderModalBtn = sectionContent.querySelector('.cakes-order-modal-btn');
+        if (cakesOrderModalBtn) {
+          cakesOrderModalBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const cakesOrderOverlay = document.getElementById('cakesOrderOverlay');
+            if (cakesOrderOverlay) {
+              cakesOrderOverlay.classList.add('visible');
+              cakesOrderOverlay.setAttribute('aria-hidden', 'false');
+            }
+          });
+          // Hover sound
+          cakesOrderModalBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
         const orbit = document.getElementById('cakesOrbit');
         const container = document.getElementById('cakesContainer');
         orbit.querySelectorAll('.cakes-orbit-item').forEach(el => {
@@ -1466,35 +2093,71 @@
       } else if (idx === 1) {
         sectionOverlay.classList.add('sturmzx2-modal');
         sectionContent.innerHTML = `
-          <div class="bio-content">
-            <h1 class="bio-title">STURMZX2</h1>
-            <p class="bio-tagline">Artwear ┬À Berlin</p>
-            <div class="bio-text">
-              <p>Sturmzx2 is an artwear project founded by 2 sisters, Berlin based. Their vision is bold.</p>
+          <button class="sturmzx2-modal-close" aria-label="Close">&times;</button>
+          <h2 class="gallery-title">STURMZX2</h2>
+          <div class="sturmzx2-scroll">
+            <div class="sturmzx2-content">
+              <p class="sturmzx2-tagline">ARTWEAR FROM BERLIN</p>
+              <p class="sturmzx2-first-paragraph">Sturmzx2 is an artwear project founded by 2 sisters, Berlin based. Their vision is <span class="sturmzx2-be-bold">BOLD</span>.</p>
+              <img src="img/sturmz-duo.gif" alt="Sturmz duo" class="sturmzx2-duo-gif" loading="lazy">
+              <br>
               <p>Rejecting the fast fashion industry, proposing a brave aesthetic inspired by trash, society, dreams, life, death, and pleasure.</p>
+              <br>
               <p>Collecting materials from the streets of the city or whatever God provides, transforming them with mixed experimental naive techniques.</p>
-              <p>Enjoying the process of each piece, making unique products. Encouraging &ldquo;Never forget playing and dreaming hard &lt;3.&rdquo;</p>
+              <p>Enjoying the process of each piece, making unique products. Encouraging "Never forget playing and dreaming hard <3."</p>
             </div>
           </div>
+          <button class="sturmzx2-visit-btn">Visit store</button>
         `;
+        const sturmCloseBtn = sectionContent.querySelector('.sturmzx2-modal-close');
+        if (sturmCloseBtn) sturmCloseBtn.addEventListener('click', () => closeSection());
+        const sturmVisitBtn = sectionContent.querySelector('.sturmzx2-visit-btn');
+        if (sturmVisitBtn) {
+          sturmVisitBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.open('https://www.instagram.com/sturmzx2/', '_blank', 'noopener,noreferrer');
+          });
+        }
       } else if (idx === 3) {
         sectionOverlay.classList.add('bio-modal');
         if (couchClothes) couchClothes.src = 'img/oyestupida_naked.png';
         // Layering: bio modal above mid-right toggle; couch + overlay above bio modal
         sectionOverlay.style.zIndex = '1300';
         if (couchBtn) couchBtn.style.zIndex = '1400';
-        if (couchClothes) couchClothes.style.zIndex = '1401';
+        if (couchClothes) couchClothes.style.zIndex = '99999';
         if (bioHoverSlide) bioHoverSlide.classList.remove('visible');
         if (toggleBtnWrap) toggleBtnWrap.style.display = 'none';
         if (muteBtnWrap) muteBtnWrap.style.display = 'none';
+        
+        // Position couch at bottom center of screen, naked PNG more to the right
+        const screenCenterX = window.innerWidth / 2;
+        const screenBottomY = window.innerHeight;
+        
+        if (couchClothes) {
+          const bioCouchWidth = Math.max(320, Math.min(680, window.innerWidth * 0.48));
+          couchClothes.style.transition = 'top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          couchClothes.style.width = bioCouchWidth + 'px';
+          couchClothes.style.left = (screenCenterX + 150) + 'px'; // 150px to the right
+          couchClothes.style.top = screenBottomY + 'px';
+          couchClothes.style.transform = 'translate(-50%, -50%)';
+        }
+        // Move couchBtn to bottom center of screen
+        if (couchBtn) {
+          couchBtn.style.transition = 'top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          couchBtn.style.left = screenCenterX + 'px';
+          couchBtn.style.top = screenBottomY + 'px';
+          couchBtn.style.transform = 'translate(-50%, -50%)';
+        }
         sectionContent.innerHTML = `
+          <button class="bio-modal-close" aria-label="Close">&times;</button>
+          <h2 class="gallery-title">BIO</h2>
           <div class="bio-content" style="padding-bottom:90px;">
-            <div class="bio-intro">Hi, I&rsquo;m Barbi.</div>
             <div class="bio-scroll" id="bioScroll">
+              <div class="bio-intro">Hi, I'm Barbi.</div>
               <div class="bio-text">
-                <p>SelfÔÇæexpression has always been the force that keeps my mind alive and curious. Since childhood, I&rsquo;ve been drawing, moving, questioning, and pushing against rules that never made sense to me. As I grew older, I realized how much oppression and rigidity could silence people ÔÇö and how deeply I needed creativity to release, transform, and make sense of the world around me. Art became the place where I could channel that energy, mix reality with imagination, and build a universe of my own. It&rsquo;s a universe that makes me feel safe, one I return to in my dreams, and one I hope to keep discovering throughout my life.</p>
-                <p>Feeling lost at times has guided me toward unexpected paths. Each path opens new doors, and exploring them has become one of my greatest passions. Asking questions, drawing my thoughts, and creating stories out of everyday objects helps me understand myself and the world. Even something as simple as finding a set of old keys can spark endless curiosity ÔÇö who owned them, what spaces they opened, what lives they touched. I love imagining the stories behind things that pass through my hands.</p>
-                <p>My creative journey has never been linear. I studied interior design, completed a postgraduate degree in illustration, baked and sold cakes at school, made handmade scarves, tattooed, explored upcycling clothing and jewelry from street materials, returned to baking, and continued tattooing. I&rsquo;m happiest when I&rsquo;m learning, experimenting, and trying new things. Creating ÔÇö in any form ÔÇö is where I feel most myself.</p>
+                <p>Self-expression has always been the force that keeps my mind alive and curious. Since childhood, I've been drawing, moving, questioning, and pushing against rules that never made sense to me. As I grew older, I realized how much oppression and rigidity could silence people — and how deeply I needed creativity to release, transform, and make sense of the world around me. Art became the place where I could channel that energy, mix reality with imagination, and build a universe of my own. It's a universe that makes me feel safe, one I return to in my dreams, and one I hope to keep discovering throughout my life.</p>
+                <p>Feeling lost at times has guided me toward unexpected paths. Each path opens new doors, and exploring them has become one of my greatest passions. Asking questions, drawing my thoughts, and creating stories out of everyday objects helps me understand myself and the world. Even something as simple as finding a set of old keys can spark endless curiosity — who owned them, what spaces they opened, what lives they touched. I love imagining the stories behind things that pass through my hands.</p>
+                <p>My creative journey has never been linear. I studied interior design, completed a postgraduate degree in illustration, baked and sold cakes at school, made handmade scarves, tattooed, explored upcycling clothing and jewelry from street materials, returned to baking, and continued tattooing. I'm happiest when I'm learning, experimenting, and trying new things. Creating — in any form — is where I feel most myself.</p>
               </div>
             </div>
             <div class="bio-photo-wrap">
@@ -1502,6 +2165,15 @@
             </div>
           </div>
         `;
+
+        const bioContent = sectionContent.querySelector('.bio-content');
+        if (bioHoverSlide && bioContent) {
+          bioContent.appendChild(bioHoverSlide);
+          bioHoverSlide.classList.remove('visible');
+        }
+
+        const bioCloseBtn = sectionContent.querySelector('.bio-modal-close');
+        if (bioCloseBtn) bioCloseBtn.addEventListener('click', () => closeSection());
 
         // invisible scroll + click-drag scrolling
         requestAnimationFrame(() => {
@@ -1534,56 +2206,377 @@
         });
       } else if (idx === 4) {
         sectionOverlay.classList.add('tarot-modal');
+        // Push couchClothes behind the tarot modal so the "Get a reading" button is on top
+        if (couchClothes) couchClothes.style.zIndex = '1';
         sectionContent.innerHTML = `
-          <div class="tarot-content">
-            <h2 class="tarot-title">Tarot</h2>
-            <div class="tarot-video-wrap">
-              <video src="img/tarot/tarot-loop.mp4" class="tarot-hero" id="tarotVideo" loop muted playsinline></video>
-              <button class="tarot-roll-btn" id="tarotRollBtn">Roll the cards!</button>
-              <div class="tarot-modal-cards">
-                <div class="tarot-modal-card c1"></div>
-                <div class="tarot-modal-card c2"></div>
-                <div class="tarot-modal-card c3"></div>
-                <div class="tarot-modal-card c4"></div>
+          <button class="tarot-modal-close" id="tarotCloseBtn" aria-label="Close">×</button>
+          <div class="tarot-scroll-arrow" id="tarotScrollArrow">↓</div>
+          <img src="img/bysturmz.png" class="tarot-bysturmz" alt="By Sturmz" style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:80px;height:auto;z-index:100;">
+          <h2 class="gallery-title" id="tarotTitle">TAROT</h2>
+          <div class="tarot-scroll-snap" id="tarotScrollSnap">
+            <div class="tarot-section tarot-section-intro">
+              <div class="tarot-text-wrap">
+                <p class="tarot-text">Discover your path through the cards. Each reading is a journey into the unknown — a moment to reflect, dream, and connect.</p>
+                <button class="tarot-contact-btn" id="tarotContactBtn">GET YOUR DESTINY</button>
               </div>
             </div>
-            <div class="tarot-text-wrap">
-              <p class="tarot-text">Discover your path through the cards. Each reading is a journey into the unknown ÔÇö a moment to reflect, dream, and connect.</p>
-              <button class="tarot-contact-btn" id="tarotContactBtn">Get a reading</button>
+            <div class="tarot-section tarot-section-cards" id="tarotCardSection">
+              <div class="tarot-card-stage" id="tarotCardStage">
+                <!-- 6 flipped cards with checkerboard backs -->
+                <div class="tarot-flipped-cards" id="tarotFlippedCards">
+                  <div class="tarot-flipped-card" style="--i:0;"></div>
+                  <div class="tarot-flipped-card" style="--i:1;"></div>
+                  <div class="tarot-flipped-card" style="--i:2;"></div>
+                  <div class="tarot-flipped-card" style="--i:3;"></div>
+                  <div class="tarot-flipped-card" style="--i:4;"></div>
+                  <div class="tarot-flipped-card" style="--i:5;"></div>
+                </div>
+                <!-- Selected card (hidden initially) -->
+                <div class="tarot-selected-card" id="tarotSelectedCard">
+                  <img src="" alt="Selected Tarot Card" id="tarotSelectedImg">
+                </div>
+                <!-- Meaning text (hidden initially) -->
+                <div class="tarot-meaning-display" id="tarotMeaningDisplay">
+                  <p class="tarot-meaning-text" id="tarotMeaningText"></p>
+                </div>
+              </div>
+              <button class="tarot-roll-btn" id="tarotRollBtn">Roll the cards!</button>
+              <button class="tarot-get-reading-btn" id="tarotGetReadingBtn">GET A READING</button>
             </div>
           </div>
         `;
-        document.getElementById('tarotContactBtn').addEventListener('click', (e) => {
+        const tarotCloseBtn = document.getElementById('tarotCloseBtn');
+        const tarotCardSection = document.getElementById('tarotCardSection');
+        const tarotFlippedCards = document.getElementById('tarotFlippedCards');
+        const tarotSelectedCard = document.getElementById('tarotSelectedCard');
+        const tarotSelectedImg = document.getElementById('tarotSelectedImg');
+        const tarotMeaningDisplay = document.getElementById('tarotMeaningDisplay');
+        const tarotMeaningText = document.getElementById('tarotMeaningText');
+        const tarotRollBtn = document.getElementById('tarotRollBtn');
+        const tarotTitle = document.getElementById('tarotTitle');
+        
+        // Tarot card data with meanings (22 cards, 0-21)
+        const tarotCards = [
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-3.png', name: 'The Fool', number: 0, meaning: 'The Fool is a tarot card that represents new beginnings, innocence, spontaneity, and a free spirit. It is a card that invites you to step into the unknown with an open and curious mind, a sense of excitement, and a willingness to embrace new experiences.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-15.png', name: 'The Hanged Man', number: 12, meaning: 'The Hanged Man is a tarot card that represents the need to pause, surrender, let go, and embrace new perspectives. It reminds us that sometimes we have to put everything on hold before we can take the next step.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-16.png', name: 'Death', number: 13, meaning: 'The Death card in the tarot is often misunderstood and feared, but it can actually be a positive card representing the end of a major phase or aspect of life that is no longer serving you. It signifies the need to let go of the past and embrace new opportunities.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-17.png', name: 'Temperance', number: 14, meaning: 'Temperance is a tarot card that symbolizes balance, patience, and moderation. It encourages you to bring order and stability into your life by managing your emotions and keeping a composed mind even during stressful situations.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-18.png', name: 'The Devil', number: 15, meaning: 'The Devil is a tarot card that represents the negative forces that hold you back from being the best version of yourself. This card indicates that you may be struggling with negative habits, dependencies, behaviors, thought patterns, relationships, or addiction.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-19.png', name: 'The Tower', number: 16, meaning: 'The Tower card in a tarot reading can indicate sudden and significant change, chaos, and revelation. This change could be in the form of a divorce, death of a loved one, financial failure, job loss, health problems, or any event that shakes you to your core.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-20.png', name: 'The Star', number: 17, meaning: 'The Star card represents a time of renewal and spiritual growth after a period of challenges and difficulties. It signifies hope, faith, and a connection to the divine, bringing calm energy, mental stability, and a deeper understanding of oneself and others.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-21.png', name: 'The Moon', number: 18, meaning: 'The Moon card in Tarot is all about fears and illusions. It often shows up when you\'re letting your past experiences make you anxious about the present and future. Sometimes, instead of dealing with painful memories, you hide them deep inside your mind.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-22.png', name: 'The Sun', number: 19, meaning: 'The Sun is a symbol of positivity, fun, warmth, success, and vitality. It represents the abundant inner energy that radiates through you, giving you strength and bringing happiness and joy to your life.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-23.png', name: 'Judgement', number: 20, meaning: 'The Judgement card is a powerful symbol that urges us to listen to our inner calling and step into a higher level of consciousness. This means letting go of our old selves and embracing a new version of who we are meant to be.' },
+          { image: 'img/tarot/cartas_new/Tarotbookpdf-24.png', name: 'The World', number: 21, meaning: 'The World card in tarot symbolizes a sense of achievement, completion, and wholeness. It represents the culmination of a long-term project, career, relationship, or period of study. This could be graduation, marriage, birth of a child, or achieving a long-held dream.' }
+        ];
+        
+        let isShowingMeaning = false;
+        let currentCardIndex = 0;
+        
+        function getRandomCardIndex() {
+          let newIndex;
+          do {
+            newIndex = Math.floor(Math.random() * tarotCards.length);
+          } while (newIndex === currentCardIndex && tarotCards.length > 1);
+          return newIndex;
+        }
+        
+        function resetToInitialState() {
+          isShowingMeaning = false;
+          
+          // Reset title
+          tarotTitle.textContent = 'TAROT';
+          
+          // Hide meaning and selected card
+          tarotMeaningDisplay.classList.remove('visible');
+          tarotSelectedCard.classList.remove('visible');
+          
+          // Hide GET A READING button
+          const getReadingBtn = document.getElementById('tarotGetReadingBtn');
+          if (getReadingBtn) getReadingBtn.classList.remove('visible');
+          
+          // Show flipped cards with animation
+          tarotFlippedCards.classList.remove('fading-out');
+          
+          // Reappear roll button
+          tarotRollBtn.classList.remove('disappearing');
+          tarotRollBtn.classList.add('reappearing');
+          tarotRollBtn.textContent = 'Roll the cards!';
+          
+          // Reset close button
+          tarotCloseBtn.innerHTML = '&times;';
+          tarotCloseBtn.classList.remove('back-arrow');
+          tarotCloseBtn.setAttribute('aria-label', 'Close');
+          
+          setTimeout(() => {
+            tarotRollBtn.classList.remove('reappearing');
+          }, 600);
+        }
+        
+        function showCardMeaning() {
+          const card = tarotCards[currentCardIndex];
+          isShowingMeaning = true;
+          
+          // Show meaning text only (no title at bottom)
+          tarotMeaningText.textContent = card.meaning;
+          tarotMeaningDisplay.classList.add('visible');
+          
+          // Show GET A READING button at bottom
+          const getReadingBtn = document.getElementById('tarotGetReadingBtn');
+          if (getReadingBtn) getReadingBtn.classList.add('visible');
+          
+          // Change close button to back arrow
+          tarotCloseBtn.innerHTML = '<span style="font-size: 28px;">←</span>';
+          tarotCloseBtn.classList.add('back-arrow');
+          tarotCloseBtn.setAttribute('aria-label', 'Go back');
+        }
+        
+        function rollCards() {
+          // Hide scroll arrow when rolling
+          const scrollArrow = document.getElementById('tarotScrollArrow');
+          if (scrollArrow) scrollArrow.style.display = 'none';
+          
+          // Button disappears with animation
+          tarotRollBtn.classList.add('disappearing');
+          
+          // Select random card
+          currentCardIndex = getRandomCardIndex();
+          const card = tarotCards[currentCardIndex];
+          
+          // Set the selected card image
+          tarotSelectedImg.src = card.image;
+          
+          // Animate one of the flipped cards to flip and reveal
+          const flippedCards = tarotFlippedCards.querySelectorAll('.tarot-flipped-card');
+          const randomCardIndex = Math.floor(Math.random() * flippedCards.length);
+          const selectedFlippedCard = flippedCards[randomCardIndex];
+          
+          // Animate the selected flipped card
+          selectedFlippedCard.style.transform = 'rotateY(180deg) scale(1.2)';
+          selectedFlippedCard.style.zIndex = '100';
+          
+          setTimeout(() => {
+            // Fade out all flipped cards
+            tarotFlippedCards.classList.add('fading-out');
+            
+            // Show the selected card
+            tarotSelectedCard.classList.add('visible');
+            
+            // Update title to card name immediately when card is shown
+            tarotTitle.textContent = `${card.name.toUpperCase()} (${card.number})`;
+            tarotTitle.classList.add('title-blink');
+            setTimeout(() => tarotTitle.classList.remove('title-blink'), 2000);
+            
+            // After 4 seconds, fade out card and show text
+            setTimeout(() => {
+              tarotSelectedCard.style.opacity = '0';
+              tarotSelectedCard.style.transform = 'scale(0.8)';
+              
+              setTimeout(() => {
+                tarotSelectedCard.classList.remove('visible');
+                tarotSelectedCard.style.opacity = '';
+                tarotSelectedCard.style.transform = '';
+                showCardMeaning();
+              }, 600);
+            }, 4000);
+          }, 800);
+        }
+        
+        // Close/Back button handler
+        tarotCloseBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          closeSection();
-          setTimeout(() => openSection(sectionOverlay, 6), 600);
-        });
-        (function() {
-          const vid = document.getElementById('tarotVideo');
-          let rollTimer = null;
-          function doRoll() {
-            const dur = vid.duration;
-            if (!dur || isNaN(dur) || dur <= 0) return;
-            if (rollTimer) { clearTimeout(rollTimer); rollTimer = null; }
-            vid.currentTime = Math.random() * dur;
-            vid.play();
-            // Play for a random duration between 2.5s and 3.8s so it always stops at a different frame
-            const playMs = 2500 + Math.random() * 1300;
-            rollTimer = setTimeout(() => {
-              vid.pause();
-              rollTimer = null;
-            }, playMs);
+          if (isShowingMeaning) {
+            // Go back to flipped cards state
+            resetToInitialState();
+          } else {
+            // Close modal
+            closeSection();
           }
-          document.getElementById('tarotRollBtn').addEventListener('click', (e) => {
+        });
+        
+        // Roll button handler
+        tarotRollBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!tarotRollBtn.classList.contains('disappearing')) {
+            rollCards();
+          }
+        });
+        // GET A READING button handler - opens tarot reading form
+        const tarotGetReadingBtn = document.getElementById('tarotGetReadingBtn');
+        if (tarotGetReadingBtn) {
+          tarotGetReadingBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (!vid.duration || isNaN(vid.duration)) {
-              vid.addEventListener('loadedmetadata', doRoll, { once: true });
-              vid.load();
-            } else {
-              doRoll();
+            if (typeof window.openTarotReadingForm === 'function') {
+              window.openTarotReadingForm();
             }
           });
+          // Hover sound
+          tarotGetReadingBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
+        // Roll the cards button hover sound
+        if (tarotRollBtn) {
+          tarotRollBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
+        // Modal close button hover sound (tarot)
+        if (tarotCloseBtn) {
+          tarotCloseBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
+        // Discover your Destiny button - scroll to cards section
+        document.getElementById('tarotContactBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const scrollSnap = document.getElementById('tarotScrollSnap');
+          if (scrollSnap) {
+            const sectionHeight = scrollSnap.clientHeight;
+            scrollSnap.scrollTo({ top: sectionHeight, behavior: 'smooth' });
+          }
+        });
+
+        // Smooth scroll snapping with easing for tarot sections
+        (function() {
+          const scrollSnap = document.getElementById('tarotScrollSnap');
+          const scrollArrow = document.getElementById('tarotScrollArrow');
+          if (!scrollSnap) return;
+
+          let isScrolling = false;
+          let scrollTimeout = null;
+
+          // Update arrow rotation based on scroll position
+          function updateArrowDirection() {
+            if (!scrollArrow) return;
+            const sectionHeight = scrollSnap.clientHeight;
+            const currentScroll = scrollSnap.scrollTop;
+            const currentSection = Math.round(currentScroll / sectionHeight);
+            
+            if (currentSection === 0) {
+              // At top section - point down
+              scrollArrow.classList.remove('pointing-up');
+              scrollArrow.textContent = '↓';
+            } else {
+              // At bottom section - point up
+              scrollArrow.classList.add('pointing-up');
+              scrollArrow.textContent = '↑';
+            }
+          }
+
+          // Listen for scroll events to update arrow
+          scrollSnap.addEventListener('scroll', () => {
+            updateArrowDirection();
+          }, { passive: true });
+
+          // Arrow click handler - scroll to other section
+          if (scrollArrow) {
+            scrollArrow.addEventListener('click', () => {
+              const sectionHeight = scrollSnap.clientHeight;
+              const currentScroll = scrollSnap.scrollTop;
+              const currentSection = Math.round(currentScroll / sectionHeight);
+              
+              if (currentSection === 0) {
+                // At top - scroll down
+                scrollSnap.scrollTo({ top: sectionHeight, behavior: 'smooth' });
+              } else {
+                // At bottom - scroll up
+                scrollSnap.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            });
+          }
+
+          // Initial arrow direction
+          updateArrowDirection();
+
+          function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          }
+
+          function smoothScrollTo(targetY, duration = 600) {
+            const startY = scrollSnap.scrollTop;
+            const diff = targetY - startY;
+            const startTime = performance.now();
+
+            function animateScroll(currentTime) {
+              const elapsed = currentTime - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              const eased = easeInOutCubic(progress);
+
+              scrollSnap.scrollTop = startY + diff * eased;
+
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+              } else {
+                isScrolling = false;
+                updateArrowDirection();
+              }
+            }
+
+            isScrolling = true;
+            requestAnimationFrame(animateScroll);
+          }
+
+          scrollSnap.addEventListener('wheel', (e) => {
+            e.preventDefault();
+
+            if (isScrolling) return;
+
+            const sectionHeight = scrollSnap.clientHeight;
+            const currentScroll = scrollSnap.scrollTop;
+            const currentSection = Math.round(currentScroll / sectionHeight);
+
+            let targetSection;
+            if (e.deltaY > 0) {
+              // Scrolling down - go to next section
+              targetSection = Math.min(currentSection + 1, 1);
+            } else {
+              // Scrolling up - go to previous section
+              targetSection = Math.max(currentSection - 1, 0);
+            }
+
+            const targetY = targetSection * sectionHeight;
+            smoothScrollTo(targetY);
+          }, { passive: false });
+
+          // Handle keyboard navigation
+          scrollSnap.addEventListener('keydown', (e) => {
+            if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+            e.preventDefault();
+
+            if (isScrolling) return;
+
+            const sectionHeight = scrollSnap.clientHeight;
+            const currentScroll = scrollSnap.scrollTop;
+            const currentSection = Math.round(currentScroll / sectionHeight);
+
+            let targetSection;
+            if (e.key === 'ArrowDown') {
+              targetSection = Math.min(currentSection + 1, 1);
+            } else {
+              targetSection = Math.max(currentSection - 1, 0);
+            }
+
+            const targetY = targetSection * sectionHeight;
+            smoothScrollTo(targetY);
+          });
+
+          scrollSnap.setAttribute('tabindex', '0');
+          scrollSnap.style.outline = 'none';
         })();
+
       } else if (idx === 5) {
         // Build tattoo list manually so we can skip tattoo13
         const tattooImages = [];
@@ -1595,8 +2588,13 @@
         const makeParticles = () => Array.from({ length: particleCount }, () =>
           `<div class="tattoo-ball-particle" style="left:${10 + Math.random() * 80}%;top:${10 + Math.random() * 80}%"></div>`
         ).join('');
+        // Pre-size to final expanding dimensions so there's no size jump when expanding fires
+        sectionOverlay.style.width = '98vw';
+        sectionOverlay.style.maxWidth = '98vw';
+        sectionOverlay.style.height = '81vh';
         sectionOverlay.classList.add('tattoos-modal');
         sectionContent.innerHTML = `
+          <button class="tattoos-modal-close" aria-label="Close">&times;</button>
           <h2 class="gallery-title">TATTOO</h2>
           <div class="tattoos-gallery-scroll">
             <div class="fluid-gallery" id="tattoosGallery">
@@ -1608,10 +2606,50 @@
               `).join('')}
             </div>
           </div>
+          <button class="tattoos-get-btn">Get yours</button>
         `;
         sectionOverlay.scrollTop = 0;
         const scrollEl = sectionContent.querySelector('.tattoos-gallery-scroll');
         if (scrollEl) scrollEl.scrollTop = 0;
+        const closeBtn = sectionContent.querySelector('.tattoos-modal-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => closeSection());
+          // Hover sound
+          closeBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
+        // Get yours button hover sound
+        const tattoosGetBtn = sectionContent.querySelector('.tattoos-get-btn');
+        if (tattoosGetBtn) {
+          tattoosGetBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+          // Click to open tattoo order form
+          tattoosGetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const tattooOrderOverlay = document.getElementById('tattooOrderOverlay');
+            const tattooOrderForm = document.getElementById('tattooOrderForm');
+            if (tattooOrderOverlay && tattooOrderForm) {
+              tattooOrderOverlay.classList.add('visible');
+              tattooOrderOverlay.setAttribute('aria-hidden', 'false');
+              tattooOrderForm.reset();
+              // Reset to first step
+              const steps = tattooOrderForm.querySelectorAll('.tattoo-order-step');
+              steps.forEach((s, i) => s.classList.toggle('active', i === 0));
+              const nameInput = document.getElementById('tattooName');
+              if (nameInput) setTimeout(() => nameInput.focus(), 80);
+            }
+          });
+        }
         let lightbox = document.getElementById('paintingsLightbox');
         if (!lightbox) {
           lightbox = document.createElement('div');
@@ -1624,13 +2662,53 @@
           const loupeCanvas = document.getElementById('lightboxLoupeCanvas');
           const closeLb = () => {
             lightbox.classList.remove('open', 'tattoo-view');
-            if (loupe) loupe.classList.remove('visible');
+            if (loupe) {
+              loupe.classList.remove('visible', 'expanded');
+              loupe.style.width = '';
+              loupe.style.height = '';
+            }
+            // Restore gun cursor when closing tattoo lightbox
+            if (gunCursorEl) {
+              gunCursorEl.style.display = '';
+            }
+            document.body.classList.remove('hide-native-cursor');
           };
           lbClose.addEventListener('click', closeLb);
           lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLb(); });
           document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLb(); });
+          
+          // Track loupe expanded state
+          let loupeExpanded = false;
+          
+          // Click to expand loupe in tattoo view
+          lightbox.addEventListener('mousedown', (e) => {
+            if (!lightbox.classList.contains('tattoo-view') || !lightbox.classList.contains('open')) return;
+            if (e.target.closest('.lightbox-close')) return;
+            loupeExpanded = true;
+            if (loupe) {
+              loupe.classList.add('expanded');
+              loupe.style.width = '150px';
+              loupe.style.height = '150px';
+            }
+          });
+          
+          lightbox.addEventListener('mouseup', () => {
+            loupeExpanded = false;
+            if (loupe) {
+              loupe.classList.remove('expanded');
+              loupe.style.width = '';
+              loupe.style.height = '';
+            }
+          });
+          
+          lightbox.addEventListener('mouseleave', () => { 
+            if (loupe) loupe.classList.remove('visible', 'expanded');
+            loupeExpanded = false;
+          });
+          
           lightbox.addEventListener('mousemove', (e) => {
             if (!lightbox.classList.contains('tattoo-view') || !lightbox.classList.contains('open')) return;
+            // Ensure mouse position is correctly mapped to image coordinates
             const img = lightbox.querySelector('img');
             if (!img || !img.complete || !img.naturalWidth) return;
             const r = img.getBoundingClientRect();
@@ -1638,40 +2716,91 @@
               if (loupe) loupe.classList.remove('visible');
               return;
             }
+            // Calculate exact position within the displayed image
             const relX = (e.clientX - r.left) / r.width;
             const relY = (e.clientY - r.top) / r.height;
+            // Map to natural image coordinates
             const px = relX * img.naturalWidth;
             const py = relY * img.naturalHeight;
-            const zoom = 2;
-            const sampleSize = 50;
+            // Zoom levels
+            const zoom = loupeExpanded ? 2 : 1.3;
+            const sampleSize = loupeExpanded ? 50 : 77;
+            // Calculate sample area centered on mouse position
             const sx = Math.max(0, Math.min(img.naturalWidth - sampleSize, px - sampleSize / 2));
             const sy = Math.max(0, Math.min(img.naturalHeight - sampleSize, py - sampleSize / 2));
             const ctx = loupeCanvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, 100, 100);
             ctx.drawImage(img, sx, sy, sampleSize, sampleSize, 0, 0, 100, 100);
             positionLoupe(e, loupe);
             loupe.classList.add('visible');
           });
-          lightbox.addEventListener('mouseleave', () => { if (loupe) loupe.classList.remove('visible'); });
         }
         const lbImg = lightbox.querySelector('img');
+        const lbClose = lightbox.querySelector('.lightbox-close');
+
+        function positionTattooLightboxClose() {
+          if (!lightbox.classList.contains('open') || !lightbox.classList.contains('tattoo-view')) return;
+          if (!lbClose || !lbImg || !lbImg.complete || !lbImg.naturalWidth) return;
+          const imgRect = lbImg.getBoundingClientRect();
+          const inset = 8;
+          lbClose.style.top = Math.round(imgRect.top + inset) + 'px';
+          lbClose.style.right = Math.round((window.innerWidth - imgRect.right) + inset) + 'px';
+        }
+
+        function resetTattooLightboxClose() {
+          if (!lbClose) return;
+          lbClose.style.top = '';
+          lbClose.style.right = '';
+        }
+
+        if (!lightbox.dataset.tattooClosePinned) {
+          lightbox.dataset.tattooClosePinned = '1';
+          if (lbImg) {
+            lbImg.addEventListener('load', () => {
+              requestAnimationFrame(positionTattooLightboxClose);
+            });
+          }
+          if (lbClose) {
+            lbClose.addEventListener('click', () => {
+              resetTattooLightboxClose();
+            });
+          }
+          lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+              resetTattooLightboxClose();
+            }
+          });
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+              resetTattooLightboxClose();
+            }
+          });
+          window.addEventListener('resize', () => {
+            requestAnimationFrame(positionTattooLightboxClose);
+          });
+        }
+
         document.getElementById('tattoosGallery').querySelectorAll('.gallery-item').forEach(item => {
           item.addEventListener('click', () => {
             lbImg.src = item.dataset.src;
             lightbox.classList.add('open', 'tattoo-view');
+            requestAnimationFrame(positionTattooLightboxClose);
           });
         });
       } else if (idx === 6) {
         sectionOverlay.classList.add('contact-modal');
         sectionContent.innerHTML = `
+          <button class="contact-modal-close" aria-label="Close">&times;</button>
+          <h2 class="contact-title">CONTACT</h2>
           <form class="contact-form" id="contactForm">
             <div class="form-step active" data-step="1">
-              <p class="form-prompt">Hey! What's your name?</p>
+              <p class="form-prompt"><span>Hey!</span><span>What's your name?</span></p>
               <input type="text" id="contactName" name="name" placeholder="Type here..." autocomplete="name">
-              <button type="button" class="form-btn" id="contactNext1">ÔåÆ</button>
+              <button type="button" class="form-btn" id="contactNext1">Next</button>
             </div>
             <div class="form-step" data-step="2">
-              <p class="form-prompt">Nice to meet you! How can we reach you?</p>
+              <p class="form-prompt"><span>Hello <span id="contactNameDisplay"></span> How can I contact you?</span></p>
               <input type="text" id="contactContact" name="contact" placeholder="Email or phone..." autocomplete="email">
               <button type="button" class="form-btn" id="contactNext2">ÔåÆ</button>
             </div>
@@ -1682,10 +2811,34 @@
             </div>
           </form>
         `;
+        const contactCloseBtn = sectionContent.querySelector('.contact-modal-close');
+        if (contactCloseBtn) {
+          contactCloseBtn.addEventListener('click', () => closeSection());
+          // Hover sound
+          contactCloseBtn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
         const form = document.getElementById('contactForm');
         const steps = form.querySelectorAll('.form-step');
         const next1 = document.getElementById('contactNext1');
         const next2 = document.getElementById('contactNext2');
+        // Add hover sound to contact Next buttons
+        [next1, next2].forEach(btn => {
+          if (btn) {
+            btn.addEventListener('mouseenter', () => {
+              const btnSound = document.getElementById('soundButtonHover');
+              if (btnSound && !siteMuted) {
+                btnSound.currentTime = 0;
+                btnSound.play().catch(() => {});
+              }
+            });
+          }
+        });
         const nameInput = document.getElementById('contactName');
         const contactInput = document.getElementById('contactContact');
         const dreamInput = document.getElementById('contactDream');
@@ -1694,9 +2847,12 @@
           if (stepIdx === 1 && !nameInput.value.trim()) return;
           if (stepIdx === 2 && !contactInput.value.trim()) return;
           steps.forEach((s, i) => s.classList.toggle('active', i === stepIdx));
-          if (stepIdx === 1) nameInput.focus();
-          else if (stepIdx === 2) contactInput.focus();
-          else if (stepIdx === 3) dreamInput.focus();
+          if (stepIdx === 1) {
+            const nameDisplay = document.getElementById('contactNameDisplay');
+            if (nameDisplay) nameDisplay.textContent = nameInput.value;
+            contactInput.focus();
+          }
+          else if (stepIdx === 2) dreamInput.focus();
         }
 
         next1.addEventListener('click', () => goToStep(1));
@@ -1725,6 +2881,17 @@
 
       requestAnimationFrame(() => {
         sectionOverlay.classList.add('expanding');
+        const t0 = performance.now();
+        console.log('%c[MODAL OPEN] rAF — expanding added, tracking transform for 600ms...', 'color: cyan; font-weight: bold');
+        console.log('  classes:', sectionOverlay.className);
+        console.log('  transition:', getComputedStyle(sectionOverlay).transitionProperty, getComputedStyle(sectionOverlay).transitionDuration);
+        const trackOpen = () => {
+          const elapsed = (performance.now() - t0).toFixed(0);
+          const cs = getComputedStyle(sectionOverlay);
+          console.log(`  [+${elapsed}ms] opacity:${cs.opacity} transform:${cs.transform}`);
+          if (performance.now() - t0 < 600) requestAnimationFrame(trackOpen);
+        };
+        requestAnimationFrame(trackOpen);
         const isModal =
           sectionOverlay.classList.contains('contact-modal') ||
           sectionOverlay.classList.contains('bio-modal') ||
@@ -1733,29 +2900,81 @@
           sectionOverlay.classList.contains('paintings-modal') ||
           sectionOverlay.classList.contains('tattoos-modal') ||
           sectionOverlay.classList.contains('cakes-modal');
-        if (isModal && modalBackdrop) {
-          modalBackdrop.classList.add('visible');
+        if (isModal) {
+          if (modalBackdrop) modalBackdrop.classList.add('visible');
         }
         document.querySelectorAll('.ring-btn').forEach(b => {
           b.style.opacity = '0';
           b.style.pointerEvents = 'none';
         });
+        
+        // Position couchClothes to align with modal bottom-left
+        function updateCouchClothesPosition() {
+          if (!couchClothes || !sectionOverlay.classList.contains('expanding')) return;
+          // Don't move character for STURMZX2 or cakes modals
+          if (sectionOverlay.classList.contains('sturmzx2-modal') || sectionOverlay.classList.contains('cakes-modal')) {
+            return;
+          }
+          
+          // Get actual modal position
+          const modalRect = sectionOverlay.getBoundingClientRect();
+          
+          // 5% left from modal left edge (was 10%, now 5% less)
+          const modalLeft = modalRect.left - (window.innerWidth * 0.05);
+          
+          // 10% down (was 5%, now 5% more)
+          const bottomOffset = (window.innerHeight - modalRect.bottom) - (window.innerHeight * 0.10);
+          
+          couchClothes.style.left = modalLeft + 'px';
+          couchClothes.style.bottom = bottomOffset + 'px';
+          couchClothes.style.top = 'auto';
+          couchClothes.style.transform = 'translate(0, 0)';
+        }
+        
+        // Wait for slide-in animation to finish before measuring modal position
+        setTimeout(updateCouchClothesPosition, 520);
+
+        // Update on window resize
+        window.addEventListener('resize', updateCouchClothesPosition);
+        
         // when modal finish sliding up, put couch behind it
-        if (!sectionOverlay.classList.contains('bio-modal')) {
+        if (!sectionOverlay.classList.contains('bio-modal') && !sectionOverlay.classList.contains('sturmzx2-modal') && !sectionOverlay.classList.contains('cakes-modal')) {
           setTimeout(() => {
             if (couchBtn) couchBtn.style.zIndex = '';
+            // tattoos modal is z-index 200000, keep couch above it
             if (couchClothes) couchClothes.style.zIndex = '';
           }, 520);
+        } else if (sectionOverlay.classList.contains('sturmzx2-modal') || sectionOverlay.classList.contains('cakes-modal')) {
+          // Keep character behind for STURMZX2 and cakes
+          if (couchBtn) couchBtn.style.zIndex = '1';
+          if (couchClothes) couchClothes.style.zIndex = '1';
         }
       });
 
       setTimeout(() => {
-        exitBtn.classList.add('visible');
+        if (!sectionOverlay.classList.contains('tattoos-modal') && !sectionOverlay.classList.contains('sturmzx2-modal') && !sectionOverlay.classList.contains('contact-modal') && !sectionOverlay.classList.contains('tarot-modal') && !sectionOverlay.classList.contains('bio-modal') && !sectionOverlay.classList.contains('cakes-modal')) {
+          exitBtn.classList.add('visible');
+        }
       }, 400);
     }
 
     function closeSection() {
       if (!sectionOpen) return;
+      
+      // Make couch visible and reset button to natural ring position
+      if (couchBtn) {
+        couchBtn.style.opacity = '1';
+        couchBtn.style.pointerEvents = 'auto';
+        couchBtn.style.transition = 'none';
+        couchBtn.style.left = '';
+        couchBtn.style.top = '';
+        couchBtn.style.transform = '';
+      }
+      
+      // Restore couchClothes to its natural position
+      if (couchClothes) {
+        positionCouchClothes();
+      }
       exitBtn.classList.remove('visible');
       if (sectionOverlay.classList.contains('bio-modal') && couchClothes) {
         couchClothes.src = 'img/oyestupida_clothes.png';
@@ -1763,6 +2982,9 @@
         if (couchBtn) couchBtn.style.zIndex = '';
         if (couchClothes) couchClothes.style.zIndex = '';
         if (bioHoverSlide) bioHoverSlide.classList.remove('visible');
+        if (bioHoverSlide && bioHoverSlideHome && bioHoverSlide.parentElement !== bioHoverSlideHome) {
+          bioHoverSlideHome.appendChild(bioHoverSlide);
+        }
         if (toggleBtnWrap) toggleBtnWrap.style.display = '';
         if (muteBtnWrap) muteBtnWrap.style.display = '';
       }
@@ -1780,8 +3002,29 @@
       if (couchBtn) couchBtn.style.zIndex = '950';
       if (couchClothes) couchClothes.style.zIndex = '951';
 
-      // fade out
-      sectionOverlay.classList.remove('expanding');
+      // Freeze current size so it doesn't collapse when expanding class is removed
+      const rect = sectionOverlay.getBoundingClientRect();
+      sectionOverlay.style.width = rect.width + 'px';
+      sectionOverlay.style.height = rect.height + 'px';
+      sectionOverlay.style.top = '50%';
+      sectionOverlay.style.left = '50%';
+      // No inline transform — slideOutBottom animation owns it
+      
+      // Always slide out to bottom
+      sectionOverlay.classList.remove('expanding', 'slide-from-top', 'slide-from-bottom');
+      sectionOverlay.classList.add('slide-out-bottom');
+
+      const tClose = performance.now();
+      console.log('%c[MODAL CLOSE] slide-out-bottom added, tracking for 500ms...', 'color: orange; font-weight: bold');
+      console.log('  classes:', sectionOverlay.className);
+      console.log('  transition:', getComputedStyle(sectionOverlay).transitionProperty, getComputedStyle(sectionOverlay).transitionDuration);
+      const trackClose = () => {
+        const elapsed = (performance.now() - tClose).toFixed(0);
+        const cs = getComputedStyle(sectionOverlay);
+        console.log(`  [+${elapsed}ms] opacity:${cs.opacity} transform:${cs.transform}`);
+        if (performance.now() - tClose < 500) requestAnimationFrame(trackClose);
+      };
+      requestAnimationFrame(trackClose);
 
       // also clear any falling cakes when closing any modal
       const oldFalling = document.getElementById('fallingCakesContainer');
@@ -1795,11 +3038,13 @@
         b.style.pointerEvents = 'auto';
       });
 
+      // Wait for fade-out transition to complete before resetting styles
       setTimeout(() => {
         sectionOverlay.style.transition = 'none';
         sectionOverlay.style.opacity = '0';
-        sectionOverlay.classList.remove('contact-modal', 'bio-modal', 'sturmzx2-modal', 'tarot-modal', 'paintings-modal', 'tattoos-modal', 'cakes-modal');
+        sectionOverlay.classList.remove('contact-modal', 'bio-modal', 'sturmzx2-modal', 'tarot-modal', 'paintings-modal', 'tattoos-modal', 'cakes-modal', 'slide-out-top', 'slide-out-bottom');
         sectionOpen = false;
+        document.body.classList.remove('modal-open');
         document.querySelectorAll('.ring-btn').forEach(b => b.classList.remove('selected'));
         if (couchBtn) couchBtn.style.zIndex = '';
         if (couchClothes) couchClothes.style.zIndex = '';
@@ -1820,16 +3065,8 @@
       closeSection();
     });
 
-    if (cakesOrderBtn && cakesOrderOverlay && cakesOrderForm && cakesOrderCancel) {
-      cakesOrderBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        cakesOrderOverlay.classList.add('visible');
-        cakesOrderOverlay.setAttribute('aria-hidden', 'false');
-      });
+    if (cakesOrderOverlay && cakesOrderForm) {
 
-      const cakesOrderPrompt = document.getElementById('cakesOrderPrompt');
-      const cakesOrderNext = document.getElementById('cakesOrderNext');
-      const cakesOrderBack = document.getElementById('cakesOrderBack');
       const cakeName = document.getElementById('cakeName');
       const cakeInspiration = document.getElementById('cakeInspiration');
       const cakeColor1 = document.getElementById('cakeColor1');
@@ -1839,14 +3076,19 @@
       const cakeDate = document.getElementById('cakeDate');
 
       const cakeSteps = Array.from(cakesOrderForm.querySelectorAll('.cakes-order-step'));
-      const cakePrompts = [
-        "Hey! WhatÔÇÖs your name?",
-        "WhatÔÇÖs your inspiration for the cake? / mood / concept",
-        "Pick your 3 favorite colors for this cake",
-        "Any specific alimentary condition? or anything to add?",
-        "For when do you need the cake? (7 weeks before works for me.)"
-      ];
       let cakeStepIdx = 0;
+
+      if (cakesOrderBtn) {
+        cakesOrderBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          cakesOrderOverlay.classList.add('visible');
+          cakesOrderOverlay.setAttribute('aria-hidden', 'false');
+          cakesOrderForm.reset();
+          cakeStepIdx = 0;
+          setCakeStep(0);
+          if (cakeName) cakeName.focus();
+        });
+      }
 
       function colorNameFromHex(hex) {
         const h = (hex || '').trim().toLowerCase();
@@ -1872,9 +3114,6 @@
       function setCakeStep(nextIdx) {
         cakeStepIdx = Math.max(0, Math.min(cakeSteps.length - 1, nextIdx));
         cakeSteps.forEach((s, i) => s.classList.toggle('active', i === cakeStepIdx));
-        if (cakesOrderPrompt) cakesOrderPrompt.textContent = cakePrompts[cakeStepIdx] || '';
-        if (cakesOrderBack) cakesOrderBack.style.display = cakeStepIdx === 0 ? 'none' : '';
-        if (cakesOrderNext) cakesOrderNext.textContent = cakeStepIdx === cakeSteps.length - 1 ? 'Send' : 'ÔåÆ';
 
         const focusEl = [cakeName, cakeInspiration, cakeColor1, cakeConditions, cakeDate][cakeStepIdx];
         if (focusEl) setTimeout(() => focusEl.focus(), 80);
@@ -1887,57 +3126,86 @@
         return true;
       }
 
-      function openCakeOverlay() {
-        cakesOrderOverlay.classList.add('visible');
-        cakesOrderOverlay.setAttribute('aria-hidden', 'false');
-        setCakeStep(0);
-      }
-
-      cakesOrderCancel.addEventListener('click', (e) => {
-        e.stopPropagation();
-        cakesOrderOverlay.classList.remove('visible');
-        cakesOrderOverlay.setAttribute('aria-hidden', 'true');
-      });
-
-      cakesOrderOverlay.addEventListener('click', (e) => {
-        if (e.target === cakesOrderOverlay) {
+      // Close button handler
+      const cakesOrderClose = cakesOrderOverlay.querySelector('.cakes-order-close');
+      if (cakesOrderClose) {
+        cakesOrderClose.addEventListener('click', (e) => {
+          e.stopPropagation();
           cakesOrderOverlay.classList.remove('visible');
           cakesOrderOverlay.setAttribute('aria-hidden', 'true');
+        });
+      }
+
+      // All Next buttons - attach to specific IDs
+      const cakesOrderNext1 = document.getElementById('cakesOrderNext1');
+      const cakesOrderNext2 = document.getElementById('cakesOrderNext2');
+      const cakesOrderNext3 = document.getElementById('cakesOrderNext3');
+      const cakesOrderNext4 = document.getElementById('cakesOrderNext4');
+
+      // Add hover sound to cakes order Next buttons
+      [cakesOrderNext1, cakesOrderNext2, cakesOrderNext3, cakesOrderNext4].forEach(btn => {
+        if (btn) {
+          btn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
         }
       });
 
-      if (cakesOrderBtn) {
-        cakesOrderBtn.addEventListener('click', (e) => {
+      if (cakesOrderNext1) {
+        cakesOrderNext1.addEventListener('click', (e) => {
           e.stopPropagation();
-          openCakeOverlay();
-        });
-      }
-
-      if (cakesOrderBack) {
-        cakesOrderBack.addEventListener('click', (e) => {
-          e.stopPropagation();
-          setCakeStep(cakeStepIdx - 1);
-        });
-      }
-
-      if (cakesOrderNext) {
-        cakesOrderNext.addEventListener('click', (e) => {
-          e.stopPropagation();
+          e.preventDefault();
           if (!validateCakeStep()) return;
-          if (cakeStepIdx < cakeSteps.length - 1) setCakeStep(cakeStepIdx + 1);
-          else cakesOrderForm.requestSubmit();
+          setCakeStep(1);
         });
       }
 
+      if (cakesOrderNext2) {
+        cakesOrderNext2.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateCakeStep()) return;
+          setCakeStep(2);
+        });
+      }
+
+      if (cakesOrderNext3) {
+        cakesOrderNext3.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateCakeStep()) return;
+          setCakeStep(3);
+        });
+      }
+
+      if (cakesOrderNext4) {
+        cakesOrderNext4.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateCakeStep()) return;
+          setCakeStep(4);
+        });
+      }
+
+      // Enter key on inputs
       [cakeName, cakeInspiration, cakeConditions].filter(Boolean).forEach((el) => {
         el.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' && !(el.tagName === 'TEXTAREA' && e.shiftKey)) {
             e.preventDefault();
-            if (cakesOrderNext) cakesOrderNext.click();
+            e.stopPropagation();
+            if (!validateCakeStep()) return;
+            if (cakeStepIdx < cakeSteps.length - 1) {
+              setCakeStep(cakeStepIdx + 1);
+            }
           }
         });
       });
 
+      // Form submit
       cakesOrderForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!validateCakeStep()) return;
@@ -1967,6 +3235,300 @@
 
       // init
       setCakeStep(0);
+    }
+
+    if (tarotReadingOverlay && tarotReadingForm) {
+      const tarotReadingName = document.getElementById('tarotReadingName');
+      const tarotReadingTopic = document.getElementById('tarotReadingTopic');
+      const tarotReadingBirth = document.getElementById('tarotReadingBirth');
+      const tarotReadingQuestion = document.getElementById('tarotReadingQuestion');
+      const tarotReadingContact = document.getElementById('tarotReadingContact');
+
+      const tarotReadingSteps = Array.from(tarotReadingForm.querySelectorAll('.tarot-reading-step'));
+      let tarotReadingStepIdx = 0;
+
+      function setTarotReadingStep(nextIdx) {
+        tarotReadingStepIdx = Math.max(0, Math.min(tarotReadingSteps.length - 1, nextIdx));
+        tarotReadingSteps.forEach((step, i) => step.classList.toggle('active', i === tarotReadingStepIdx));
+        const focusEl = [tarotReadingName, tarotReadingTopic, tarotReadingBirth, tarotReadingQuestion, tarotReadingContact][tarotReadingStepIdx];
+        if (focusEl) setTimeout(() => focusEl.focus(), 80);
+      }
+
+      function validateTarotReadingStep() {
+        if (tarotReadingStepIdx === 0) return tarotReadingName && tarotReadingName.value.trim().length > 0;
+        if (tarotReadingStepIdx === 1) return tarotReadingTopic && tarotReadingTopic.value.trim().length > 0;
+        if (tarotReadingStepIdx === 2) return tarotReadingBirth && tarotReadingBirth.value;
+        if (tarotReadingStepIdx === 3) return tarotReadingQuestion && tarotReadingQuestion.value.trim().length > 0;
+        if (tarotReadingStepIdx === 4) return tarotReadingContact && tarotReadingContact.value.trim().length > 0;
+        return true;
+      }
+
+      function openTarotReadingForm() {
+        tarotReadingOverlay.classList.add('visible');
+        tarotReadingOverlay.setAttribute('aria-hidden', 'false');
+        tarotReadingForm.reset();
+        tarotReadingStepIdx = 0;
+        setTarotReadingStep(0);
+        if (tarotReadingName) tarotReadingName.focus();
+      }
+
+      window.openTarotReadingForm = openTarotReadingForm;
+
+      const tarotReadingClose = tarotReadingOverlay.querySelector('.tarot-reading-close');
+      if (tarotReadingClose) {
+        tarotReadingClose.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tarotReadingOverlay.classList.remove('visible');
+          tarotReadingOverlay.setAttribute('aria-hidden', 'true');
+        });
+      }
+
+      const tarotReadingNext1 = document.getElementById('tarotReadingNext1');
+      const tarotReadingNext2 = document.getElementById('tarotReadingNext2');
+      const tarotReadingNext3 = document.getElementById('tarotReadingNext3');
+      const tarotReadingNext4 = document.getElementById('tarotReadingNext4');
+
+      [tarotReadingNext1, tarotReadingNext2, tarotReadingNext3, tarotReadingNext4].forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('mouseenter', () => {
+          const btnSound = document.getElementById('soundButtonHover');
+          if (btnSound && !siteMuted) {
+            btnSound.currentTime = 0;
+            btnSound.play().catch(() => {});
+          }
+        });
+      });
+
+      if (tarotReadingNext1) {
+        tarotReadingNext1.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTarotReadingStep()) return;
+          setTarotReadingStep(1);
+        });
+      }
+
+      if (tarotReadingNext2) {
+        tarotReadingNext2.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTarotReadingStep()) return;
+          setTarotReadingStep(2);
+        });
+      }
+
+      if (tarotReadingNext3) {
+        tarotReadingNext3.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTarotReadingStep()) return;
+          setTarotReadingStep(3);
+        });
+      }
+
+      if (tarotReadingNext4) {
+        tarotReadingNext4.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTarotReadingStep()) return;
+          setTarotReadingStep(4);
+        });
+      }
+
+      [tarotReadingName, tarotReadingQuestion, tarotReadingContact].filter(Boolean).forEach((el) => {
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !(el.tagName === 'TEXTAREA' && e.shiftKey)) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!validateTarotReadingStep()) return;
+            if (tarotReadingStepIdx < tarotReadingSteps.length - 1) {
+              setTarotReadingStep(tarotReadingStepIdx + 1);
+            }
+          }
+        });
+      });
+
+      tarotReadingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validateTarotReadingStep()) return;
+
+        const body = [
+          `Name: ${tarotReadingName ? tarotReadingName.value.trim() : ''}`,
+          `Guidance area: ${tarotReadingTopic ? tarotReadingTopic.value : ''}`,
+          `Birth date: ${tarotReadingBirth ? tarotReadingBirth.value : ''}`,
+          `Question: ${tarotReadingQuestion ? tarotReadingQuestion.value.trim() : ''}`,
+          `Contact: ${tarotReadingContact ? tarotReadingContact.value.trim() : ''}`
+        ].join('\n');
+
+        window.location.href = `mailto:?subject=${encodeURIComponent('Tarot reading request')}&body=${encodeURIComponent(body)}`;
+
+        tarotReadingForm.innerHTML = `
+          <h3>Reading request received</h3>
+          <p>Thanks for sharing your questions. I will contact you soon.</p>
+        `;
+      });
+
+      setTarotReadingStep(0);
+    }
+
+    /* ---------- Tattoo Order Form ---------- */
+    const tattooOrderOverlay = document.getElementById('tattooOrderOverlay');
+    const tattooOrderForm = document.getElementById('tattooOrderForm');
+    if (tattooOrderOverlay && tattooOrderForm) {
+      const tattooSteps = Array.from(tattooOrderForm.querySelectorAll('.tattoo-order-step'));
+      let tattooStepIdx = 0;
+
+      const tattooName = document.getElementById('tattooName');
+      const tattooContact = document.getElementById('tattooContact');
+      const tattooDesign = document.getElementById('tattooDesign');
+      const tattooSize = document.getElementById('tattooSize');
+      const tattooArea = document.getElementById('tattooArea');
+
+      function setTattooStep(nextIdx) {
+        tattooStepIdx = Math.max(0, Math.min(tattooSteps.length - 1, nextIdx));
+        tattooSteps.forEach((s, i) => s.classList.toggle('active', i === tattooStepIdx));
+
+        const focusEl = [tattooName, tattooContact, tattooDesign, tattooSize, tattooArea, null][tattooStepIdx];
+        if (focusEl) setTimeout(() => focusEl.focus(), 80);
+      }
+
+      function validateTattooStep() {
+        if (tattooStepIdx === 0) return tattooName && tattooName.value.trim().length > 0;
+        if (tattooStepIdx === 1) return tattooContact && tattooContact.value.trim().length > 0;
+        if (tattooStepIdx === 2) return tattooDesign && tattooDesign.value.trim().length > 0;
+        if (tattooStepIdx === 3) return tattooSize && tattooSize.value;
+        if (tattooStepIdx === 4) return tattooArea && tattooArea.value.trim().length > 0;
+        return true;
+      }
+
+      // Close button handler
+      const tattooOrderClose = tattooOrderOverlay.querySelector('.tattoo-order-close');
+      if (tattooOrderClose) {
+        tattooOrderClose.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tattooOrderOverlay.classList.remove('visible');
+          tattooOrderOverlay.setAttribute('aria-hidden', 'true');
+        });
+        // Hover sound
+        tattooOrderClose.addEventListener('mouseenter', () => {
+          const btnSound = document.getElementById('soundButtonHover');
+          if (btnSound && !siteMuted) {
+            btnSound.currentTime = 0;
+            btnSound.play().catch(() => {});
+          }
+        });
+      }
+
+      // Overlay click to close
+      tattooOrderOverlay.addEventListener('click', (e) => {
+        if (e.target === tattooOrderOverlay) {
+          tattooOrderOverlay.classList.remove('visible');
+          tattooOrderOverlay.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      // All Next buttons
+      const tattooOrderNext1 = document.getElementById('tattooOrderNext1');
+      const tattooOrderNext2 = document.getElementById('tattooOrderNext2');
+      const tattooOrderNext3 = document.getElementById('tattooOrderNext3');
+      const tattooOrderNext4 = document.getElementById('tattooOrderNext4');
+      const tattooOrderNext5 = document.getElementById('tattooOrderNext5');
+
+      // Add hover sound to tattoo order Next buttons
+      [tattooOrderNext1, tattooOrderNext2, tattooOrderNext3, tattooOrderNext4, tattooOrderNext5].forEach(btn => {
+        if (btn) {
+          btn.addEventListener('mouseenter', () => {
+            const btnSound = document.getElementById('soundButtonHover');
+            if (btnSound && !siteMuted) {
+              btnSound.currentTime = 0;
+              btnSound.play().catch(() => {});
+            }
+          });
+        }
+      });
+
+      if (tattooOrderNext1) {
+        tattooOrderNext1.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTattooStep()) return;
+          setTattooStep(1);
+        });
+      }
+
+      if (tattooOrderNext2) {
+        tattooOrderNext2.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTattooStep()) return;
+          setTattooStep(2);
+        });
+      }
+
+      if (tattooOrderNext3) {
+        tattooOrderNext3.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTattooStep()) return;
+          setTattooStep(3);
+        });
+      }
+
+      if (tattooOrderNext4) {
+        tattooOrderNext4.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTattooStep()) return;
+          setTattooStep(4);
+        });
+      }
+
+      if (tattooOrderNext5) {
+        tattooOrderNext5.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!validateTattooStep()) return;
+          setTattooStep(5);
+        });
+      }
+
+      // Enter key on inputs
+      [tattooName, tattooContact, tattooDesign, tattooArea].filter(Boolean).forEach((el) => {
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !(el.tagName === 'TEXTAREA' && e.shiftKey)) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!validateTattooStep()) return;
+            if (tattooStepIdx < tattooSteps.length - 1) {
+              setTattooStep(tattooStepIdx + 1);
+            }
+          }
+        });
+      });
+
+      // Form submit
+      tattooOrderForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validateTattooStep()) return;
+
+        const colorValue = tattooOrderForm.querySelector('input[name="color"]:checked')?.value || 'black';
+        const body = [
+          `Name: ${tattooName ? tattooName.value.trim() : ''}`,
+          `Contact: ${tattooContact ? tattooContact.value.trim() : ''}`,
+          `Design: ${tattooDesign ? tattooDesign.value.trim() : ''}`,
+          `Size: ${tattooSize ? tattooSize.value : ''}`,
+          `Area: ${tattooArea ? tattooArea.value.trim() : ''}`,
+          `Color preference: ${colorValue}`
+        ].join('\n');
+
+        // Opens user email client with prefilled text
+        window.location.href = `mailto:?subject=${encodeURIComponent('Tattoo inquiry')}&body=${encodeURIComponent(body)}`;
+
+        tattooOrderForm.innerHTML = `
+          <h3>Request received</h3>
+          <p>Thanks for your tattoo inquiry! I'll get back to you soon.</p>
+        `;
+      });
     }
 
     /* ---------- Instagram icons (Tattoo / Visual Art) ---------- */
@@ -2007,6 +3569,8 @@
 
       if (!sectionOpen) {
         for (const b of ringButtons) {
+          // Skip exploded buttons - they should not block balls
+          if (explodedButtons.has(b.el)) continue;
           const r = b.el.getBoundingClientRect();
           const cx = r.left + r.width / 2;
           const cy = r.top + r.height / 2;
@@ -2025,6 +3589,40 @@
         const dist = Math.hypot(ballCx - cx, ballCy - cy);
         if (dist < r.width / 2 + ballSize / 2) {
           return { el: link, press: () => window.open(link.href, '_blank') };
+        }
+      }
+
+      // Check frame collision
+      if (frameBtn && !explodedButtons.has(frameBtn)) {
+        const r = frameBtn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(ballCx - cx, ballCy - cy);
+        if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2) {
+          return { el: frameBtn, press: null, isFrame: true };
+        }
+      }
+
+      // Check couch collision
+      if (couchBtn && !explodedButtons.has(couchBtn)) {
+        const r = couchBtn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(ballCx - cx, ballCy - cy);
+        if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2) {
+          return { el: couchBtn, press: null, isCouch: true };
+        }
+      }
+
+      // Check logo collision
+      const logoEl = document.getElementById('siteLogoImg');
+      if (logoEl) {
+        const r = logoEl.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(ballCx - cx, ballCy - cy);
+        if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2) {
+          return { el: logoEl, press: null, isLogo: true };
         }
       }
 
@@ -2061,8 +3659,84 @@
       return null;
     }
 
+    /* ---------- Button explosion system ---------- */
+    const buttonHitCounts = new WeakMap();
+    const BUTTON_HITS_TO_EXPLODE = 20;
+    const explodedButtons = new Set();
+
+    // Drop clothes animation when couch explodes
+    function dropClothes() {
+      const clothes = document.getElementById('couchClothes');
+      if (!clothes) return;
+      const currentTop = parseInt(getComputedStyle(clothes).top) || 0;
+      clothes.style.transition = 'top 0.5s ease-out';
+      clothes.style.top = (currentTop + 100) + 'px';
+    }
+
+    function createExplosion(x, y) {
+      const particleCount = 20;
+      const colors = ['green', 'pink', 'white'];
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particle.className = `explosion-particle ${color}`;
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const distance = 100 + Math.random() * 80;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+
+        particle.style.setProperty('--tx', `${tx}px`);
+        particle.style.setProperty('--ty', `${ty}px`);
+        particle.style.animation = `particleFly 0.7s ease-out forwards`;
+
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 700);
+      }
+    }
+
+    function explodeButton(el) {
+      if (explodedButtons.has(el)) return;
+      explodedButtons.add(el);
+
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      // Play explosion sound, create particles, and start button animation simultaneously
+      const explodeSound = document.getElementById('soundExplodes');
+      if (explodeSound && !siteMuted) {
+        explodeSound.volume = 0.8;
+        explodeSound.currentTime = 0;
+        explodeSound.play().catch(() => {});
+      }
+
+      createExplosion(cx, cy);
+      el.classList.add('btn-exploding');
+      el.style.visibility = 'hidden';
+      el.style.pointerEvents = 'none';
+    }
+
+    function trackButtonHit(el) {
+      if (explodedButtons.has(el)) return false;
+
+      const currentHits = (buttonHitCounts.get(el) || 0) + 1;
+      buttonHitCounts.set(el, currentHits);
+
+      if (currentHits >= BUTTON_HITS_TO_EXPLODE) {
+        explodeButton(el);
+        return true;
+      }
+      return false;
+    }
+
     /* ---------- Shooting balls ---------- */
     const gunSound = document.getElementById('soundGun');
+    const MAX_BALLS = 15;
+    const activeBalls = [];
 
     function shootBall(startX, startY) {
       if (gunSound && !siteMuted) {
@@ -2082,9 +3756,20 @@
       ball.innerHTML = '<img src="ball.png" alt="">';
       document.body.appendChild(ball);
 
+      // Add to active balls and manage limit
+      activeBalls.push(ball);
+      if (activeBalls.length > MAX_BALLS) {
+        const oldestBall = activeBalls.shift();
+        if (oldestBall && oldestBall.parentNode) {
+          oldestBall.style.transition = 'opacity 0.5s ease-out';
+          oldestBall.style.opacity = '0';
+          setTimeout(() => oldestBall.remove(), 500);
+        }
+      }
+
       const fireAngle = effectiveShootAngle() + (Math.random() - 0.5) * 0.08;
       const speed = 35 + Math.random() * 8;
-      const ballSize = 14;
+      const ballSize = 10;
       let bx = startX - ballSize / 2;
       let by = startY - ballSize / 2;
       let vx = Math.cos(fireAngle) * speed;
@@ -2113,14 +3798,34 @@
         ball.style.top = by + 'px';
         ball.style.transform = `rotate(${life * 8}deg)`;
 
-        const currentSpeed = Math.sqrt(vx * vx + vy * vy);
-
         const hit = checkAllCollisions(bx, by, ballSize);
         if (hit) {
-          // Visual flash only ÔÇö no action triggered
+          // Track hits on buttons, frame, and couch for explosion effect
+          if (hit.el && (hit.el.classList.contains('ring-btn') || hit.isFrame || hit.isCouch)) {
+            console.log('Hit detected:', hit.el.id || hit.el.className, 'isFrame:', hit.isFrame, 'isCouch:', hit.isCouch);
+            const didExplode = trackButtonHit(hit.el);
+            // If couch exploded, make clothes fall
+            if (didExplode && hit.isCouch) {
+              dropClothes();
+            }
+          }
+
+          // Visual flash only — no action triggered
           hit.el.classList.remove('hit');
           void hit.el.offsetWidth;
           hit.el.classList.add('hit');
+
+          // Logo hit - trigger green blink effect
+          if (hit.isLogo && hit.el.id === 'siteLogoImg') {
+            hit.el.classList.remove('hit');
+            void hit.el.offsetWidth;
+            hit.el.classList.add('hit');
+            // Remove hit class after animation completes
+            setTimeout(() => {
+              hit.el.classList.remove('hit');
+            }, 300);
+          }
+
           // Reflect velocity off the element's surface normal
           const r = hit.el.getBoundingClientRect();
           const ecx = r.left + r.width / 2;
@@ -2141,7 +3846,7 @@
           by = ecy + ndy * minDist - ballSize / 2;
         }
 
-        // Rat collision ÔÇö skip while any modal is open
+        // Rat collision — skip while any modal is open
         const ratEl = !sectionOpen ? document.getElementById('site-rat') : null;
         if (ratEl) {
           const rr = ratEl.getBoundingClientRect();
@@ -2151,6 +3856,14 @@
               by + ballSize > rr.top  && by < rr.bottom &&
               now - ratHitAt > 1000) {
             ratHitAt = now;
+            window.dispatchEvent(new Event('rat-hit'));
+            // Play rat speaks sound (louder volume)
+            const ratSound = document.getElementById('soundRatSpeaks');
+            if (ratSound && !siteMuted) {
+              ratSound.volume = 1.0;
+              ratSound.currentTime = 0;
+              ratSound.play().catch(() => {});
+            }
             // Bounce off rat
             const ecx = rr.left + rr.width / 2;
             const ecy = rr.top  + rr.height / 2;
@@ -2181,20 +3894,27 @@
       requestAnimationFrame(animate);
     }
 
-    // Single click ÔÇö one shot
+    // Single click — one shot
     document.body.addEventListener('click', (e) => {
       if (draggingHot || draggingVec) return;
       if (isDraggingUI || Date.now() - lastDragEnd < 120) return;
-      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn')) return;
+      if (sectionOpen) return;
+      // Disable shooting in tattoo lightbox
+      const lightbox = document.getElementById('paintingsLightbox');
+      if (lightbox && lightbox.classList.contains('tattoo-view')) return;
+      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn') || e.target.closest('.gallery-item')) return;
       shootBall(e.clientX, e.clientY);
     });
 
-    // Hold ÔÇö uzi mode
+    // Hold — uzi mode
     let uziInterval = null;
     const UZI_RATE_MS = 80; // ~12 shots/sec
 
     document.body.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return;
+      // Disable uzi mode in tattoo lightbox
+      const lightbox = document.getElementById('paintingsLightbox');
+      if (lightbox && lightbox.classList.contains('tattoo-view')) return;
       if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn')) return;
       // Only start uzi after holding 200ms so a quick click stays a single shot
       const holdStart = Date.now();
@@ -2370,6 +4090,10 @@
         buffer.push({ x: e.clientX, y: e.clientY, t: now });
         while (buffer.length > 0 && buffer[0].t < now - 400) buffer.shift();
 
+        // Update green dot cursor position for mobile
+        document.body.style.setProperty('--cursor-x', e.clientX + 'px');
+        document.body.style.setProperty('--cursor-y', e.clientY + 'px');
+
         if (isShaking()) {
           if (shakeStartTime == null) shakeStartTime = now;
           else if (now - shakeStartTime >= SHAKE_DURATION_MS) {
@@ -2385,7 +4109,8 @@
     let laserHoverEl = null;
     (function animateLaser() {
       const inTattoosGallery = sectionOverlay.classList.contains('tattoos-modal') && sectionOverlay.classList.contains('expanding');
-      if (inTattoosGallery || !laserActive) {
+      const showGreenDot = sectionOpen || window.innerWidth <= 768;
+      if (inTattoosGallery || !laserActive || showGreenDot) {
         laserLine.setAttribute('opacity', '0');
         laserDot.setAttribute('opacity', '0');
         if (laserHoverEl) {
@@ -2427,25 +4152,54 @@
   </script>
 
   <!-- RAT -->
-  <img id="site-rat" src="img/rat.png" alt=""
-    style="
-      position: fixed;
-      top: 0;
-      left: -120px;
-      width: 80px;
-      height: auto;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      image-rendering: pixelated;
-    "
-  >
+  <div id="site-rat-wrap" style="
+    position: fixed;
+    top: -20px;
+    left: -120px;
+    width: 78px;
+    height: 78px;
+    z-index: 2500;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    overflow: hidden;
+  ">
+    <img id="site-rat" src="img/rat.png" alt=""
+      style="
+        width: 80px;
+        height: auto;
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        image-rendering: pixelated;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+        outline: none;
+        border: none;
+        background: transparent;
+        will-change: transform;
+        clip-path: inset(1px);
+        filter: drop-shadow(0 0 0 transparent);
+      "
+    >
+  </div>
   <script>
     (function() {
+      const ratWrap = document.getElementById('site-rat-wrap');
       const rat = document.getElementById('site-rat');
+      const RAT_NORMAL_SRC = 'img/rat.png';
+      const RAT_FLY_SRC = 'img/rat_fly.png';
+      const RAT_HITS_TO_FLY = 6;
+      const RAT_OUT_MS = 5000;
       const speed = 0.5;
+      const flySpeedX = 6.5;
+      const flySpeedY = 8.5;
+      const fallGravity = 0.45;
       let x, y, dirX, dirY, running = false;
+      let ratHits = 0;
+      let ratMode = 'normal';
+      let outUntil = 0;
+      let fallVy = 0;
 
       function initPos() {
         const rw = rat.offsetWidth || 80;
@@ -2455,7 +4209,32 @@
         y = vh - rh;         // start at floor
         dirX = 1;
         dirY = -1;           // initially drifting up
+        rat.src = RAT_NORMAL_SRC;
+        ratMode = 'normal';
+        ratHits = 0;
       }
+
+      function triggerRatFlight() {
+        if (ratMode !== 'normal') return;
+        ratMode = 'fly-out';
+        ratHits = 0;
+        rat.src = RAT_FLY_SRC;
+        // Play rat fly sound
+        const ratFlySound = document.getElementById('soundRatFly');
+        if (ratFlySound && !siteMuted) {
+          ratFlySound.volume = 1.0;
+          ratFlySound.currentTime = 0;
+          ratFlySound.play().catch(() => {});
+        }
+      }
+
+      window.addEventListener('rat-hit', () => {
+        if (ratMode !== 'normal') return;
+        ratHits += 1;
+        if (ratHits > RAT_HITS_TO_FLY) {
+          triggerRatFlight();
+        }
+      });
 
       const overlay = document.getElementById('sectionOverlay');
 
@@ -2463,28 +4242,64 @@
         if (!running) return;
 
         const modalOpen = overlay && overlay.classList.contains('expanding');
-        rat.style.opacity = modalOpen ? '0' : '1';
+        ratWrap.style.opacity = modalOpen ? '0' : '1';
 
-        if (!modalOpen) {
-          const rw = rat.offsetWidth || 80;
-          const rh = rat.offsetHeight || 50;
-          const vw = window.innerWidth;
-          const vh = window.innerHeight;
-          const floorY  = vh - rh;
-          const ceilY   = vh * 0.75 - rh;
+        const rw = rat.offsetWidth || 80;
+        const rh = rat.offsetHeight || 50;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const floorY  = vh - rh;
+        const ceilY   = vh * 0.9 - rh;  // top limit is 90% down (bottom 10% slice only)
 
-          x += speed * dirX;
-          y += speed * 0.4 * dirY;
+        if (ratMode === 'normal') {
+          if (!modalOpen) {
+            x += speed * dirX;
+            y += speed * 0.4 * dirY;
 
-          if (dirX === 1  && x > vw + 10)   { x = vw + 10;  dirX = -1; }
-          if (dirX === -1 && x < -rw - 10)  { x = -rw - 10; dirX = 1; }
+            if (dirX === 1  && x > vw + 10)   { x = vw + 10;  dirX = -1; }
+            if (dirX === -1 && x < -rw - 10)  { x = -rw - 10; dirX = 1; }
 
-          if (y < ceilY)  { y = ceilY;  dirY = 1; }
-          if (y > floorY) { y = floorY; dirY = -1; }
+            if (y < ceilY)  { y = ceilY;  dirY = 1; }
+            if (y > floorY) { y = floorY; dirY = -1; }
 
-          rat.style.left = x + 'px';
-          rat.style.top  = y + 'px';
-          rat.style.transform = dirX === 1 ? 'scaleX(-1)' : 'scaleX(1)';
+            ratWrap.style.left = x + 'px';
+            ratWrap.style.top  = y + 'px';
+            rat.style.transform = dirX === 1 ? 'scaleX(-1)' : 'scaleX(1)';
+          }
+        } else if (ratMode === 'fly-out') {
+          x += flySpeedX * dirX;
+          y -= flySpeedY;
+          ratWrap.style.left = x + 'px';
+          ratWrap.style.top  = y + 'px';
+          rat.style.transform = (dirX === 1 ? 'scaleX(-1)' : 'scaleX(1)') + ' rotate(-20deg)';
+
+          if (y + rh < -120) {
+            ratMode = 'out-wait';
+            outUntil = performance.now() + RAT_OUT_MS;
+          }
+        } else if (ratMode === 'out-wait') {
+          ratWrap.style.opacity = '0';
+          if (performance.now() >= outUntil) {
+            ratMode = 'falling';
+            fallVy = 0;
+            y = -rh - 30;
+            x = Math.min(Math.max(20, x), vw - rw - 20);
+          }
+        } else if (ratMode === 'falling') {
+          fallVy += fallGravity;
+          y += fallVy;
+          ratWrap.style.left = x + 'px';
+          ratWrap.style.top  = y + 'px';
+          rat.style.transform = (dirX === 1 ? 'scaleX(-1)' : 'scaleX(1)') + ' rotate(12deg)';
+
+          if (y >= floorY) {
+            y = floorY;
+            ratMode = 'normal';
+            fallVy = 0;
+            dirY = -1;
+            rat.src = RAT_NORMAL_SRC;
+            rat.style.transform = dirX === 1 ? 'scaleX(-1)' : 'scaleX(1)';
+          }
         }
 
         requestAnimationFrame(stepRat);
@@ -2492,12 +4307,304 @@
 
       setTimeout(function() {
         initPos();
-        rat.style.opacity = '1';
+        ratWrap.style.opacity = '1';
         running = true;
         requestAnimationFrame(stepRat);
       }, 2000);
     })();
+
+    /* ---------- Modal title click - WHAT? effect ---------- */
+    (function initTitleClickEffect() {
+      // Use event delegation to handle clicks on any .gallery-title element
+      document.addEventListener('click', (e) => {
+        const title = e.target.closest('.gallery-title');
+        if (!title) return;
+        if (title.dataset.changing) return; // Already changing
+
+        const originalText = title.textContent;
+        title.dataset.changing = 'true';
+        title.textContent = 'WHAT?';
+
+        setTimeout(() => {
+          title.textContent = originalText;
+          delete title.dataset.changing;
+        }, 1500);
+      });
+    })();
   </script>
+
+  <!-- Preloader Handler -->
+  <script>
+    (function() {
+      const preloader = document.getElementById('preloader');
+      
+      function hidePreloader() {
+        if (preloader) {
+          preloader.classList.add('hidden');
+          // Remove from DOM after transition completes
+          setTimeout(() => {
+            if (preloader && preloader.parentNode) {
+              preloader.parentNode.removeChild(preloader);
+            }
+          }, 500);
+        }
+      }
+      
+      // Hide preloader when window loads
+      if (document.readyState === 'complete') {
+        hidePreloader();
+      } else {
+        window.addEventListener('load', hidePreloader);
+        // Fallback: hide after max 3 seconds regardless
+        setTimeout(hidePreloader, 3000);
+      }
+    })();
+  </script>
+
+  <!-- Dithering Shader -->
+  <script>
+    (function() {
+      const canvas = document.getElementById('ditherCanvas');
+      const toggle = document.getElementById('ditherToggle');
+      const slider = document.getElementById('ditherIntensity');
+      const value = document.getElementById('ditherValue');
+      const controls = document.querySelector('.dither-controls');
+      
+      let gl = null;
+      let program = null;
+      let intensityLocation = null;
+      let isActive = false;
+      let intensity = 0;
+      
+      // Vertex shader
+      const vertexShaderSource = `
+        attribute vec2 a_position;
+        void main() {
+          gl_Position = vec4(a_position, 0.0, 1.0);
+        }
+      `;
+      
+      // Fragment shader - Bayer ordered dithering
+      const fragmentShaderSource = `
+        precision mediump float;
+        uniform float u_intensity;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        
+        // Bayer 4x4 matrix for ordered dithering
+        float bayer4x4(vec2 coord) {
+          vec2 bayerCoord = mod(floor(coord), 4.0);
+          int x = int(bayerCoord.x);
+          int y = int(bayerCoord.y);
+          
+          float bayer[16];
+          bayer[0] = 0.0;   bayer[1] = 8.0;   bayer[2] = 2.0;   bayer[3] = 10.0;
+          bayer[4] = 12.0;  bayer[5] = 4.0;   bayer[6] = 14.0;  bayer[7] = 6.0;
+          bayer[8] = 3.0;   bayer[9] = 11.0;  bayer[10] = 1.0;  bayer[11] = 9.0;
+          bayer[12] = 15.0; bayer[13] = 7.0;  bayer[14] = 13.0; bayer[15] = 5.0;
+          
+          int index = y * 4 + x;
+          float val = 0.0;
+          if (index == 0) val = bayer[0];
+          else if (index == 1) val = bayer[1];
+          else if (index == 2) val = bayer[2];
+          else if (index == 3) val = bayer[3];
+          else if (index == 4) val = bayer[4];
+          else if (index == 5) val = bayer[5];
+          else if (index == 6) val = bayer[6];
+          else if (index == 7) val = bayer[7];
+          else if (index == 8) val = bayer[8];
+          else if (index == 9) val = bayer[9];
+          else if (index == 10) val = bayer[10];
+          else if (index == 11) val = bayer[11];
+          else if (index == 12) val = bayer[12];
+          else if (index == 13) val = bayer[13];
+          else if (index == 14) val = bayer[14];
+          else if (index == 15) val = bayer[15];
+          
+          return val / 16.0;
+        }
+        
+        void main() {
+          vec2 coord = gl_FragCoord.xy;
+          float threshold = bayer4x4(coord);
+          
+          // Create scanline effect
+          float scanline = sin(coord.y * 0.5 + u_time * 2.0) * 0.1 + 0.9;
+          
+          // Output dither pattern with intensity
+          float pattern = threshold * scanline;
+          float alpha = pattern * u_intensity;
+          
+          // Black and white dither
+          vec3 color = vec3(0.0);
+          if (pattern > 0.5) {
+            color = vec3(1.0);
+          }
+          
+          gl_FragColor = vec4(color, alpha * 0.3);
+        }
+      `;
+      
+      function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      }
+      
+      function createProgram(gl, vertexShader, fragmentShader) {
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          console.error('Program link error:', gl.getProgramInfoLog(program));
+          gl.deleteProgram(program);
+          return null;
+        }
+        return program;
+      }
+      
+      function initGL() {
+        if (!canvas) return false;
+        
+        gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) {
+          console.warn('WebGL not supported, falling back to CSS dithering');
+          return false;
+        }
+        
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+        
+        if (!vertexShader || !fragmentShader) return false;
+        
+        program = createProgram(gl, vertexShader, fragmentShader);
+        if (!program) return false;
+        
+        // Set up geometry (full screen quad)
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+          -1, -1,
+           1, -1,
+          -1,  1,
+          -1,  1,
+           1, -1,
+           1,  1
+        ]), gl.STATIC_DRAW);
+        
+        const positionLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+        
+        intensityLocation = gl.getUniformLocation(program, 'u_intensity');
+        
+        // Enable blending for overlay effect
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        
+        resize();
+        return true;
+      }
+      
+      function resize() {
+        if (!gl) return;
+        const displayWidth = Math.floor(window.innerWidth);
+        const displayHeight = Math.floor(window.innerHeight);
+        
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+          canvas.width = displayWidth;
+          canvas.height = displayHeight;
+          gl.viewport(0, 0, displayWidth, displayHeight);
+        }
+      }
+      
+      let startTime = Date.now();
+      
+      function render() {
+        if (!isActive || !gl) return;
+        
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        
+        gl.useProgram(program);
+        
+        const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
+        const timeLocation = gl.getUniformLocation(program, 'u_time');
+        
+        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+        gl.uniform1f(timeLocation, (Date.now() - startTime) / 1000.0);
+        gl.uniform1f(intensityLocation, intensity / 100.0);
+        
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        
+        requestAnimationFrame(render);
+      }
+      
+      function updateDithering() {
+        if (intensity > 0) {
+          canvas.classList.add('active');
+          if (!isActive) {
+            isActive = true;
+            if (gl) render();
+          }
+        } else {
+          canvas.classList.remove('active');
+          isActive = false;
+        }
+        value.textContent = intensity + '%';
+      }
+      
+      // Event listeners
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          toggle.classList.toggle('active');
+          controls.classList.toggle('visible');
+          if (intensity === 0 && toggle.classList.contains('active')) {
+            intensity = 50;
+            slider.value = 50;
+            updateDithering();
+          } else if (!toggle.classList.contains('active')) {
+            intensity = 0;
+            slider.value = 0;
+            updateDithering();
+          }
+        });
+      }
+      
+      if (slider) {
+        slider.addEventListener('input', () => {
+          intensity = parseInt(slider.value);
+          if (intensity > 0) {
+            toggle.classList.add('active');
+          } else {
+            toggle.classList.remove('active');
+          }
+          updateDithering();
+        });
+      }
+      
+      window.addEventListener('resize', resize);
+      
+      // Initialize
+      if (initGL()) {
+        console.log('WebGL dithering initialized');
+      } else {
+        // CSS fallback for non-WebGL browsers
+        canvas.style.background = 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)';
+      }
+    })();
+  </script>
+
+  <!-- Analytics -->
+  <script src="analytics.js"></script>
 
 </body>
 </html>

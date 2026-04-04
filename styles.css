@@ -1,6 +1,205 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     *:focus { outline: none; }
 
+    /* ---------- Preloader ---------- */
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 999999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .preloader-content {
+      text-align: center;
+    }
+    .preloader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgba(255, 0, 192, 0.2);
+      border-top-color: #ff00c0;
+      border-radius: 50%;
+      animation: preloaderSpin 1s linear infinite;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 192, 0.3);
+    }
+    @keyframes preloaderSpin {
+      to { transform: rotate(360deg); }
+    }
+    .preloader-text {
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      animation: preloaderPulse 1.5s ease-in-out infinite;
+
+/* ---------- Dithering Shader Canvas ---------- */
+.dither-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999999990;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.dither-canvas.active {
+  opacity: 1;
+}
+
+/* Dithering Control Menu */
+.dither-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dither-toggle {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #ff00c0;
+  background: rgba(10, 0, 20, 0.9);
+  color: #ff00c0;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 8px rgba(255, 0, 192, 0.4);
+}
+      top: 16px;
+      left: 16px;
+      z-index: 10002;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dither-toggle {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #ff00c0;
+      background: rgba(10, 0, 20, 0.9);
+      color: #ff00c0;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(255, 0, 192, 0.4);
+    }
+
+    .dither-toggle:hover {
+      background: rgba(255, 0, 192, 0.2);
+      box-shadow: 0 0 12px rgba(255, 0, 192, 0.6);
+    }
+
+    .dither-toggle.active {
+      background: #ff00c0;
+      color: #000;
+    }
+
+    .dither-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(10, 0, 20, 0.95);
+      border: 2px solid #ff00c0;
+      padding: 6px 12px;
+      opacity: 0;
+      transform: translateX(-10px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    .dither-menu:hover .dither-controls,
+    .dither-controls.visible {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .dither-label {
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .dither-controls input[type="range"] {
+      width: 80px;
+      height: 4px;
+      background: rgba(255, 0, 192, 0.3);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .dither-controls input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #ff00c0;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(255, 0, 192, 0.6);
+    }
+
+    .dither-controls input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: #ff00c0;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 8px rgba(255, 0, 192, 0.6);
+    }
+
+    .dither-value {
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      min-width: 28px;
+      text-align: right;
+    }
+
+    /* Mobile adjustments for dithering menu */
+    @media (max-width: 768px) {
+      .dither-menu {
+        top: 10px;
+        left: 10px;
+      }
+      .dither-toggle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+      .dither-controls {
+        padding: 4px 8px;
+      }
+      .dither-controls input[type="range"] {
+        width: 60px;
+      }
+    }
+
     body { background: #000; overflow: hidden; }
 
     body.hide-native-cursor {
@@ -31,13 +230,21 @@
 
     .site-logo {
       position: fixed;
-      top: 16px;
+      top: 36px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
       pointer-events: none;
-      width: 100px;
-      max-width: 100px;
+      width: 144px;
+      max-width: 144px;
+    }
+
+    @media (max-width: 768px) {
+      .site-logo {
+        top: 16px;
+        width: 101px;
+        max-width: 101px;
+      }
     }
 
     .site-logo img {
@@ -49,11 +256,37 @@
       image-rendering: crisp-edges;
     }
 
+    /* ---------- Logo Neon Pink Glow Animation ---------- */
+    #siteLogoImg {
+      filter: url(#gemma-glow) drop-shadow(0 0 8px #ff00c0) drop-shadow(0 0 16px #ff00c0);
+      animation: neonPulse 2s ease-in-out infinite;
+    }
+    #siteLogoImg.hit {
+      filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%) drop-shadow(0 0 10px #0f0);
+    }
+    @keyframes neonPulse {
+      0%, 100% {
+        filter: url(#gemma-glow) drop-shadow(0 0 8px #ff00c0) drop-shadow(0 0 16px #ff00c0) drop-shadow(0 0 24px rgba(255, 0, 192, 0.5));
+        opacity: 1;
+      }
+      50% {
+        filter: url(#gemma-glow) drop-shadow(0 0 20px #ff00c0) drop-shadow(0 0 40px #ff00c0) drop-shadow(0 0 60px rgba(255, 0, 192, 0.8));
+        opacity: 0.95;
+      }
+    }
+    .site-logo:hover #siteLogoImg {
+      animation: neonFlicker 0.15s ease-in-out infinite;
+    }
+    @keyframes neonFlicker {
+      0%, 100% { filter: drop-shadow(0 0 30px #ff00c0) drop-shadow(0 0 60px #ff00c0) drop-shadow(0 0 90px #ff00c0); }
+      50% { filter: drop-shadow(0 0 10px #ff00c0) drop-shadow(0 0 20px #ff00c0); }
+    }
+
     html, body {
       width: 100%; height: 100%;
       background: #000;
       overflow: hidden;
-      font-family: 'Courier New', monospace;
+      font-family: 'Ubuntu', sans-serif;
       user-select: none;
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -76,6 +309,9 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
       transition: background-image 0.6s ease;
+      /* CSS variables for green dot cursor position on mobile */
+      --cursor-x: 50%;
+      --cursor-y: 50%;
     }
 
     body.night-mode {
@@ -114,10 +350,12 @@
       transition: all 0.25s ease, opacity 0.4s ease;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      box-shadow: inset 0 0 0 1px #000;
     }
 
     .ring-btn.dragging {
       transition: none !important;
+      z-index: 3600 !important;
     }
 
     .ring-btn .tarot-button-label,
@@ -136,7 +374,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 10px 22px;
+      padding: 12px 30px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -144,7 +382,7 @@
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 1;
+      z-index: 99999999;
       clip-path: polygon(
         50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
         93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
@@ -162,6 +400,9 @@
 
     .frame-tooltip {
       position: fixed;
+      bottom: auto;
+      top: 62%;
+      left: 50%;
       transform: translateX(-50%) translateY(4px) scale(0.85);
       white-space: nowrap;
       font-size: 20px;
@@ -169,14 +410,14 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 10px 22px;
+      padding: 12px 30px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 40;
+      z-index: 99999999;
       clip-path: polygon(
         50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
         93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
@@ -207,7 +448,7 @@
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 40;
+      z-index: 99999999;
       clip-path: polygon(
         50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
         93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
@@ -228,6 +469,217 @@
       height: auto;
       cursor: inherit;
       filter: none;
+    }
+
+    /* Green dot cursor for modals (when hide-native-cursor class is active) */
+    body.hide-native-cursor::after {
+      content: '';
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: #0f0;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+      left: var(--cursor-x, 50%);
+      top: var(--cursor-y, 50%);
+      box-shadow: 0 0 12px #0f0, 0 0 24px rgba(0,255,0,0.5);
+    }
+
+    body.hide-native-cursor.cursor-invert-close::after {
+      background: rgba(0, 255, 0, 0.08);
+      border: 1px solid #0f0;
+      box-shadow: 0 0 10px rgba(0,255,0,0.8), 0 0 24px rgba(0,255,0,0.35);
+      backdrop-filter: invert(1) contrast(1.1);
+      -webkit-backdrop-filter: invert(1) contrast(1.1);
+    }
+
+    /* Hide green dot when gun cursor is visible (not in modals) */
+    body:not(.modal-open).hide-native-cursor::after {
+      display: none;
+    }
+
+    /* Trail effect for dragged buttons - MUST override all inherited transitions */
+    body .ring-btn-trail,
+    body .frame-btn-trail {
+      position: fixed !important;
+      pointer-events: none !important;
+      z-index: 3500 !important;
+      opacity: 1 !important;
+      transition: opacity 2.5s ease-out, transform 2.5s ease-out !important;
+      transform: scale(0.92) !important;
+      filter: brightness(1.15) !important;
+    }
+
+    body .ring-btn-trail.fading,
+    body .frame-btn-trail.fading {
+      opacity: 0 !important;
+      transform: scale(0.8) !important;
+    }
+
+    /* Font Selector Dropdown */
+    .font-toggle-dot {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      width: 14px;
+      height: 14px;
+      border: none;
+      background: transparent;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 10001;
+      pointer-events: auto;
+    }
+
+    .font-selector-wrap {
+      position: fixed !important;
+      top: 16px !important;
+      left: 16px !important;
+      z-index: 10000 !important;
+      pointer-events: auto !important;
+      display: none;
+    }
+
+    .font-selector-wrap.is-open {
+      display: block;
+    }
+
+    .font-selector {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: rgba(10, 0, 20, 0.95);
+      border: 2px solid #ff00c0;
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 10px 36px 10px 14px;
+      border-radius: 0;
+      cursor: pointer;
+      min-width: 180px;
+      box-shadow: 0 0 12px rgba(255, 0, 192, 0.4);
+      transition: all 0.2s ease;
+      pointer-events: auto !important;
+      position: relative;
+    }
+
+    .font-selector:hover {
+      background: rgba(255, 0, 192, 0.1);
+      box-shadow: 0 0 14px rgba(255, 0, 192, 0.5);
+    }
+
+    .font-selector:focus {
+      outline: none;
+      box-shadow: 0 0 16px rgba(255, 0, 192, 0.6);
+    }
+
+    /* Custom dropdown arrow */
+    .font-selector-wrap::after {
+      content: '▼';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ff00c0;
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    /* Style dropdown options */
+    .font-selector option {
+      background: rgba(10, 0, 20, 0.95);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 8px;
+    }
+
+    /* Hide on small screens to avoid clutter */
+    @media (max-width: 768px) {
+      .font-toggle-dot {
+        top: 6px;
+        left: 6px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .font-selector-wrap {
+        top: 10px !important;
+        left: 10px !important;
+      }
+      .font-selector {
+        font-size: 10px;
+        padding: 8px 28px 8px 10px;
+        min-width: 140px;
+      }
+    }
+
+    /* Gun cursor - prevent color shift when flipped */
+    #gunCursor {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    #gunCursor img {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      image-rendering: auto;
+    }
+
+    @media (max-width: 768px) {
+      .center-right-img {
+        width: 58px;
+      }
+
+      .mute-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      /* Hide gun cursor on small screens, show green dot instead */
+      #gunCursor {
+        display: none !important;
+      }
+      
+      body {
+        cursor: default !important;
+      }
+      
+      /* Green dot cursor for small screens - ensure it shows even with hide-native-cursor class */
+      body.hide-native-cursor::after,
+      body:not(.modal-open).hide-native-cursor::after,
+      body::after {
+        content: '';
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        background: #0f0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 999999;
+        transform: translate(-50%, -50%);
+        left: var(--cursor-x, 50%);
+        top: var(--cursor-y, 50%);
+        box-shadow: 0 0 12px #0f0, 0 0 24px rgba(0,255,0,0.5);
+        display: block !important;
+      }
+
+      body.hide-native-cursor.cursor-invert-close::after,
+      body:not(.modal-open).hide-native-cursor.cursor-invert-close::after,
+      body.cursor-invert-close::after {
+        background: rgba(0, 255, 0, 0.08);
+        border: 1px solid #0f0;
+        box-shadow: 0 0 10px rgba(0,255,0,0.8), 0 0 24px rgba(0,255,0,0.35);
+        backdrop-filter: invert(1) contrast(1.1);
+        -webkit-backdrop-filter: invert(1) contrast(1.1);
+      }
     }
 
     @media (max-width: 640px) {
@@ -358,12 +810,21 @@
 
     .ring-btn.tattoos-btn:hover,
     .ring-btn.cakes-btn:hover,
+    .ring-btn.cakes-btn.laser-hover,
     .ring-btn.sturm-btn:hover {
       background: transparent;
       border-color: transparent;
       box-shadow: none !important;
       transform: none;
       color: inherit;
+    }
+
+    .ring-btn.cakes-btn.selected,
+    .ring-btn.cakes-btn.hit {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      color: inherit !important;
     }
 
     .ring-btn.tattoos-btn {
@@ -652,14 +1113,15 @@
       position: fixed;
       right: 20px;
       bottom: 24px;
-      z-index: 1200;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 0;
+      z-index: 2000;
+      padding: 12px 24px;
+      border-radius: 0;
+      border: 2px solid #000;
       background: #ff00c0;
       color: #000;
       font-family: 'Courier New', monospace;
-      font-size: 20px;
+      font-size: 14px;
+      font-weight: bold;
       letter-spacing: 1px;
       text-transform: uppercase;
       display: none;
@@ -667,17 +1129,25 @@
       justify-content: center;
       gap: 6px;
       cursor: pointer;
-      box-shadow: none;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
     .cakes-order-btn.visible {
       display: inline-flex;
     }
     .cakes-order-btn:hover,
     .cakes-order-btn.laser-hover {
-      transform: translateY(-2px);
-      box-shadow: none;
-      filter: brightness(1.05);
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(255,0,192,0.9), 0 0 36px rgba(255,0,192,0.4);
+      filter: brightness(1.1);
     }
 
     .cakes-order-form-overlay {
@@ -687,92 +1157,214 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1300;
+      z-index: 1400;
     }
     .cakes-order-form-overlay.visible {
       display: flex;
     }
-    .cakes-order-form {
-      width: min(420px, 90vw);
-      max-height: 80vh;
+
+    .cakes-order-container {
+      position: relative;
+      width: min(480px, 94vw);
+      height: auto;
+      max-height: calc(100vh - 40px);
       overflow-y: auto;
-      padding: 20px 22px;
-      border-radius: 18px;
-      border: 1px solid #ff00c0;
-      background: radial-gradient(circle at top, rgba(255,0,192,0.15), transparent 60%), rgba(10, 0, 20, 0.96);
-      box-shadow: 0 0 30px rgba(255,0,192,0.7);
+      overflow: visible;
+      padding: 48px 20px 20px;
+      border-radius: 0;
+      border: none;
+      background: rgba(10, 0, 20, 0.96);
       font-family: 'Courier New', monospace;
       color: #fdf0ff;
     }
-    .cakes-order-form h3 {
-      margin: 0 0 14px;
-      font-size: 16px;
-      text-transform: uppercase;
-      letter-spacing: 4px;
+
+    .cakes-order-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
       color: #ff00c0;
-      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
     }
-    .cakes-order-form p {
-      font-size: 11px;
-      line-height: 1.5;
-      margin: 0 0 14px;
-      color: #ffbdf1;
-      text-align: center;
+
+    .cakes-order-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
     }
-    .cakes-order-form label {
-      display: block;
-      font-size: 11px;
+
+    .cakes-order-close:hover {
+      color: #00ff00;
+    }
+
+    .cakes-order-close:hover::after {
+      background: #00ff00;
+    }
+
+    .cakes-order-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: 10px 0 4px;
-      color: #ffdaf7;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
+
+    .cakes-order-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
     .cakes-order-step {
       display: none;
       flex-direction: column;
-      gap: 8px;
+      gap: 14px;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
     }
+
     .cakes-order-step.active {
       display: flex;
     }
+
+    .cakes-order-prompt {
+      color: #ff00c0;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      margin-top: 0;
+    }
+
+    .cakes-order-prompt span {
+      display: block;
+    }
+
     .cakes-order-form input[type="text"],
     .cakes-order-form input[type="date"],
-    .cakes-order-form textarea,
-    .cakes-order-form select {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid rgba(255,0,192,0.4);
-      background: rgba(10,0,20,0.9);
-      color: #fff;
-      padding: 7px 9px;
-      font-size: 11px;
-      font-family: inherit;
-      outline: none;
-    }
     .cakes-order-form textarea {
-      min-height: 70px;
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.05);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      transition: all 0.25s ease;
+    }
+
+    .cakes-order-form input[type="text"]::placeholder,
+    .cakes-order-form input[type="date"]::placeholder,
+    .cakes-order-form textarea::placeholder {
+      color: rgba(255, 105, 180, 0.5);
+    }
+
+    .cakes-order-form input[type="text"]:focus,
+    .cakes-order-form input[type="date"]:focus,
+    .cakes-order-form textarea:focus {
+      background: rgba(255, 105, 180, 0.12);
+      box-shadow: 0 0 20px rgba(255,0,192,0.2);
+    }
+
+    .cakes-order-form textarea {
+      min-height: 120px;
       resize: vertical;
     }
+
     .cakes-order-form small {
       display: block;
-      font-size: 9px;
+      font-size: 13px;
       color: #ff9eea;
-      margin-top: 2px;
+      margin-top: -8px;
     }
-    .cakes-order-form .colors-row {
+
+    .colors-row {
       display: flex;
-      gap: 6px;
+      gap: 10px;
     }
+
     .cakes-order-form .colors-row input[type="color"] {
       width: 100%;
-      height: 44px;
+      height: 60px;
       flex: 1 1 0;
       padding: 0;
-      border-radius: 10px;
-      border: 1px solid rgba(255,0,192,0.4);
+      border-radius: 0;
+      border: 2px solid #ff00c0;
       background: rgba(10,0,20,0.9);
       cursor: pointer;
     }
+
+    .cakes-order-form button[type="button"],
+    .cakes-order-form button[type="submit"] {
+      position: static;
+      right: auto;
+      bottom: auto;
+      z-index: auto;
+      padding: 12px 32px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 8px;
+      width: auto;
+      border-radius: 0;
+      display: inline-block;
+      align-self: flex-end;
+      border: 2px solid #000;
+    }
+
+    .cakes-order-form button[type="button"]:hover,
+    .cakes-order-form button[type="submit"]:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+    }
+
     .cakes-order-actions {
       margin-top: 16px;
       display: flex;
@@ -784,13 +1376,212 @@
       flex: 1;
       padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid #ff00c0;
+      border: 2px solid #ff00c0;
       background: #ff00c0;
       color: #000;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 3px;
       cursor: pointer;
+      border: 2px solid #000;
+    }
+
+    .tarot-reading-form-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 0, 10, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1450;
+    }
+
+    .tarot-reading-form-overlay.visible {
+      display: flex;
+    }
+
+    .tarot-reading-container {
+      position: relative;
+      width: min(480px, 94vw);
+      height: auto;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      overflow: visible;
+      padding: 48px 20px 20px;
+      border-radius: 0;
+      border: none;
+      background: rgba(10, 0, 20, 0.96);
+      font-family: 'Courier New', monospace;
+      color: #fdf0ff;
+    }
+
+    .tarot-reading-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .tarot-reading-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .tarot-reading-close:hover {
+      color: #00ff00;
+    }
+
+    .tarot-reading-close:hover::after {
+      background: #00ff00;
+    }
+
+    .tarot-reading-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    .tarot-reading-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tarot-reading-step {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tarot-reading-step.active {
+      display: flex;
+    }
+
+    .tarot-reading-prompt {
+      color: #ff00c0;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      margin-top: 0;
+    }
+
+    .tarot-reading-prompt span {
+      display: block;
+    }
+
+    .tarot-reading-form input[type="text"],
+    .tarot-reading-form input[type="date"],
+    .tarot-reading-form textarea,
+    .tarot-reading-select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.05);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      transition: all 0.25s ease;
+      border-radius: 0;
+    }
+
+    .tarot-reading-form input[type="text"]::placeholder,
+    .tarot-reading-form textarea::placeholder {
+      color: rgba(255, 105, 180, 0.5);
+    }
+
+    .tarot-reading-form input[type="text"]:focus,
+    .tarot-reading-form input[type="date"]:focus,
+    .tarot-reading-form textarea:focus,
+    .tarot-reading-select:focus {
+      background: rgba(255, 105, 180, 0.12);
+      box-shadow: 0 0 20px rgba(255,0,192,0.2);
+    }
+
+    .tarot-reading-form textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .tarot-reading-form small {
+      display: block;
+      font-size: 13px;
+      color: #ff9eea;
+      margin-top: -8px;
+    }
+
+    .tarot-reading-form button[type="button"],
+    .tarot-reading-form button[type="submit"] {
+      padding: 12px 32px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 8px;
+      width: auto;
+      border-radius: 0;
+      display: inline-block;
+      align-self: flex-end;
+      border: 2px solid #000;
+    }
+
+    .tarot-reading-form button[type="button"]:hover,
+    .tarot-reading-form button[type="submit"]:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.5);
     }
     .cakes-order-submit:hover {
       filter: brightness(1.1);
@@ -799,7 +1590,7 @@
     .cakes-order-cancel {
       padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 2px solid rgba(255,255,255,0.3);
       background: transparent;
       color: #fff;
       font-size: 10px;
@@ -812,12 +1603,310 @@
       background: rgba(255,255,255,0.08);
     }
 
+    /* Button explosion effect */
+    .btn-exploding {
+      pointer-events: none !important;
+      animation: btnExplode 0.6s ease-out forwards;
+    }
+
+    @keyframes btnExplode {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      20% {
+        transform: scale(1.1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.3);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    .explosion-particle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .explosion-particle.green {
+      background: #00ff00;
+      box-shadow: 0 0 8px #00ff00, 0 0 16px #00ff00;
+    }
+
+    .explosion-particle.pink {
+      background: #ff00c0;
+      box-shadow: 0 0 8px #ff00c0, 0 0 16px #ff00c0;
+    }
+
+    .explosion-particle.white {
+      background: #fff;
+      box-shadow: 0 0 8px #fff, 0 0 16px #fff;
+    }
+
+    @keyframes particleFly {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Tattoo order form overlay - same pattern as cakes */
+    .tattoo-order-form-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 0, 10, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+    .tattoo-order-form-overlay.visible {
+      display: flex;
+    }
+
+    .tattoo-order-container {
+      position: relative;
+      width: min(480px, 94vw);
+      height: auto;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      overflow: visible;
+      padding: 48px 20px 20px;
+      border-radius: 0;
+      border: none;
+      background: rgba(10, 0, 20, 0.96);
+      font-family: 'Courier New', monospace;
+      color: #fdf0ff;
+    }
+
+    .tattoo-order-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .tattoo-order-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .tattoo-order-close:hover {
+      color: #00ff00;
+    }
+
+    .tattoo-order-close:hover::after {
+      background: #00ff00;
+    }
+
+    .tattoo-order-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    .tattoo-order-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tattoo-order-step {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tattoo-order-step.active {
+      display: flex;
+    }
+
+    .tattoo-order-prompt {
+      color: #ff00c0;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      margin-top: 0;
+    }
+
+    .tattoo-order-prompt span {
+      display: block;
+    }
+
+    .tattoo-order-form input[type="text"],
+    .tattoo-order-form textarea,
+    .tattoo-order-form select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ff00c0;
+      background: rgba(255, 105, 180, 0.05);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      transition: all 0.25s ease;
+    }
+
+    .tattoo-order-form input[type="text"]::placeholder,
+    .tattoo-order-form textarea::placeholder {
+      color: rgba(255, 105, 180, 0.5);
+    }
+
+    .tattoo-order-form input[type="text"]:focus,
+    .tattoo-order-form textarea:focus,
+    .tattoo-order-form select:focus {
+      background: rgba(255, 105, 180, 0.12);
+      box-shadow: 0 0 20px rgba(255,0,192,0.2);
+      outline: none;
+    }
+
+    .tattoo-order-form textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .tattoo-order-form small {
+      display: block;
+      font-size: 13px;
+      color: #ff9eea;
+      margin-top: -8px;
+    }
+
+    .tattoo-order-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff00c0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    .tattoo-color-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tattoo-color-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      color: #ff9eea;
+      font-size: 14px;
+    }
+
+    .tattoo-color-option input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ff00c0;
+      background: rgba(10, 0, 20, 0.9);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tattoo-color-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      background: #ff00c0;
+    }
+
+    .tattoo-order-form button[type="button"],
+    .tattoo-order-form button[type="submit"] {
+      padding: 12px 32px;
+      border: 2px solid #000;
+      background: rgba(255, 105, 180, 0.1);
+      color: #ff00c0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 8px;
+      width: auto;
+      border-radius: 0;
+      display: inline-block;
+    }
+
+    .tattoo-order-form button[type="button"]:hover,
+    .tattoo-order-form button[type="submit"]:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+    }
+
     .couch-kiss {
       position: fixed;
       font-size: 42px;
       line-height: 1;
       pointer-events: none;
-      z-index: 15;
+      z-index: 99999999;
       opacity: 0;
       transition: none;
       transform: translate(-50%, -50%);
@@ -844,8 +1933,8 @@
     .section-overlay {
       position: fixed;
       border-radius: 12px;
-      border: none;
-      background: rgba(20, 0, 15, 0.95);
+      border: 2px solid #00ff00;
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -853,7 +1942,6 @@
       pointer-events: none;
       opacity: 0;
       z-index: 900;
-      transition: opacity 0.35s ease;
     }
 
     .modal-backdrop {
@@ -871,9 +1959,96 @@
       pointer-events: auto;
     }
 
+    .modal-backdrop.tattoos-visible {
+      background: rgba(0, 0, 0, 0.85);
+    }
+
     .section-overlay.expanding {
       pointer-events: auto;
+    }
+
+    .section-overlay.expanding:not(.slide-from-top):not(.slide-from-bottom) {
       opacity: 1;
+    }
+
+    .section-overlay.slide-from-top,
+    .section-overlay.slide-from-bottom {
+      pointer-events: auto;
+    }
+
+    /* Modal slide animations */
+    .section-overlay.slide-from-top {
+      animation: slideFromTop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .section-overlay.slide-from-bottom {
+      animation: slideFromBottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .section-overlay.slide-out-top {
+      animation: slideOutTop 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .section-overlay.slide-out-bottom {
+      animation: slideOutBottom 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes slideFromTop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -150%);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @keyframes slideFromBottom {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 150%);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @keyframes slideOutTop {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -150%);
+      }
+    }
+
+    @keyframes slideOutBottom {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, 150%);
+      }
+    }
+
+    .section-overlay.bio-modal,
+    .section-overlay.sturmzx2-modal,
+    .section-overlay.tarot-modal,
+    .section-overlay.contact-modal,
+    .section-overlay.paintings-modal,
+    .section-overlay.tattoos-modal {
+      top: 50% !important;
+      left: 50% !important;
+      max-width: min(94vw, 480px);
+      max-height: 81vh;
+      border-radius: 12px;
+      padding: 32px;
     }
 
     .section-overlay.bio-modal.expanding,
@@ -882,16 +2057,8 @@
     .section-overlay.contact-modal.expanding,
     .section-overlay.paintings-modal.expanding,
     .section-overlay.tattoos-modal.expanding {
-      top: 50% !important;
-      left: 50% !important;
-      width: fit-content !important;
-      height: fit-content !important;
-      max-width: min(94vw, 480px);
-      max-height: 90vh;
-      transform: translate(-50%, -50%) !important;
-      border-radius: 12px;
-      padding: 32px;
-      overflow: auto;
+      pointer-events: auto;
+      /* Inherits dimensions from base class, no need to redefine */
     }
 
     /* Shared size: bio + sturm modals */
@@ -905,11 +2072,91 @@
 
     /* Bio: internal scroll handles overflow, hide modal scrollbar */
     .section-overlay.bio-modal.expanding {
-      overflow: hidden !important;
+      overflow: visible !important;
+      padding-top: 48px !important;
+      max-width: 98vw !important;
+      height: 81vh !important;
+      max-height: 81vh !important;
+      display: flex;
+      flex-direction: column;
+      z-index: 1300 !important;
+    }
+
+    .bio-modal .section-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .bio-modal .gallery-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    .bio-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
       align-items: center;
-      justify-content: flex-start;
-      padding-top: 24px;
-      box-sizing: border-box;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .bio-modal-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .bio-modal-close:hover {
+      color: #00ff00;
+    }
+
+    .bio-modal-close:hover::after {
+      background: #00ff00;
     }
 
     /* Sturm: hide scrollbar visually but keep scrollability */
@@ -923,43 +2170,223 @@
       display: none;
     }
 
-    .section-overlay.sturmzx2-modal .bio-content {
-      max-width: 100%;
-    }
 
-    .section-overlay.sturmzx2-modal .bio-text {
-      text-align: justify;
-    }
 
     .section-overlay.tarot-modal.expanding {
       overflow: visible !important;
-      padding: 68px 16px 44px 16px !important;
-      max-width: min(94vw, 400px);
-      width: min(94vw, 400px) !important;
-      z-index: 2000 !important;
+      padding-top: 48px !important;
+      max-width: 98vw !important;
+      width: clamp(300px, 94vw, 480px) !important;
+      height: 81vh !important;
+      max-height: 81vh !important;
+      display: flex;
+      flex-direction: column;
+      z-index: 1300 !important;
+    }
+
+    .tarot-modal .section-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .tarot-modal .gallery-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    .tarot-scroll-snap {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0;
+      opacity: 1;
+      transition: opacity 0.15s ease;
+    }
+
+    .section-overlay.tarot-modal:not(.expanding) .tarot-scroll-snap {
+      opacity: 0;
+    }
+
+    .tarot-section {
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-sizing: border-box;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .tarot-section-intro {
+      padding: 20px;
+    }
+
+    .tarot-section-cards {
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Ensure sections fill exactly one viewport height */
+    .tarot-scroll-snap > .tarot-section {
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
+    }
+
+    /* Hide scrollbar for snap container */
+    .tarot-scroll-snap::-webkit-scrollbar {
+      width: 0;
+      display: none;
+    }
+    .tarot-scroll-snap {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .tarot-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 20px 0 0;
+      opacity: 1;
+      transition: opacity 0.15s ease;
+    }
+
+    .tarot-scroll::-webkit-scrollbar-track {
+      background: #050505;
+      border-left: 3px solid #ff00c0;
+      margin-left: 14px;
+    }
+    .tarot-scroll::-webkit-scrollbar-thumb {
+      background: #ff00c0;
+      border: 3px solid #000;
+      min-height: 64px;
+      box-shadow: inset 0 0 0 2px #000;
+    }
+    .tarot-scroll::-webkit-scrollbar-thumb:hover {
+      background: #ff00c0;
+      box-shadow: inset 0 0 0 3px #000;
+    }
+
+    .tarot-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .tarot-modal-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .tarot-modal-close:hover {
+      color: #00ff00;
+    }
+
+    .tarot-modal-close:hover::after {
+      background: #00ff00;
     }
 
     .section-overlay.contact-modal.expanding {
       z-index: 1300 !important;
     }
 
-    /* Cakes modal: full screen */
+    /* Cakes modal */
     .section-overlay.cakes-modal.expanding {
-      border: none;
-      border-radius: 0;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      transform: none !important;
+      overflow: visible !important;
+      padding: 0 !important;
+      max-width: 49vw !important;
+      height: 81vh !important;
+      max-height: 81vh !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
       z-index: 1300 !important;
     }
 
+    @media (max-width: 768px) {
+      .section-overlay.cakes-modal.expanding {
+        max-width: 90vw !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-overlay.cakes-modal.expanding {
+        max-width: 95vw !important;
+      }
+    }
+
     .tarot-hero {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
+      width: auto;
+      max-width: 100%;
+      height: 280px;
+      max-height: 55vh;
+      object-fit: contain;
       display: block;
+      margin: 0 auto;
     }
 
     .tarot-title {
@@ -993,26 +2420,124 @@
     }
 
     .tarot-contact-btn {
-      display: block;
-      width: 100%;
-      padding: 14px 24px;
-      border: 2px solid #ff00c0;
-      background: rgba(255, 105, 180, 0.1);
-      color: #ff00c0;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 32px;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: all 0.25s ease;
-      text-align: center;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 100000;
     }
 
-    .tarot-contact-btn:hover {
+    .tarot-contact-btn:hover,
+    .tarot-contact-btn.laser-hover {
       background: #ff00c0;
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .tarot-contact-btn:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateX(-50%) translateY(2px);
+    }
+
+    .cakes-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .cakes-modal-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .cakes-modal-close:hover {
+      color: #00ff00;
+    }
+
+    .cakes-modal-close:hover::after {
+      background: #00ff00;
+    }
+
+    .cakes-order-modal-btn {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 32px;
+      background: #00ff00;
       color: #000;
-      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+      border: 2px solid #000;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 100000;
+    }
+
+    .cakes-order-modal-btn:hover,
+    .cakes-order-modal-btn.laser-hover {
+      background: #ff00c0;
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .cakes-order-modal-btn:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateX(-50%) translateY(2px);
     }
 
     .tarot-content {
@@ -1022,42 +2547,49 @@
       align-items: center;
     }
 
-    .tarot-content > .tarot-title {
+    .section-overlay.contact-modal {
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff00;
+    }
+
+    .section-overlay.contact-modal.expanding {
+      overflow: visible !important;
+      padding-top: 48px !important;
+      width: clamp(300px, 88vw, 520px) !important;
+      min-height: auto;
+      height: fit-content !important;
+      max-height: 81vh !important;
+      display: flex;
+      flex-direction: column;
+      z-index: 1300 !important;
+    }
+
+    .contact-modal .section-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .section-overlay.contact-modal .contact-title {
       position: absolute;
       top: 0;
       left: 50%;
       transform: translate(-50%, -50%);
       white-space: nowrap;
       margin: 0;
-    }
-
-    .tarot-video-wrap {
-      background: #fff;
-      padding: 0 0 46px 0;
-      border-radius: 8px 8px 0 0;
-      border: 2px solid #000;
-      position: relative;
-      width: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .tarot-roll-btn {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 18px 36px;
-      border: none;
+      letter-spacing: 4px;
+      padding: 10px 22px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      cursor: pointer;
+      text-align: center;
+      z-index: 10;
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       clip-path: polygon(
         50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
@@ -1067,83 +2599,491 @@
         7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
         7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
       );
-      transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    }
+
+    .contact-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    .tarot-video-wrap {
+      background: transparent;
+      padding: 0 0 46px 0;
+      border-radius: 8px 8px 0 0;
+      border: 2px solid #000;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .tarot-video-wrap .tarot-hero {
+      display: block;
+      width: 100%;
+      height: auto;
+      clip-path: inset(3px 10px 3px 10px);
+    }
+
+    /* New tarot card stage layout */
+    .tarot-card-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    /* Flipped cards container */
+    .tarot-flipped-cards {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: opacity 0.8s ease;
+    }
+
+    .tarot-flipped-cards.fading-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Individual flipped card with checkerboard back */
+    .tarot-flipped-card {
+      width: 60px;
+      height: 100px;
+      border-radius: 6px;
+      background: 
+        repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 12px 12px;
+      border: 2px solid #333;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transform: rotate(calc(var(--i) * 4deg - 10deg)) translateY(calc(var(--i) * 2px));
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .tarot-flipped-card:nth-child(1) { z-index: 6; }
+    .tarot-flipped-card:nth-child(2) { z-index: 5; }
+    .tarot-flipped-card:nth-child(3) { z-index: 4; }
+    .tarot-flipped-card:nth-child(4) { z-index: 3; }
+    .tarot-flipped-card:nth-child(5) { z-index: 2; }
+    .tarot-flipped-card:nth-child(6) { z-index: 1; }
+
+    /* Selected card container */
+    .tarot-selected-card {
+      position: absolute;
+      width: 200px;
+      height: 320px;
+      opacity: 0;
+      transform: scale(0.8) rotateY(180deg);
+      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .tarot-selected-card.visible {
+      opacity: 1;
+      transform: scale(1) rotateY(0deg);
+      pointer-events: auto;
+    }
+
+    .tarot-selected-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    /* Meaning display - no border, moved up */
+    .tarot-meaning-display {
+      position: absolute;
+      width: 90%;
+      max-width: 400px;
+      max-height: 70%;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 24px;
+      border-radius: 8px;
+      border: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+      pointer-events: none;
+      overflow-y: auto;
+      z-index: 20;
+      top: 10%;
+    }
+
+    .tarot-meaning-display.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .tarot-meaning-text {
+      color: #ff00c0;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 16px 0;
+      font-family: inherit;
+    }
+
+    /* GET A READING button - fixed position to appear over bottom left PNG */
+    .tarot-get-reading-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 32px;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      transition: all 0.2s ease;
+      z-index: 100001;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tarot-get-reading-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .tarot-get-reading-btn:hover {
+      background: #ff00c0;
+      color: #000;
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .tarot-get-reading-btn:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateX(-50%) translateY(2px);
+    }
+
+    /* Roll button - centered and 30% bigger */
+    .tarot-roll-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1.3);
+      padding: 16px 32px;
+      border: 1px solid #000;
+      border-radius: 0;
+      background: #00ff00;
+      color: #000;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 2200;
       white-space: nowrap;
     }
 
     .tarot-roll-btn:hover {
-      background: #39ff14;
+      background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 16px rgba(57,255,20,0.9), 0 0 36px rgba(57,255,20,0.5);
+      box-shadow: 0 0 20px rgba(255,0,192,0.9), 0 0 40px rgba(255,0,192,0.5);
+      transform: translate(-50%, -50%) scale(1.35);
     }
 
-    .tarot-modal-cards {
+    /* Button disappearing animation */
+    .tarot-roll-btn.disappearing {
+      animation: btnDisappear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes btnDisappear {
+      0% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+
+    /* Button reappearing animation */
+    .tarot-roll-btn.reappearing {
+      animation: btnReappear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes btnReappear {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.4);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+      }
+    }
+
+    /* Pink scroll arrow - bottom right, no border, simple */
+    .tarot-scroll-arrow {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 900;
+      color: #ff00c0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      z-index: 100002;
+      transition: transform 0.3s ease;
+      animation: arrowBounce 2s ease-in-out infinite;
+      user-select: none;
+    }
+
+    @keyframes arrowBounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .tarot-scroll-arrow.pointing-up {
+      transform: scaleY(-1);
+    }
+
+    @keyframes arrowBounceUp {
+      0%, 100% {
+        transform: scaleY(-1) translateY(0);
+      }
+      50% {
+        transform: scaleY(-1) translateY(-5px);
+      }
+    }
+
+    /* Modal close button transforms to arrow */
+    .tarot-modal-close {
       position: absolute;
-      bottom: 18px;
-      left: 50%;
-      width: 0;
-      height: 0;
-      z-index: 2100;
+      top: 10px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10001;
+      transition: all 0.3s ease;
     }
 
-    .tarot-modal-card {
+    .tarot-modal-close::after {
+      content: '';
       position: absolute;
-      width: 52px;
-      height: 88px;
-      border-radius: 5px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      filter: hue-rotate(-20deg) saturate(1.6);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
     }
 
-    /* Closed / stacked */
-    .tarot-modal-card.c1 { background-image: url('img/tarot/tarot4.png'); z-index: 1; transform: translate(-50%, -50%) rotate(-6deg); }
-    .tarot-modal-card.c2 { background-image: url('img/tarot/tarot3.png'); z-index: 2; transform: translate(-50%, -50%) rotate(-2deg); }
-    .tarot-modal-card.c3 { background-image: url('img/tarot/tarot2.png'); z-index: 3; transform: translate(-50%, -50%) rotate(2deg); }
-    .tarot-modal-card.c4 { background-image: url('img/tarot/tarot1.png'); z-index: 4; transform: translate(-50%, -50%) rotate(6deg); }
+    .tarot-modal-close:hover {
+      color: #00ff00;
+    }
 
-    /* Fanned open on button hover */
-    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c1 { transform: translate(-160%, -60%) rotate(-22deg); }
-    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c2 { transform: translate(-80%,  -70%) rotate(-7deg); }
-    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c3 { transform: translate(-20%,  -70%) rotate(7deg); }
-    .tarot-roll-btn:hover ~ .tarot-modal-cards .tarot-modal-card.c4 { transform: translate(60%,   -60%) rotate(22deg); }
+    .tarot-modal-close:hover::after {
+      background: #00ff00;
+    }
+
+    /* Back arrow state */
+    .tarot-modal-close.back-arrow {
+      font-size: 28px;
+    }
+
+    .tarot-modal-close.back-arrow::before {
+      content: '←';
+    }
+
+    .tarot-modal-close.back-arrow span,
+    .tarot-modal-close.back-arrow::not(:before) {
+      display: none;
+    }
 
     .tarot-text-wrap {
       background: #000;
-      padding: 20px 16px 20px 16px;
+      padding: 20px 16px 50px 16px;
       border-radius: 0 0 8px 8px;
+      /* ... */
       width: 100%;
       box-sizing: border-box;
+      position: relative;
     }
 
-    .section-overlay.paintings-modal.expanding {
-      max-width: min(98vw, 1200px);
-      padding: 32px 28px 24px 28px;
+    /* Tarot card meaning display */
+    .tarot-meaning {
+      background: rgba(0, 0, 0, 0.95);
+      padding: 20px;
+      border-radius: 8px;
+      color: #fff;
+      max-height: 320px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      text-align: left;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .section-overlay.tattoos-modal.expanding {
-      overflow: visible !important;
-      padding-top: 48px !important;
-      max-width: 98vw !important;
-      height: 90vh !important;
-      max-height: 90vh !important;
-      display: flex;
-      flex-direction: column;
-      z-index: 1300 !important;
+    .tarot-card-name {
+      color: #ff00c0;
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 0 0 12px 0;
+      text-align: center;
     }
 
-    .tattoos-modal .section-content {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-      overflow: visible;
-      padding: 0;
+    .tarot-meaning-text {
+      color: #ff00c0;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+      font-family: inherit;
     }
 
+    .tarot-meaning::-webkit-scrollbar {
+      width: 8px;
+    }
+    .tarot-meaning::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+    .tarot-meaning::-webkit-scrollbar-thumb {
+      background: #ff00c0;
+      border-radius: 4px;
+    }
+
+.section-overlay.tattoos-modal.expanding {
+  overflow: visible !important;
+  padding-top: 48px !important;
+  width: clamp(300px, 88vw, 520px) !important;
+  height: 81vh !important;
+  max-height: 81vh !important;
+  display: flex;
+  flex-direction: column;
+  z-index: 1300 !important;
+}
+
+.tattoos-modal .section-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+/* Tattoos: title on border + scrollable gallery */
+.tattoos-modal .gallery-title {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  margin: 0;
+  letter-spacing: 4px;
+  padding: 10px 22px;
+  border-radius: 0;
+  background: #ff00c0;
+  color: #000;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+  clip-path: polygon(
+    50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+    93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+    93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+    50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+    7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+    7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+  );
+}
     /* Tattoos: title on border + scrollable gallery */
     .tattoos-modal .gallery-title {
       position: absolute;
@@ -1178,15 +3118,22 @@
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
-      padding: 4px 0 0;
+      padding: 4px 20px 0 0;
+      opacity: 1;
+      transition: opacity 0.15s ease;
+    }
+
+    .tattoos-modal:not(.expanding) .tattoos-gallery-scroll {
+      opacity: 0;
     }
 
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar {
-      width: 36px;
+      width: 80px;
     }
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-track {
       background: #050505;
       border-left: 3px solid #ff00c0;
+      margin-left: 14px;
     }
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-thumb {
       background: #ff00c0;
@@ -1197,6 +3144,209 @@
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-thumb:hover {
       background: #ff00c0;
       box-shadow: inset 0 0 0 3px #000;
+    }
+
+    .tattoos-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .tattoos-modal-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .tattoos-modal-close:hover {
+      color: #00ff00;
+    }
+
+    .tattoos-modal-close:hover::after {
+      background: #00ff00;
+    }
+
+    .sturmzx2-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .sturmzx2-modal-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .sturmzx2-modal-close:hover {
+      color: #00ff00;
+    }
+
+    .sturmzx2-modal-close:hover::after {
+      background: #00ff00;
+    }
+
+    .contact-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #ff00c0;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .contact-modal-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
+    }
+
+    .contact-modal-close:hover {
+      color: #00ff00;
+    }
+
+    .contact-modal-close:hover::after {
+      background: #00ff00;
+    }
+
+    .tattoos-get-btn {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 32px;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 100000;
+    }
+
+    .tattoos-get-btn:hover,
+    .tattoos-get-btn.laser-hover {
+      background: #ff00c0;
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .tattoos-get-btn:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateX(-50%) translateY(2px);
+    }
+
+    .sturmzx2-visit-btn {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 32px;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 100000;
+    }
+
+    .sturmzx2-visit-btn:hover,
+    .sturmzx2-visit-btn.laser-hover {
+      background: #ff00c0;
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .sturmzx2-visit-btn:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateX(-50%) translateY(2px);
     }
 
     /* ---------- Fluid gallery (tattoos) ---------- */
@@ -1278,8 +3428,160 @@
     .fluid-gallery .tattoo-ball-particle:nth-child(14) { transition-delay: 0.39s; }
     .fluid-gallery .tattoo-ball-particle:nth-child(15) { transition-delay: 0.42s; }
 
+    /* ---------- STURMZX2 Modal ---------- */
+    .section-overlay.sturmzx2-modal {
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff00;
+    }
+
+    .section-overlay.sturmzx2-modal.expanding {
+      overflow: visible !important;
+      padding-top: 48px !important;
+      max-width: 98vw !important;
+      min-height: auto;
+      height: fit-content !important;
+      max-height: 81vh !important;
+      display: flex;
+      flex-direction: column;
+      z-index: 1300 !important;
+    }
+
+    .sturmzx2-modal .section-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .sturmzx2-modal .gallery-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      margin: 0;
+      letter-spacing: 4px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+    }
+
+    .sturmzx2-scroll {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 20px 0 0;
+      opacity: 1;
+      transition: opacity 0.15s ease;
+      scrollbar-width: auto;
+      scrollbar-color: #ff00c0 #000;
+    }
+
+    .section-overlay.sturmzx2-modal:not(.expanding) .sturmzx2-scroll {
+      opacity: 0;
+    }
+
+    .sturmzx2-scroll::-webkit-scrollbar {
+      width: 12px;
+      background-color: #000;
+    }
+
+    .sturmzx2-scroll::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    .sturmzx2-scroll::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+      background-color: #000;
+    }
+    .sturmzx2-scroll::-webkit-scrollbar-thumb {
+      background: #ff00c0;
+      min-height: 64px;
+    }
+    .sturmzx2-scroll::-webkit-scrollbar-thumb:hover {
+      background: #ff4dcf;
+    }
+
+    .sturmzx2-content {
+      padding: 8px 0;
+      line-height: 1.6;
+      font-size: 14px;
+      color: rgba(255, 105, 180, 0.95);
+      text-align: left;
+    }
+
+    .sturmzx2-tagline {
+      font-size: 13px;
+      color: #00ff00;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 4px 0 6px;
+      font-style: italic;
+    }
+
+    .sturmzx2-first-paragraph {
+      font-weight: 700;
+      font-size: 1.05em;
+      letter-spacing: -0.1px;
+      line-height: 1.45;
+      margin-bottom: 1em;
+    }
+
+    .sturmzx2-duo-gif {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 0 0 8px;
+      border: 1px solid rgba(255, 0, 192, 0.45);
+      box-shadow: 0 0 12px rgba(255, 0, 192, 0.25);
+    }
+
+    .sturmzx2-be-bold {
+      font-weight: 900;
+      font-size: 1.08em;
+      letter-spacing: 0.4px;
+    }
+
     .section-overlay.cakes-modal {
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff00;
+    }
+
+    .cakes-modal .section-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 100%;
+      min-height: 100%;
+      overflow: visible;
+      padding: 0;
+      position: relative;
+      align-items: center;
+      justify-content: center;
     }
 
     .section-overlay.cakes-modal.expanding .section-content {
@@ -1290,27 +3592,85 @@
       justify-content: center;
       width: 100%;
       height: 100%;
+      min-height: 100%;
       padding: 0;
       box-sizing: border-box;
     }
 
     .section-overlay.cakes-modal .gallery-title {
       position: absolute;
-      top: 24px;
+      top: 0;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
       margin: 0;
       white-space: nowrap;
       z-index: 5;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ff00c0;
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     /* ---------- Cakes carousel ---------- */
     .cakes-container {
-      position: relative;
-      width: min(100vw, 100vh);
-      height: min(100vw, 100vh);
-      margin: 0 auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 540px;
+      height: 540px;
       flex-shrink: 0;
+      max-width: 41vw;
+      max-height: 41vw;
+    }
+
+    @media (max-width: 1200px) {
+      .cakes-container {
+        width: 450px;
+        height: 450px;
+        max-width: 41vw;
+        max-height: 41vw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cakes-container {
+        width: 360px;
+        height: 360px;
+        max-width: 77vw;
+        max-height: 77vw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .cakes-container {
+        width: 277px;
+        height: 277px;
+        max-width: 86vw;
+        max-height: 86vw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
 
     .cakes-center {
@@ -1327,69 +3687,64 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
     .cakes-center img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      animation: cakeUnfold 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+      object-fit: contain;
+      animation: cakeCenterAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    /* Center cake circular border animation */
+    .cakes-center::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(90deg, #ff00c0 50%, #00ff00 50%);
+      background-size: 200% 100%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cakes-center.has-cake::before {
+      opacity: 1;
+      animation: borderRotate 1.5s linear infinite;
+    }
+
+    @keyframes cakeCenterAppear {
+      0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2) rotate(10deg);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    .cakes-center:hover img {
+      transform: scale(1.05);
     }
 
     .cakes-center.hit img {
       animation: cakeCenterHit 0.3s ease-out;
     }
 
-    @keyframes cakeCenterHit {
-      0% { transform: scale(1.2); filter: brightness(1.5); }
-      100% { transform: scale(1); filter: brightness(1); }
-    }
-
-    .cakes-center-essentials {
-      background: transparent;
-      padding: 28px;
-    }
-
-    .cakes-recipe {
-      text-align: center;
-      list-style: none;
-    }
-
-    .cakes-recipe-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #ff00c0;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      margin-bottom: 20px;
-      font-family: 'Courier New', monospace;
-    }
-
-    .cakes-recipe-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .cakes-recipe-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: 13px;
-      line-height: 2.2;
-      color: rgba(255, 105, 180, 0.9);
-      font-family: 'Courier New', monospace;
-    }
-
-    .cakes-recipe-ingredient {
-      text-transform: lowercase;
-      letter-spacing: 1px;
-    }
-
-    .cakes-recipe-amount {
-      font-weight: bold;
-      color: #ff00c0;
-      margin-left: 12px;
+    @keyframes cakeHit {
+      0%   { filter: brightness(1.3); }
+      100% { filter: brightness(1); }
     }
 
     .cakes-orbit {
@@ -1401,7 +3756,12 @@
       margin: -44% 0 0 -44%;
       transform-origin: center center;
       animation: orbitSpin 30s linear infinite;
-      z-index: 4;
+      z-index: 8;
+    }
+
+    .cakes-orbit:hover,
+    .cakes-orbit:hover .cakes-orbit-item {
+      animation-play-state: paused;
     }
 
     @keyframes orbitSpin {
@@ -1420,37 +3780,75 @@
       height: 22%;
       min-width: 80px;
       min-height: 80px;
-      cursor: inherit;
+      cursor: pointer;
       transition: all 0.3s ease;
       transform: translate(-50%, -50%);
       animation: orbitCounterSpin 30s linear infinite;
       z-index: 5;
+      pointer-events: auto;
+    }
+
+    .cakes-orbit-item::after {
+      content: '';
+      position: absolute;
+      inset: 16%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 0, 192, 0.34) 0%, rgba(0, 255, 0, 0.3) 48%, rgba(255, 0, 192, 0) 78%);
+      filter: blur(7px);
+      opacity: 0;
+      transform: scale(0.72);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: -1;
     }
 
     .cakes-orbit-item.hit {
       animation: cakeHit 0.4s ease-out, orbitCounterSpin 30s linear infinite;
     }
 
-    @keyframes cakeHit {
-      0%   { filter: brightness(1.3); }
-      100% { filter: brightness(1); }
-    }
-
     .cakes-orbit-item:hover,
     .cakes-orbit-item.laser-hover {
-      z-index: 3;
+      z-index: 7;
+    }
+
+    .cakes-orbit-item::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(90deg, #ff00c0 50%, #00ff00 50%);
+      background-size: 200% 100%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .cakes-orbit-item:hover::before,
+    .cakes-orbit-item.laser-hover::before {
+      opacity: 1;
+      animation: borderRotate 1.5s linear infinite;
+    }
+
+    @keyframes borderRotate {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
     }
 
     .cakes-orbit-item:hover img,
     .cakes-orbit-item.laser-hover img {
-      transform: scale(1.15);
+      transform: scale(1.35);
     }
 
     .cakes-orbit-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), filter 0.35s ease;
       animation: cakeUnfold 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
     }
 
@@ -1553,6 +3951,7 @@
     .section-overlay::-webkit-scrollbar-track {
       background: #050505;
       border-left: 3px solid #ff00c0;
+      margin-left: 4px;
     }
     .section-overlay::-webkit-scrollbar-thumb {
       background: #ff00c0;
@@ -1565,7 +3964,7 @@
       box-shadow: inset 0 0 0 3px #000;
     }
     .section-overlay {
-      scrollbar-width: auto;
+      scrollbar-width: auto; /* Firefox */
       scrollbar-color: #ff00c0 #0a0a0a;
     }
 
@@ -1578,6 +3977,7 @@
       width: 100%;
       min-width: 280px;
       max-width: 400px;
+      padding-top: 40px;
     }
 
     /* ---------- Paintings gallery ---------- */
@@ -1628,23 +4028,57 @@
 
     .gallery-title {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
+      padding: 16px 42px;
+      border-radius: 0;
       background: #ff00c0;
       color: #000;
       font-size: 20px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 20px;
       text-align: center;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      margin: 0;
+      white-space: nowrap;
+      border: 2px solid #000;
+    }
+
+    /* Gallery title blinking animation for tarot card name */
+    .gallery-title.title-blink {
+      color: #00ff00 !important;
+      animation: titleBlink 0.4s ease-in-out 4;
+    }
+
+    @keyframes titleBlink {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+    }
+
+    .paintings-modal .gallery-title,
+    .tattoos-modal .gallery-title {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .lightbox {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.92);
-      z-index: 10000;
+      z-index: 15555000;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1666,6 +4100,9 @@
       border-radius: 8px;
       border: 2px solid #ff00c0;
       box-shadow: 0 0 60px rgba(255, 105, 180, 0.3);
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .lightbox.tattoo-view img {
@@ -1673,77 +4110,103 @@
       box-shadow: none;
     }
 
-    .lightbox-loupe {
+    .lightbox.tattoo-view .lightbox-loupe {
       position: fixed;
       width: 100px;
       height: 100px;
-      left: 0;
-      top: 0;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      overflow: hidden;
       pointer-events: none;
       z-index: 10001;
       opacity: 0;
-      transition: opacity 0.15s ease;
+      transition: opacity 0.15s ease, width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       border: 2px solid rgba(0, 255, 0, 0.4);
       box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+      border-radius: 50%;
+      overflow: hidden;
+      /* Center on cursor - no offset */
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%);
+      margin-left: 0;
+      margin-top: 0;
     }
 
-    .lightbox-loupe.visible {
+    .lightbox.tattoo-view .lightbox-loupe.visible {
       opacity: 1;
     }
 
-    .lightbox-loupe canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
+    .lightbox.tattoo-view {
+      cursor: none;
+    }
+
+    .lightbox.open ~ .mute-btn-wrap,
+    .lightbox.open ~ .toggle-btn-wrap,
+    body:has(.lightbox.open) .mute-btn-wrap,
+    body:has(.lightbox.open) .toggle-btn-wrap,
+    body:has(.modal-backdrop.visible) .mute-btn-wrap,
+    body:has(.modal-backdrop.visible) .toggle-btn-wrap {
+      z-index: 800;
+    }
+
+    /* Also when tattoos modal is open */
+    .section-overlay.tattoos-modal.expanding ~ .mute-btn-wrap,
+    .section-overlay.tattoos-modal.expanding ~ .toggle-btn-wrap,
+    body:has(.section-overlay.tattoos-modal.expanding) .mute-btn-wrap,
+    body:has(.section-overlay.tattoos-modal.expanding) .toggle-btn-wrap {
+      z-index: 800;
     }
 
     .lightbox-close {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid #ff00c0;
-      background: rgba(255, 105, 180, 0.1);
+      top: 8px;
+      right: 12px;
+      width: auto;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
       color: #ff00c0;
-      font-size: 24px;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.25s ease;
+      padding: 0 0 4px 0;
+      z-index: 10002;
+      transition: all 0.2s ease;
+    }
+
+    .lightbox-close::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff00c0;
+      transition: background 0.2s ease;
     }
 
     .lightbox-close:hover {
-      background: #ff00c0;
-      color: #000;
+      color: #00ff00;
+    }
+
+    .lightbox-close:hover::after {
+      background: #00ff00;
     }
 
     /* ---------- Bio modal ---------- */
     .bio-content {
-      max-width: 420px;
+      max-width: 100%;
       width: 100%;
+      height: 100%;
+      flex: 1;
+      min-height: 0;
       padding: 8px 0;
       margin: 0 auto;
       box-sizing: border-box;
       position: relative;
-    }
-
-    .bio-content .bio-title {
-      font-size: 26px;
-      font-weight: bold;
-      color: #ff00c0;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      margin: 0 0 8px 0;
-      text-align: center;
     }
 
     .bio-content .bio-tagline {
@@ -1756,7 +4219,7 @@
     }
 
     .bio-content .bio-text {
-      font-size: 15px;
+      font-size: clamp(11px, 1.4vw, 13px);
       line-height: 1.8;
       color: rgba(255, 105, 180, 0.95);
       text-align: center;
@@ -1765,9 +4228,10 @@
     .bio-scroll {
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      height: clamp(220px, 36vh, 320px);
+      height: 100%;
+      min-height: 0;
       padding: 10px 16px 18px 16px;
-      width: min(420px, 92%);
+      width: 100%;
       margin: 0 auto;
       scrollbar-width: auto; /* Firefox */
       scrollbar-color: #ff00c0 #0a0a0a;
@@ -1808,6 +4272,9 @@
       margin-bottom: 18px;
       text-align: center;
       color: rgba(255, 105, 180, 0.95);
+      width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
 
     .bio-content .bio-text p:last-child {
@@ -1849,9 +4316,15 @@
 
     .contact-form .form-prompt {
       color: #ff00c0;
-      font-size: 18px;
-      line-height: 1.5;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1.1;
       margin-bottom: 4px;
+      margin-top: -50px;
+    }
+
+    .contact-form .form-prompt span {
+      display: block;
     }
 
     .contact-form input,
@@ -1901,23 +4374,52 @@
 
     .contact-form .form-btn {
       padding: 12px 32px;
-      border: 2px solid #ff00c0;
-      background: rgba(255, 105, 180, 0.1);
-      color: #ff00c0;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
       margin-top: 8px;
+      width: auto;
+      display: inline-block;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 100000;
     }
 
-    .contact-form .form-btn:hover {
+    .contact-form .form-btn:hover,
+    .contact-form .form-btn.laser-hover {
       background: #ff00c0;
-      color: #000;
-      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .contact-form .form-btn:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateY(2px);
+    }
+
+    #contactNext1,
+    #contactNext2 {
+      align-self: flex-end;
+      width: auto;
+      margin-left: auto;
+    }
+
+    #contactNext1 {
+      margin-bottom: -14px;
     }
 
     /* ---------- Exit button ---------- */
@@ -1926,7 +4428,7 @@
       top: 30px; right: 30px;
       width: 56px; height: 56px;
       border-radius: 50%;
-      border: none;
+      border: 2px solid #000;
       background: transparent;
       padding: 0;
       display: flex; align-items: center; justify-content: center;
@@ -1986,7 +4488,7 @@
 
     .mute-btn-wrap {
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       right: 20px;
       z-index: 951;
       display: flex;
@@ -2005,7 +4507,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 8px 18px;
+      padding: 10px 26px;
       background: #ff00c0;
       color: #000;
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
@@ -2019,12 +4521,15 @@
         7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
         7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
       );
+      border: 2px solid #000;
     }
 
-    /* mute tooltip: above the icon */
+    /* mute tooltip: below-left of the icon */
     .mute-tooltip {
-      bottom: 110%;
-      top: auto;
+      top: 110%;
+      bottom: auto;
+      left: -80px;
+      transform: translateX(0) translateY(4px) scale(0.85);
     }
 
     /* light toggle tooltip: above the icon */
@@ -2037,6 +4542,10 @@
     .toggle-btn-wrap:hover .toggle-tooltip {
       opacity: 1;
       transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .mute-btn-wrap:hover .mute-tooltip {
+      transform: translateX(0) translateY(0) scale(1);
     }
 
     .toggle-btn-wrap {
@@ -2087,7 +4596,7 @@
     .preview-box {
       position: fixed;
       bottom: 30px; right: 30px;
-      border: 1px solid #ff00c044;
+      border: 2px solid #ff00c044;
       padding: 12px;
       background: rgba(255, 105, 180, 0.05);
       border-radius: 8px;
@@ -2193,7 +4702,7 @@
       width: 100%;
       margin-top: 8px;
       padding: 6px;
-      border: 1px solid #0f0;
+      border: 2px solid #0f0;
       border-radius: 4px;
       background: rgba(0, 255, 0, 0.1);
       color: #0f0;
@@ -2222,8 +4731,8 @@
       flex-direction: row;
       gap: 14px;
       z-index: 800;
+      margin-left: 20px;
     }
-
 
     .social-icons a {
       width: 38px;
@@ -2300,7 +4809,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 8px 18px;
+      padding: 10px 26px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -2308,6 +4817,7 @@
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 99999999;
       clip-path: polygon(
         50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
         93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
@@ -2316,6 +4826,7 @@
         7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
         7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
       );
+      border: 2px solid #000;
     }
 
     .social-ig-btn:hover .social-tooltip,
@@ -2336,7 +4847,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       opacity: 0;
-      padding: 8px 18px;
+      padding: 10px 26px;
       background: #ff00c0;
       color: #000;
       box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
@@ -2352,6 +4863,7 @@
         7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
       );
       z-index: 9998;
+      border: 2px solid #000;
     }
     .rat-noo.visible {
       opacity: 1;
@@ -2363,10 +4875,16 @@
       position: fixed;
       pointer-events: none;
       z-index: 9999;
-      width: 14px; height: 14px;
+      width: 10px; height: 10px;
     }
 
-    .ball img { width: 100%; height: 100%; }
+    .ball img {
+      width: 100%;
+      height: 100%;
+      image-rendering: auto;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
 
     .muzzle-flash {
       position: fixed;
@@ -2392,30 +4910,176 @@
 
     #couchClothes {
       position: fixed;
-      left: 0;
+      left: 50%;
       top: 0;
       transform: translate(-50%, -50%);
       pointer-events: auto;
       cursor: inherit;
-      z-index: 11;
+      z-index: 1400;
       height: auto;
+      width: 85%;
+      max-width: 450px;
+      transition: left 0.7s ease-out, bottom 0.7s ease-out, top 0.7s ease-out, transform 0.7s ease-out;
+    }
+
+    .section-overlay.contact-modal.expanding #couchClothes {
+      transform: translate(-50%, calc(-50% + 50px));
     }
 
     #bioHoverSlide {
-      position: fixed;
+      position: absolute;
       left: 0;
       bottom: 0;
-      width: 100vw;
+      width: 100%;
       pointer-events: none;
-      z-index: 1100;
+      z-index: 24;
       transform: translateY(100%);
       transition: transform 0.55s ease;
+      overflow: visible;
     }
     #bioHoverSlide.visible {
       transform: translateY(0);
     }
     #bioHoverSlide img {
       display: block;
-      width: 100%;
+      width: 58%;
+      max-width: 420px;
       height: auto;
+      margin: 0 auto;
+      filter: drop-shadow(0 0 18px rgba(255, 0, 192, 0.35));
+    }
+
+
+    /* ---- Nutrition Facts label (baking essentials) ---- */
+    .cakes-center-essentials {
+      overflow-y: auto;
+      overflow-x: hidden;
+      align-items: flex-start;
+      justify-content: flex-start;
+      border-radius: 0 !important;
+    }
+    .cakes-center-essentials::before {
+      display: none !important;
+    }
+
+    .nutrition-facts {
+      background: transparent;
+      color: #ff00c0;
+      border: 3px solid #ff00c0;
+      padding: 5px 7px 6px;
+      font-family: 'Helvetica Neue', Arial, sans-serif !important;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .nf-title {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 1px;
+      font-family: inherit !important;
+    }
+
+    .nf-servings {
+      font-size: 9px;
+      margin-bottom: 1px;
+    }
+
+    .nf-serving-size {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: bold;
+      padding-bottom: 3px;
+    }
+
+    .nf-rule { background: #ff00c0; margin: 2px 0; }
+    .nf-rule--thick  { height: 8px; }
+    .nf-rule--medium { height: 4px; }
+    .nf-rule--thin   { height: 1px; }
+
+    .nf-calories-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 1px 0;
+    }
+    .nf-cal-label { font-size: 11px; font-weight: 700; }
+    .nf-cal-num   { font-size: 20px; font-weight: 900; line-height: 1; }
+
+    .nf-dv-header {
+      text-align: right;
+      font-size: 8px;
+      font-weight: 700;
+      padding-bottom: 1px;
+      border-bottom: 1px solid #ff00c0;
+    }
+
+    .nf-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .nf-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      border-bottom: 1px solid #ff00c0;
+      padding: 1px 0;
+      font-size: 9px;
+    }
+    .nf-name   { flex: 1; font-weight: 700; text-transform: capitalize; }
+    .nf-amount { color: #ff00c0; min-width: 36px; text-align: right; }
+    .nf-pct    { font-weight: 900; min-width: 28px; text-align: right; }
+
+    .nf-footnote {
+      font-size: 7.5px;
+      margin-top: 3px;
+      line-height: 1.2;
+      color: rgba(255, 0, 192, 0.85);
+    }
+
+    /* ≤1200px — center is ~225px, compress slightly */
+    @media (max-width: 1200px) {
+      .nutrition-facts {
+        font-size: 8.5px;
+        padding: 4px 5px 5px;
+        border-width: 2px;
+      }
+      .nf-title { font-size: 18px; }
+      .nf-cal-label { font-size: 9px; }
+      .nf-cal-num   { font-size: 17px; }
+      .nf-rule--thick  { height: 6px; }
+      .nf-rule--medium { height: 3px; }
+    }
+
+    /* ≤768px — title + thick line + daily value list only */
+    @media (max-width: 768px) {
+      .nutrition-facts {
+        padding: 4px 5px 5px;
+        border-width: 2px;
+      }
+      .nf-title { font-size: 16px; }
+      .nf-servings,
+      .nf-serving-size,
+      .nf-calories-row,
+      .nf-rule--medium,
+      .nf-rule--thin,
+      .nf-footnote { display: none; }
+      .nf-rule--thick { height: 6px; margin: 3px 0; }
+      .nf-dv-header { font-size: 8px; }
+      .nf-list li   { font-size: 9px; padding: 2px 0; }
+      .nf-amount    { min-width: 32px; }
+      .nf-pct       { min-width: 24px; }
+    }
+
+    /* ≤480px — same structure, slightly tighter */
+    @media (max-width: 480px) {
+      .nutrition-facts { padding: 3px 4px 4px; border-width: 1px; }
+      .nf-title { font-size: 13px; }
+      .nf-rule--thick { height: 4px; margin: 2px 0; }
+      .nf-dv-header { font-size: 7px; }
+      .nf-list li   { font-size: 8px; }
     }
