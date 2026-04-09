@@ -69,9 +69,15 @@
   <link rel="preload" href="img/sound_off.png" as="image">
   <link rel="preload" href="img/light_off.png" as="image">
   <link rel="preload" href="img/light_on.png" as="image">
+  <link rel="preload" href="sound/sound-on.mp3" as="fetch" crossorigin>
+  <link rel="preload" href="sound/sound-off.mp3" as="fetch" crossorigin>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { corePlugins: { ringWidth: false, ringColor: false, ringOpacity: false, ringOffsetWidth: false } }</script>
+  
+  <!-- Model Viewer for 3D Logo -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  
   <style id="gunCursorStyle"></style>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -82,19 +88,58 @@
 
   <!-- Dithering Control Menu -->
   <div class="dither-menu" id="ditherMenu">
-    <button class="dither-toggle" id="ditherToggle" aria-label="Toggle dithering">⚡</button>
+    <button class="dither-toggle" id="ditherToggle" aria-label="Toggle dithering controls"></button>
     <div class="dither-controls">
-      <label class="dither-label">DITHER</label>
-      <input type="range" id="ditherIntensity" min="0" max="100" value="0" aria-label="Dither intensity">
-      <span class="dither-value" id="ditherValue">0%</span>
+      <div class="dither-row">
+        <label class="dither-label">INTENSITY</label>
+        <div class="dither-row-inline">
+          <input type="range" id="ditherIntensity" min="0" max="100" value="32" aria-label="Dither intensity">
+          <span class="dither-value" id="ditherValue">32%</span>
+        </div>
+      </div>
+      <div class="dither-row">
+        <label class="dither-label">SIZE</label>
+        <div class="dither-row-inline">
+          <input type="range" id="ditherSize" min="1" max="8" value="1" step="1" aria-label="Dither size">
+          <span class="dither-value" id="ditherSizeValue">1</span>
+        </div>
+      </div>
+      <div class="dither-row">
+        <label class="dither-label">TYPE</label>
+        <select id="ditherType" class="dither-select" aria-label="Dither type">
+          <option value="0" selected>BAYER</option>
+          <option value="1">HALFTONE</option>
+          <option value="2">SCANLINE</option>
+          <option value="3">NOISE</option>
+        </select>
+      </div>
     </div>
   </div>
 
   <!-- Preloader -->
-  <div id="preloader" class="preloader">
+  <div class="preloader" id="preloader">
     <div class="preloader-content">
-      <div class="preloader-spinner"></div>
-      <div class="preloader-text">DID YOU KNOW THAT...</div>
+      <div style="width: 200px; height: 200px; margin: 0 auto 6px auto; position: relative;">
+        <model-viewer 
+          id="preloaderLogo"
+          src="img/logo.glb"
+          alt="Loading Logo"
+          auto-rotate
+          rotation-per-second="180deg"
+          style="width: 100%; height: 100%; filter: none;"
+          exposure="1.5"
+          shadow-intensity="1"
+          camera-orbit="0deg 75deg 4m"
+          min-camera-orbit="0deg 75deg 4m"
+          max-camera-orbit="0deg 75deg 4m"
+          background-color="transparent"
+          onload="console.log('Preloader logo loaded'); initPreloaderFill();">
+        </model-viewer>
+      </div>
+      <div style="width: 220px; height: 10px; margin: 0 auto 10px auto; position: relative; border: 1px solid #00ff00; background: rgba(0, 255, 0, 0.08); overflow: hidden;">
+        <div id="loadingFill" style="position: absolute; top: 0; left: 0; width: 0%; height: 100%; background: linear-gradient(to right, #00ff00, #ff00c0); opacity: 0.9; pointer-events: none; transition: width 0.3s ease;"></div>
+      </div>
+      <div class="preloader-text">LOADING</div>
     </div>
   </div>
 
@@ -163,15 +208,87 @@
   </div>
 
   <div class="site-logo" id="siteLogo">
-    <img src="" alt="Oye Estupida" id="siteLogoImg">
+    <model-viewer 
+      id="logoModel"
+      src="img/logo.glb"
+      alt="Oye Estupida 3D Logo"
+      auto-rotate
+      rotation-per-second="180deg"
+      style="width: 100%; height: 100%;"
+      exposure="1.5"
+      shadow-intensity="1"
+      camera-orbit="0deg 75deg 6m"
+      min-camera-orbit="0deg 75deg 6m"
+      max-camera-orbit="0deg 75deg 6m"
+      background-color="#000000"
+      onerror="console.error('Model viewer error:', event)"
+      onload="console.log('Model loaded successfully'); makeModelPink();"
+      onprogress="console.log('Loading progress:', event.detail.loaded + '/' + event.detail.total)">
+    </model-viewer>
   </div>
 
-  <img src="img/frames/frame1.png" alt="Artwork in frame" id="frameArt" class="fixed left-1/2 -translate-x-1/2 w-[45vw] sm:w-[30vw] md:w-[20vw] max-w-[280px] z-20" style="top: 70px;" draggable="false">
+  <script>
+    function setMaterialEmissive(material, r, g, b) {
+      if (!material) return;
+      if (typeof material.setEmissiveFactor === 'function') {
+        material.setEmissiveFactor([r, g, b]);
+      }
+    }
+
+    function makeModelPink() {
+      const modelViewer = document.getElementById('logoModel');
+      if (modelViewer && modelViewer.model) {
+        modelViewer.model.materials.forEach(material => {
+          if (material.pbrMetallicRoughness) {
+            // Pink glossy material
+            material.pbrMetallicRoughness.setBaseColorFactor([0.9, 0, 0.6, 1]); // Slightly darker pink
+            material.pbrMetallicRoughness.setMetallicFactor(0.8); // More metallic for glossy look
+            material.pbrMetallicRoughness.setRoughnessFactor(0.1); // Very smooth for glossy finish
+          }
+          
+          // Add emissive glow
+          if (material.pbrMetallicRoughness) {
+                      setMaterialEmissive(material, 0.5, 0, 0.3); // Pink emissive glow
+          }
+        });
+      }
+    }
+
+    function initPreloaderFill() {
+      const preloaderLogo = document.getElementById('preloaderLogo');
+      const loadingFill = document.getElementById('loadingFill');
+      
+      if (preloaderLogo && preloaderLogo.model) {
+        preloaderLogo.model.materials.forEach(material => {
+          if (material.pbrMetallicRoughness) {
+            // Pink glossy material for preloader
+            material.pbrMetallicRoughness.setBaseColorFactor([0.9, 0, 0.6, 1]);
+            material.pbrMetallicRoughness.setMetallicFactor(0.8);
+            material.pbrMetallicRoughness.setRoughnessFactor(0.1);
+            setMaterialEmissive(material, 0.5, 0, 0.3);
+          }
+        });
+      }
+
+      // Simulate loading progress
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress += Math.random() * 15; // Random progress increments
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(loadingInterval);
+        }
+        loadingFill.style.width = progress + '%';
+      }, 200);
+    }
+  </script>
+
+  <img src="img/frames/frame1.png" alt="Artwork in frame" id="frameArt" class="fixed left-1/2 -translate-x-1/2 w-[45vw] sm:w-[30vw] md:w-[20vw] max-w-[250px] z-20" style="top: 70px;" draggable="false">
   <img src="img/frame-mask.png" alt="Paintings frame" id="frameBtn" class="frame-btn fixed left-1/2 -translate-x-1/2 w-[45vw] sm:w-[30vw] md:w-[20vw] max-w-[280px] z-30" style="top: 70px;" draggable="false">
 
   <div class="ring" id="ring"></div>
 
-  <!-- UI sounds (folder: sound ÔÇö carÔåÆsturm, celebrationÔåÆcakes, holyÔåÆtarot, frameÔåÆframe, kissÔåÆcouch, tattooÔåÆtattoo, phoneÔåÆcontact) -->
+  <!-- UI sounds (folder: sound - car->sturm, celebration->cakes, holy->tarot, frame->frame, kiss->couch, tattoo->tattoo, phone->contact) -->
   <audio id="soundTattoos" src="sound/tattoo-1.mp3" preload="auto"></audio>
   <audio id="soundContact" src="sound/phone-1.mp3" preload="auto"></audio>
   <audio id="soundTarot" src="sound/holy-1.mp3" preload="auto"></audio>
@@ -187,16 +304,20 @@
   <audio id="soundRatSpeaks" src="sound/rat-speaks.mp3" preload="auto"></audio>
   <audio id="soundRatFly" src="sound/rat-fly.mp3" preload="auto"></audio>
   <audio id="soundButtonHover" src="sound/button-hover.mp3" preload="auto"></audio>
+  <audio id="soundCakeFall" src="sound/cake_fall.mp3" preload="auto"></audio>
+  <audio id="soundTarotRoll" src="sound/rollcards.mp3" preload="auto"></audio>
   <audio id="soundTheme" src="sound/oye-estupida-theme.mp3" preload="auto" loop></audio>
+  <audio id="soundLightOn" src="sound/sound-on.mp3" preload="auto"></audio>
+  <audio id="soundLightOff" src="sound/sound-off.mp3" preload="auto"></audio>
 
   <div class="mute-btn-wrap">
     <img id="muteBtn" class="mute-btn" src="img/sound_on.png" alt="Toggle sound" title="Mute / Unmute" draggable="false">
-    <span class="mute-tooltip">SOUND ON</span>
+    <span class="mute-tooltip">OFF</span>
   </div>
 
   <svg id="laserSvg" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index:9990;">
-    <line id="laserLine" stroke="#0f0" stroke-width="1" opacity="0.5" />
-    <circle id="laserDot" r="3" fill="#0f0" opacity="0.8" />
+    <line id="laserLine" stroke="#00aaff" stroke-width="1" opacity="0.7" />
+    <circle id="laserDot" r="3" fill="#00aaff" opacity="0.9" />
   </svg>
 
   <div id="gunCursor" aria-hidden="true"><img src="mouse.png" alt="" draggable="false"></div>
@@ -213,8 +334,10 @@
   <div id="tattooOrderOverlay" class="tattoo-order-form-overlay" aria-hidden="true">
     <div class="tattoo-order-container">
       <button class="tattoo-order-close" aria-label="Close">&times;</button>
-      <h2 class="tattoo-order-title">GET YOUR TATTOO</h2>
-      <form id="tattooOrderForm" class="tattoo-order-form">
+      <h2 class="tattoo-order-title">GET YOURS</h2>
+      <form id="tattooOrderForm" class="tattoo-order-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="33fa51ca-9890-40f1-aff2-66f2ae3fbce3">
+        <input type="hidden" name="form_type" value="tattoo_order">
         <div class="tattoo-order-step active" data-step="1">
           <p class="tattoo-order-prompt"><span>Hey!</span><span>What's your name?</span></p>
           <input type="text" id="tattooName" name="name" placeholder="Type here..." autocomplete="name" />
@@ -271,6 +394,7 @@
           <button type="submit" class="tattoo-order-btn">Send</button>
         </div>
       </form>
+      <img src="img/tatoo-button.png" alt="" class="tattoo-order-deco" draggable="false">
     </div>
   </div>
 
@@ -278,7 +402,14 @@
     <div class="cakes-order-container">
       <button class="cakes-order-close" aria-label="Close">&times;</button>
       <h2 class="cakes-order-title">ORDER YOUR CAKE</h2>
-      <form id="cakesOrderForm" class="cakes-order-form">
+      <div class="cakes-order-deco" aria-hidden="true">
+        <img src="img/cakes/cake1.png" alt="" draggable="false">
+        <img src="img/cakes/cake3.png" alt="" draggable="false">
+        <img src="img/cakes/cake5.png" alt="" draggable="false">
+      </div>
+      <form id="cakesOrderForm" class="cakes-order-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="33fa51ca-9890-40f1-aff2-66f2ae3fbce3">
+        <input type="hidden" name="form_type" value="cake_order">
         <div class="cakes-order-step active" data-step="1">
           <p class="cakes-order-prompt"><span>Hey!</span><span>What's your name?</span></p>
           <input type="text" id="cakeName" name="name" placeholder="Type here..." autocomplete="name" />
@@ -322,8 +453,10 @@
   <div id="tarotReadingOverlay" class="tarot-reading-form-overlay" aria-hidden="true">
     <div class="tarot-reading-container">
       <button class="tarot-reading-close" aria-label="Close">&times;</button>
-      <h2 class="tarot-reading-title">GET A READING</h2>
-      <form id="tarotReadingForm" class="tarot-reading-form">
+      <h2 class="tarot-reading-title">GET YOUR SET</h2>
+      <form id="tarotReadingForm" class="tarot-reading-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="33fa51ca-9890-40f1-aff2-66f2ae3fbce3">
+        <input type="hidden" name="form_type" value="tarot_reading">
         <div class="tarot-reading-step active" data-step="1">
           <p class="tarot-reading-prompt"><span>Hey!</span><span>What's your name?</span></p>
           <input type="text" id="tarotReadingName" name="name" placeholder="Type here..." autocomplete="name" />
@@ -331,35 +464,9 @@
         </div>
 
         <div class="tarot-reading-step" data-step="2">
-          <p class="tarot-reading-prompt">What area do you want guidance on?</p>
-          <select id="tarotReadingTopic" name="topic" class="tarot-reading-select">
-            <option value="">Select one...</option>
-            <option value="love">Love</option>
-            <option value="career">Career</option>
-            <option value="money">Money</option>
-            <option value="family">Family</option>
-            <option value="spiritual">Spiritual path</option>
-            <option value="other">Other</option>
-          </select>
-          <button type="button" class="tarot-reading-btn" id="tarotReadingNext2">Next</button>
-        </div>
-
-        <div class="tarot-reading-step" data-step="3">
-          <p class="tarot-reading-prompt">When were you born?</p>
-          <input type="date" id="tarotReadingBirth" name="birthDate" />
-          <button type="button" class="tarot-reading-btn" id="tarotReadingNext3">Next</button>
-        </div>
-
-        <div class="tarot-reading-step" data-step="4">
-          <p class="tarot-reading-prompt">What is your question for the cards?</p>
-          <textarea id="tarotReadingQuestion" name="question" placeholder="Tell me what you want clarity about..." rows="4"></textarea>
-          <button type="button" class="tarot-reading-btn" id="tarotReadingNext4">Next</button>
-        </div>
-
-        <div class="tarot-reading-step" data-step="5">
           <p class="tarot-reading-prompt">How should I contact you?</p>
           <input type="text" id="tarotReadingContact" name="contact" placeholder="Email or phone..." autocomplete="email" />
-          <small>I'll answer with your personalized reading.</small>
+          <small>I'll get in contact with you.</small>
           <button type="submit" class="tarot-reading-btn">Send</button>
         </div>
       </form>
@@ -372,15 +479,15 @@
   <div class="couch-kiss" id="couchKiss" aria-hidden="true">💋</div>
 
   <div class="social-icons">
-    <a href="#" id="instagramTattoo" class="social-ig-btn" aria-label="Instagram Tattoo">
+    <a href="https://www.instagram.com/elpastoesverde69/" target="_blank" rel="noopener" id="instagramTattoo" class="social-ig-btn" aria-label="Instagram Tattoo">
       <img src="img/insta1.png" alt="Instagram Tattoo" draggable="false" style="width:34px;height:34px;object-fit:contain;">
       <span class="social-tooltip">TATTOO</span>
     </a>
-    <a href="#" id="instagramArt" class="social-ig-btn" aria-label="Instagram Visual Art">
+    <a href="https://www.instagram.com/oyestupida/" target="_blank" rel="noopener" id="instagramArt" class="social-ig-btn" aria-label="Instagram Visual Art">
       <img src="img/insta2.png" alt="Instagram Art" draggable="false" style="width:34px;height:34px;object-fit:contain;">
       <span class="social-tooltip">ART</span>
     </a>
-    <a href="https://soundcloud.com" target="_blank" rel="noopener" aria-label="Soundcloud" title="Soundcloud">
+    <a href="https://soundcloud.com/lila007" target="_blank" rel="noopener" aria-label="Soundcloud" title="Soundcloud">
       <img src="img/soundcloud.png" alt="Soundcloud" draggable="false" style="width:34px;height:34px;object-fit:contain;">
       <span class="social-tooltip">Soundcloud</span>
     </a>
@@ -468,12 +575,6 @@
         link.href = canvas.toDataURL('image/png');
       };
       img.src = link.href;
-    })();
-
-    (function() {
-      const logos = ['img/oyestupida-logo1.svg', 'img/oyestupida-logo2.svg'];
-      const img = document.getElementById('siteLogoImg');
-      if (img) img.src = logos[Math.random() < 0.5 ? 0 : 1];
     })();
 
     /* ---------- Day / Night background ---------- */
@@ -821,8 +922,8 @@
         gunCursorImgEl.style.transformOrigin = (cursorW / 2) + 'px 0';
       }
 
-      // Don't apply gun cursor on small screens
-      if (window.innerWidth <= 768) {
+      // Don't apply gun cursor on touch devices or small screens
+      if (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches) {
         document.body.style.cursor = 'default';
         document.querySelectorAll('.ring-btn, .exit-btn, .mute-btn, .frame-btn, .social-icons a, .tarot-contact-btn, .gallery-item, .cakes-orbit-item, .cakes-center').forEach(b => b.style.cursor = 'inherit');
         return;
@@ -847,10 +948,10 @@
         document.body.classList.add('hide-native-cursor');
         return;
       }
-      // Show green dot on small screens - hide native cursor
-      if (window.innerWidth <= 768) {
+      // Hide gun cursor on touch devices or small screens
+      if (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches) {
         gunCursorEl.style.display = 'none';
-        document.body.classList.add('hide-native-cursor');
+        document.body.classList.remove('hide-native-cursor');
         return;
       }
       const isFormField = !!(targetEl && targetEl.closest && targetEl.closest('input, textarea, select, [contenteditable="true"]'));
@@ -983,9 +1084,13 @@
     const soundSocial1 = document.getElementById('soundSocial1');
     const soundSocial2 = document.getElementById('soundSocial2');
     const soundSocial3 = document.getElementById('soundSocial3');
+    const soundTarotRoll = document.getElementById('soundTarotRoll');
+    const soundCakeFall = document.getElementById('soundCakeFall');
     const soundTheme = document.getElementById('soundTheme');
+    const soundLightOn = document.getElementById('soundLightOn');
+    const soundLightOff = document.getElementById('soundLightOff');
 
-    let siteMuted = JSON.parse(localStorage.getItem('siteMuted') || 'false');
+    let siteMuted = JSON.parse(localStorage.getItem('siteMuted') ?? 'true');
     const UI_VOLUME = 0.2;
     const THEME_VOLUME = 0.22;
 
@@ -1004,7 +1109,7 @@
         muteBtn.setAttribute('src', siteMuted ? 'img/sound_off.png' : 'img/sound_on.png');
         muteBtn.setAttribute('alt', siteMuted ? 'Sound off' : 'Sound on');
         const muteTip = muteBtn.parentElement && muteBtn.parentElement.querySelector('.mute-tooltip');
-        if (muteTip) muteTip.textContent = siteMuted ? 'SOUND OFF' : 'SOUND ON';
+        if (muteTip) muteTip.textContent = siteMuted ? 'OFF' : 'ON';
       }
     }
 
@@ -1040,11 +1145,28 @@
       loupe.style.top = e.clientY + 'px';
     }
 
-    document.getElementById('muteBtn').addEventListener('click', (e) => {
-      e.stopPropagation();
+    function toggleSiteMute(e) {
+      if (e) e.stopPropagation();
       siteMuted = !siteMuted;
       updateMuteState();
-    });
+    }
+
+    const muteBtnEl = document.getElementById('muteBtn');
+    if (muteBtnEl) {
+      muteBtnEl.addEventListener('click', () => {
+        toggleSiteMute();
+        // Show tooltip briefly on click
+        const wrap = muteBtnEl.closest('.mute-btn-wrap');
+        if (wrap) {
+          wrap.classList.add('active');
+          setTimeout(() => wrap.classList.remove('active'), 1200);
+        }
+      });
+      const muteTipEl = muteBtnEl.parentElement && muteBtnEl.parentElement.querySelector('.mute-tooltip');
+      if (muteTipEl) {
+        muteTipEl.addEventListener('click', toggleSiteMute);
+      }
+    }
     updateMuteState();
 
     document.body.addEventListener('click', () => startThemeOnce(), { once: true });
@@ -1069,15 +1191,23 @@
         const isNight = document.body.classList.toggle('night-mode');
         setToggleIcon(isNight);
         localStorage.setItem(THEME_KEY, isNight ? 'night' : 'day');
+        if (!siteMuted) {
+          const sfx = isNight ? soundLightOn : soundLightOff;
+          if (sfx) {
+            sfx.volume = UI_VOLUME;
+            sfx.currentTime = 0;
+            sfx.play().catch(() => {});
+          }
+        }
       });
     }
 
     const ringSections = [
-      { label: 'STURMZX2', idx: 1, xPct: 0.72, yPct: 0.38 },
-      { label: 'CAKES', idx: 2, xPct: 0.50, yPct: 0.45 },
-      { label: 'TAROT', idx: 4, xPct: 0.22, yPct: 0.25 },
-      { label: 'Tattoos', idx: 5, xPct: 0.22, yPct: 0.42 },
-      { label: 'Contact', idx: 6, xPct: 0.22, yPct: 0.59 },
+      { label: 'STURMZX2', idx: 1, xPct: 0.8351, yPct: 0.2827 },
+      { label: 'CAKES', idx: 2, xPct: 0.8414, yPct: 0.7070 },
+      { label: 'TAROT', idx: 4, xPct: 0.1665, yPct: 0.1878 },
+      { label: 'Tattoos', idx: 5, xPct: 0.2713, yPct: 0.4905 },
+      { label: 'Contact', idx: 6, xPct: 0.1243, yPct: 0.6596 },
     ];
 
     const draggableBtns = [];
@@ -1162,8 +1292,13 @@
       let pctY = saved ? saved.y : sec.yPct;
 
       function applyPosition() {
-        btn.style.left = (window.innerWidth * pctX - 32) + 'px';
-        btn.style.top  = (window.innerHeight * pctY - 32) + 'px';
+        const w   = btn.offsetWidth  || 64;
+        const h   = btn.offsetHeight || 64;
+        const pad = window.innerWidth <= 768 ? 44 : 0;
+        const left = Math.max(pad, Math.min(window.innerWidth  - w - pad, window.innerWidth  * pctX - w / 2));
+        const top  = Math.max(pad, Math.min(window.innerHeight - h - pad, window.innerHeight * pctY - h / 2));
+        btn.style.left = left + 'px';
+        btn.style.top  = top  + 'px';
       }
       applyPosition();
       btn.style.zIndex = '20';
@@ -1197,8 +1332,11 @@
         function spawnTrailElement(x, y) {
           const trail = btn.cloneNode(true);
           trail.classList.add('ring-btn-trail');
+          trail.classList.remove('dragging');
           trail.style.left = (x - btn.offsetWidth / 2) + 'px';
           trail.style.top = (y - btn.offsetHeight / 2) + 'px';
+          const tip = trail.querySelector('.ring-btn-tooltip');
+          if (tip) tip.remove();
           document.body.appendChild(trail);
           
           // Force reflow
@@ -1227,8 +1365,8 @@
             const newTop  = btnStartY + dy;
             btn.style.left = newLeft + 'px';
             btn.style.top  = newTop + 'px';
-            pctX = (newLeft + 32) / window.innerWidth;
-            pctY = (newTop + 32) / window.innerHeight;
+            pctX = (newLeft + btn.offsetWidth  / 2) / window.innerWidth;
+            pctY = (newTop  + btn.offsetHeight / 2) / window.innerHeight;
             
             // Spawn trail element at intervals
             const centerX = newLeft + btn.offsetWidth / 2;
@@ -1260,6 +1398,53 @@
         window.addEventListener('mouseup', onUp);
       });
 
+      btn.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        btn.classList.add('dragging');
+        isDragging = false;
+        dragStartX = t.clientX;
+        dragStartY = t.clientY;
+        btnStartX = parseFloat(btn.style.left);
+        btnStartY = parseFloat(btn.style.top);
+        trailLastX = btnStartX + btn.offsetWidth / 2;
+        trailLastY = btnStartY + btn.offsetHeight / 2;
+
+        function onTouchMove(ev) {
+          const tc = ev.touches[0];
+          const dx = tc.clientX - dragStartX;
+          const dy = tc.clientY - dragStartY;
+          if (!isDragging && Math.hypot(dx, dy) > 8) {
+            isDragging = true;
+            isDraggingUI = true;
+          }
+          if (isDragging) {
+            ev.preventDefault();
+            const newLeft = btnStartX + dx;
+            const newTop  = btnStartY + dy;
+            btn.style.left = newLeft + 'px';
+            btn.style.top  = newTop + 'px';
+            pctX = (newLeft + btn.offsetWidth  / 2) / window.innerWidth;
+            pctY = (newTop  + btn.offsetHeight / 2) / window.innerHeight;
+          }
+        }
+
+        function onTouchEnd() {
+          btn.removeEventListener('touchmove', onTouchMove);
+          btn.removeEventListener('touchend', onTouchEnd);
+          btn.classList.remove('dragging');
+          if (isDragging) {
+            saveBtnPositions();
+            lastDragEnd = Date.now();
+            setTimeout(() => { isDraggingUI = false; }, 40);
+          } else {
+            pressButton();
+          }
+        }
+
+        btn.addEventListener('touchmove', onTouchMove, { passive: false });
+        btn.addEventListener('touchend', onTouchEnd);
+      }, { passive: true });
+
       function pressButton() {
         // Tarot toggle: if Tarot modal already open, close it instead of reopening
         if (sec.label === 'TAROT' && sectionOpen && sectionOverlay.classList.contains('tarot-modal')) {
@@ -1276,9 +1461,72 @@
       document.body.appendChild(btn);
     });
 
+    // Assign staggered float classes
+    (function() {
+      const floatClasses = ['float-a','float-b','float-c','float-d','float-e'];
+      document.querySelectorAll('.ring-btn').forEach((b, i) => {
+        b.classList.add(floatClasses[i % floatClasses.length]);
+      });
+    })();
+
+    // Random sparkle on ring buttons
+    (function() {
+      const COLORS = ['#ff00c0','#fff','#ffb3f0','#ff69c7'];
+      function spawnSparkles(btn) {
+        const r = btn.getBoundingClientRect();
+        if (!r.width) return;
+        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        const count = 4 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < count; i++) {
+          const sp = document.createElement('div');
+          sp.className = 'btn-sparkle';
+          const angle = Math.random() * Math.PI * 2;
+          const dist  = r.width * 0.35 + Math.random() * r.width * 0.9;
+          const size  = 9 + Math.random() * 9;
+          sp.style.cssText = 'left:' + (cx + Math.cos(angle)*dist) + 'px;top:' + (cy + Math.sin(angle)*dist) + 'px;width:' + size + 'px;height:' + size + 'px;background:' + COLORS[i % COLORS.length] + ';filter:drop-shadow(0 0 4px #ff00c0);animation-delay:' + (i*0.07) + 's';
+          document.body.appendChild(sp);
+          sp.addEventListener('animationend', () => sp.remove());
+        }
+      }
+      function tick() {
+        const btns = Array.from(document.querySelectorAll('.ring-btn')).filter(b => b.style.opacity !== '0' && b.style.visibility !== 'hidden' && !b.classList.contains('selected'));
+        if (btns.length) {
+          const count = Math.random() < 0.35 ? 2 : 1;
+          btns.sort(() => Math.random()-0.5).slice(0, count).forEach(spawnSparkles);
+        }
+        setTimeout(tick, 1600 + Math.random() * 2400);
+      }
+      setTimeout(tick, 2500);
+    })();
+
     window.addEventListener('resize', () => {
-      draggableBtns.forEach(b => b.applyPosition());
+      // Small delay so CSS zoom is applied before reading offsetWidth
+      requestAnimationFrame(() => draggableBtns.forEach(b => b.applyPosition()));
     });
+
+    // Scale inline-styled button images on big screens
+    const BIG_MQ = window.matchMedia('(min-width: 1600px)');
+    function applyBigScreenImageSizes() {
+      const big = BIG_MQ.matches;
+      document.querySelectorAll('.ring-btn .mini-btn-icon img').forEach(img => {
+        const btn = img.closest('.ring-btn');
+        if (btn && btn.classList.contains('cakes-btn')) {
+          img.style.width = big ? '480px' : '';
+          img.style.height = big ? '480px' : '';
+        } else {
+          img.style.width = big ? '340px' : '';
+          img.style.height = big ? '340px' : '';
+        }
+      });
+      document.querySelectorAll('.ring-btn .contact-button-icon img').forEach(img => {
+        img.style.width = big ? '340px' : '';
+        img.style.height = big ? '340px' : '';
+      });
+      // Re-position after size change
+      setTimeout(() => draggableBtns.forEach(b => b.applyPosition()), 50);
+    }
+    applyBigScreenImageSizes();
+    BIG_MQ.addEventListener('change', applyBigScreenImageSizes);
 
     /* ---------- Frame = draggable artwork (no modal) ---------- */
     const frameBtn = document.getElementById('frameBtn');
@@ -1290,6 +1538,7 @@
       'img/frames/frame1.png',
       'img/frames/frame2.png',
       'img/frames/frame3.png',
+      'img/frames/frame5.png',
     ];
     let frameArtIndex = 0;
 
@@ -1315,16 +1564,21 @@
         document.body.appendChild(noiseOverlay);
       }
       
-      // Position noise overlay - slightly smaller than artwork
-      const artRect = frameArt.getBoundingClientRect();
-      const inset = 25; // inset to make container slightly smaller than artwork
-      noiseOverlay.style.left = (artRect.left + inset) + 'px';
-      noiseOverlay.style.top = (artRect.top + inset) + 'px';
-      noiseOverlay.style.width = (artRect.width - inset * 2) + 'px';
-      noiseOverlay.style.height = (artRect.height - inset * 2) + 'px';
-      
+      // Position noise overlay inside the frame PNG opening (inset 12% each side)
+      const frameRect = frameBtn.getBoundingClientRect();
+      const insetX = frameRect.width * 0.12;
+      const insetY = frameRect.height * 0.12;
+      const noiseW = frameRect.width - insetX * 2;
+      const noiseH = frameRect.height - insetY * 2;
+      noiseOverlay.style.left = (frameRect.left + insetX) + 'px';
+      noiseOverlay.style.top = (frameRect.top + insetY) + 'px';
+      noiseOverlay.style.width = noiseW + 'px';
+      noiseOverlay.style.height = noiseH + 'px';
+
       // Generate static noise on canvas
       const canvas = noiseOverlay.querySelector('canvas');
+      canvas.width = Math.max(1, Math.round(noiseW));
+      canvas.height = Math.max(1, Math.round(noiseH));
       const ctx = canvas.getContext('2d');
       
       function generateNoise() {
@@ -1420,7 +1674,7 @@
       const hasSavedFramePos = Number.isFinite(savedFramePosX) && Number.isFinite(savedFramePosY);
 
       let framePctX = hasSavedFramePos ? savedFramePosX : 0.5;
-      let framePctY = hasSavedFramePos ? savedFramePosY : 0.1;
+      let framePctY = hasSavedFramePos ? savedFramePosY : 0.3038;
 
       function updateFramePctFromRect() {
         const left = parseFloat(frameBtn.style.left);
@@ -1452,7 +1706,6 @@
         }
       }
 
-      if (!hasSavedFramePos) updateFramePctFromRect();
       applyFramePosition();
 
       let resizeRaf = 0;
@@ -1513,6 +1766,7 @@
         function spawnFrameTrail(x, y) {
           const trail = frameBtn.cloneNode(true);
           trail.classList.add('frame-btn-trail');
+          trail.classList.remove('dragging');
           trail.style.left = (x - frameBtn.offsetWidth / 2) + 'px';
           trail.style.top = (y - frameBtn.offsetHeight / 2) + 'px';
           document.body.appendChild(trail);
@@ -1588,6 +1842,66 @@
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onUp);
       });
+
+      frameBtn.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        e.preventDefault();
+        e.stopPropagation();
+        frameBtn.classList.add('dragging');
+        if (frameArt) frameArt.classList.add('dragging');
+        draggingFrame = true;
+        isDraggingUI = true;
+        const rect = frameBtn.getBoundingClientRect();
+        startX = t.clientX;
+        startY = t.clientY;
+        startLeft = rect.left;
+        startTop = rect.top;
+        frameTrailLastX = rect.left + rect.width / 2;
+        frameTrailLastY = rect.top + rect.height / 2;
+
+        if (resizeRaf) { cancelAnimationFrame(resizeRaf); resizeRaf = 0; }
+
+        function onTouchMove(ev) {
+          if (!draggingFrame) return;
+          ev.preventDefault();
+          const tc = ev.touches[0];
+          const dx = tc.clientX - startX;
+          const dy = tc.clientY - startY;
+          const newLeft = startLeft + dx;
+          const newTop  = startTop  + dy;
+          frameBtn.style.left = newLeft + 'px';
+          frameBtn.style.top  = newTop  + 'px';
+          if (frameArt) {
+            frameArt.style.left = (newLeft + (frameBtn.offsetWidth  - frameArt.offsetWidth)  / 2) + 'px';
+            frameArt.style.top  = (newTop  + (frameBtn.offsetHeight - frameArt.offsetHeight) / 2) + 'px';
+          }
+        }
+
+        function onTouchEnd() {
+          draggingFrame = false;
+          frameBtn.removeEventListener('touchmove', onTouchMove);
+          frameBtn.removeEventListener('touchend',  onTouchEnd);
+          frameBtn.classList.remove('dragging');
+          if (frameArt) frameArt.classList.remove('dragging');
+          const left = parseFloat(frameBtn.style.left);
+          const top  = parseFloat(frameBtn.style.top);
+          if (Number.isFinite(left) && Number.isFinite(top)) {
+            framePctX = (left + frameBtn.offsetWidth  / 2) / window.innerWidth;
+            framePctY = (top  + frameBtn.offsetHeight / 2) / window.innerHeight;
+          } else {
+            const r = frameBtn.getBoundingClientRect();
+            framePctX = (r.left + r.width  / 2) / window.innerWidth;
+            framePctY = (r.top  + r.height / 2) / window.innerHeight;
+          }
+          localStorage.setItem('framePosX', framePctX);
+          localStorage.setItem('framePosY', framePctY);
+          lastDragEnd = Date.now();
+          setTimeout(() => { isDraggingUI = false; }, 40);
+        }
+
+        frameBtn.addEventListener('touchmove', onTouchMove, { passive: false });
+        frameBtn.addEventListener('touchend',  onTouchEnd);
+      }, { passive: false });
     })();
 
     // Frame tooltip: ARTWORKS coming from bottom
@@ -1601,7 +1915,7 @@
       const centerX = rect.left + rect.width / 2;
       const bottomY = rect.bottom;
       frameTooltip.style.left = centerX + 'px';
-      frameTooltip.style.top = (bottomY - 62) + 'px';
+      frameTooltip.style.top = (bottomY - 42) + 'px';
     }
 
     frameBtn.addEventListener('mouseenter', () => {
@@ -1626,9 +1940,77 @@
 
     if (couchBtn) couchBtn.style.pointerEvents = 'none';
 
+    /* --- Pixel-perfect hit test for couchClothes PNG --- */
+    let _couchClothesPixels = null;
+    let _couchClothesNW = 0, _couchClothesNH = 0;
+    function _loadCouchClothesPixels(src) {
+      const offCanvas = document.createElement('canvas');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        offCanvas.width = img.naturalWidth;
+        offCanvas.height = img.naturalHeight;
+        _couchClothesNW = img.naturalWidth;
+        _couchClothesNH = img.naturalHeight;
+        const ctx = offCanvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        try { _couchClothesPixels = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight); }
+        catch (e) { _couchClothesPixels = null; }
+      };
+      img.src = src;
+    }
+    if (couchClothes) _loadCouchClothesPixels(couchClothes.src);
+
+    function _couchClothesPixelHit(screenX, screenY) {
+      if (!_couchClothesPixels || !couchClothes) return true; // fallback to bounding box
+      const r = couchClothes.getBoundingClientRect();
+      const relX = (screenX - r.left) / r.width;
+      const relY = (screenY - r.top) / r.height;
+      const px = Math.floor(relX * _couchClothesNW);
+      const py = Math.floor(relY * _couchClothesNH);
+      if (px < 0 || py < 0 || px >= _couchClothesNW || py >= _couchClothesNH) return false;
+      const alpha = _couchClothesPixels.data[(py * _couchClothesNW + px) * 4 + 3];
+      return alpha > 30;
+    }
+
+    /* --- Pixel-perfect hit test for couchBtn PNG --- */
+    let _couchBtnPixels = null;
+    let _couchBtnNW = 0, _couchBtnNH = 0;
+    function _loadCouchBtnPixels(src) {
+      const offCanvas = document.createElement('canvas');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        offCanvas.width = img.naturalWidth;
+        offCanvas.height = img.naturalHeight;
+        _couchBtnNW = img.naturalWidth;
+        _couchBtnNH = img.naturalHeight;
+        const ctx = offCanvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        try { _couchBtnPixels = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight); }
+        catch (e) { _couchBtnPixels = null; }
+      };
+      img.src = src;
+    }
+    if (couchBtn) _loadCouchBtnPixels(couchBtn.src);
+
+    function _couchBtnPixelHit(screenX, screenY) {
+      if (!_couchBtnPixels || !couchBtn) return true;
+      const r = couchBtn.getBoundingClientRect();
+      const relX = (screenX - r.left) / r.width;
+      const relY = (screenY - r.top) / r.height;
+      const px = Math.floor(relX * _couchBtnNW);
+      const py = Math.floor(relY * _couchBtnNH);
+      if (px < 0 || py < 0 || px >= _couchBtnNW || py >= _couchBtnNH) return false;
+      const alpha = _couchBtnPixels.data[(py * _couchBtnNW + px) * 4 + 3];
+      return alpha > 30;
+    }
+
     // Store resting position for when modal closes
     let restingLeft = 0;
     let restingTop = 0;
+    // Snapshot of couchClothes rect just before a modal opens (left-edge coords)
+    let premodalCouchSnap = null;
 
     function positionCouchClothes() {
       if (!couchBtn || !couchClothes) return;
@@ -1664,13 +2046,6 @@
     }
 
     couchClothes.addEventListener('mouseenter', () => {
-      if (
-        bioHoverSlide &&
-        sectionOverlay.classList.contains('bio-modal') &&
-        sectionOverlay.classList.contains('expanding')
-      ) {
-        bioHoverSlide.classList.add('visible');
-      }
       playSoundForElement(couchClothes, soundCouch);
       const { x, y } = getKissOrigin();
       couchKiss.style.left = x + 'px';
@@ -1767,6 +2142,16 @@
     function openSection(btnEl, idx) {
       if (sectionOpen) return;
       sectionOpen = true;
+      // Snapshot couchClothes position before any modal changes it
+      if (couchClothes) {
+        const r = couchClothes.getBoundingClientRect();
+        premodalCouchSnap = { left: r.left, top: r.top, width: r.width };
+      }
+      // Stop chase if a modal opens
+      if (clothesIsFollowing) {
+        clothesIsFollowing = false;
+        if (clothesFollowRAF) { cancelAnimationFrame(clothesFollowRAF); clothesFollowRAF = null; }
+      }
       document.body.classList.add('modal-open');
 
       // reset overlay classes and any closing state; clear inline styles so from-bottom animation works after cakes
@@ -1900,30 +2285,44 @@
           { label: 'love',    value: '1kg',      pct: '100%' },
           { label: 'anxiety', value: '69gr',     pct: '69%'  },
           { label: 'salz',    value: '0,5gr',    pct: '1%'   },
-          { label: 'dreams',  value: '3.690kg',  pct: '369%' },
+          { label: 'dreams',  value: '3kg',      pct: '369%' },
           { label: 'reality', value: '0,1ml',    pct: '0%'   },
           { label: 'humor',   value: '6,66L',    pct: '666%' },
         ];
-        const cakesData = Array.from({ length: 9 }, (_, i) => ({ img: `img/cakes/cake${i + 1}.png` }));
+        const cakeNames = [
+          'PICKY CLIMBER',
+          'SUGAR BOSS',
+          'LISS HARD',
+          'KIDS PANIK',
+          'BOTOX SYMPHONY',
+          'YODA SOUL',
+          'TERROR SISTERS',
+          'DOUBLE CHAOS',
+          'SALTY WITCH'
+        ];
+        const cakesData = Array.from({ length: 9 }, (_, i) => ({
+          img: `img/cakes/cake${i + 1}.png`,
+          name: cakeNames[i] || 'CREEPY WEEKY'
+        }));
         sectionOverlay.classList.add('cakes-modal');
         let activeIdx = null;
+
+        function playCakesHoverSound() {
+          const btnSound = document.getElementById('soundButtonHover');
+          if (btnSound && !siteMuted) {
+            btnSound.volume = UI_VOLUME;
+            btnSound.currentTime = 0;
+            btnSound.play().catch(() => {});
+          }
+        }
+
         const essentialsHtml = `
           <div class="nutrition-facts">
             <div class="nf-title">Nutrition Fucks</div>
-            <div class="nf-servings">6 servings per batch</div>
-            <div class="nf-serving-size"><span>Serving size</span><span>1 Dream</span></div>
             <div class="nf-rule nf-rule--thick"></div>
-            <div class="nf-calories-row">
-              <span class="nf-cal-label">Calories</span>
-              <span class="nf-cal-num">∞</span>
-            </div>
-            <div class="nf-rule nf-rule--medium"></div>
-            <div class="nf-dv-header">% Daily Value*</div>
             <ul class="nf-list">
-              ${bakingEssentials.map(n => `<li><span class="nf-name">${n.label}</span><span class="nf-amount">${n.value}</span><span class="nf-pct">${n.pct}</span></li>`).join('')}
+              ${bakingEssentials.map(n => `<li><span class="nf-name">${n.label}</span><span class="nf-amount">${n.value}</span></li>`).join('')}
             </ul>
-            <div class="nf-rule nf-rule--thin"></div>
-            <div class="nf-footnote">*% based on what you deserve.</div>
           </div>
         `;
         const updateCenterAndCorner = () => {
@@ -1932,7 +2331,22 @@
           if (!centerSlot || !cornerSlot) return;
           centerSlot.innerHTML = activeIdx === null
             ? `<div class="cakes-center cakes-center-essentials">${essentialsHtml}</div>`
-            : `<div class="cakes-center"><img src="${cakesData[activeIdx].img}" alt="Selected cake"></div>`;
+            : `<div class="cakes-center cakes-center-selected"><div class="cakes-float-group"><img src="${cakesData[activeIdx].img}" alt="${cakesData[activeIdx].name}"><span class="cake-name-tooltip">${cakesData[activeIdx].name}</span></div></div>`;
+
+          if (activeIdx !== null) {
+            const centerCake = centerSlot.querySelector('.cakes-center');
+            if (centerCake) {
+              centerCake.addEventListener('mouseenter', () => {
+                playCakesHoverSound();
+              });
+              centerCake.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const spawnFalling = sectionOverlay._cakesSpawnFalling;
+                if (spawnFalling) spawnFalling(cakesData[activeIdx].img);
+              });
+            }
+          }
+
           cornerSlot.innerHTML = '';
         };
         sectionContent.innerHTML = `
@@ -1996,6 +2410,9 @@
         const orbit = document.getElementById('cakesOrbit');
         const container = document.getElementById('cakesContainer');
         orbit.querySelectorAll('.cakes-orbit-item').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            playCakesHoverSound();
+          });
           el.addEventListener('click', () => {
             activeIdx = parseInt(el.dataset.idx, 10);
             updateCenterAndCorner();
@@ -2050,12 +2467,18 @@
         sectionOverlay._cakesSpawnFalling = (imgSrc) => {
           initCakesPhysics();
 
+          if (soundCakeFall && !siteMuted) {
+            soundCakeFall.volume = UI_VOLUME;
+            soundCakeFall.currentTime = 0;
+            soundCakeFall.play().catch(() => {});
+          }
+
           let container = document.getElementById('fallingCakesContainer');
           if (!container) {
             container = document.createElement('div');
             container.id = 'fallingCakesContainer';
             container.className = 'falling-cakes-container';
-            sectionOverlay.appendChild(container);
+            document.body.appendChild(container);
           }
 
           const count = 12;
@@ -2098,10 +2521,10 @@
           <div class="sturmzx2-scroll">
             <div class="sturmzx2-content">
               <p class="sturmzx2-tagline">ARTWEAR FROM BERLIN</p>
-              <p class="sturmzx2-first-paragraph">Sturmzx2 is an artwear project founded by 2 sisters, Berlin based. Their vision is <span class="sturmzx2-be-bold">BOLD</span>.</p>
+              <p class="sturmzx2-first-paragraph">Beloved Artwear upcycling project with my sister @Melamaniak transforming trash into wearable pieces.</p>
               <img src="img/sturmz-duo.gif" alt="Sturmz duo" class="sturmzx2-duo-gif" loading="lazy">
               <br>
-              <p>Rejecting the fast fashion industry, proposing a brave aesthetic inspired by trash, society, dreams, life, death, and pleasure.</p>
+              <p>Rejecting fast fashion industry mixing techniques like sewing, screenprint, airbrush, stiching, etc. Creating unique pieces.</p>
               <br>
               <p>Collecting materials from the streets of the city or whatever God provides, transforming them with mixed experimental naive techniques.</p>
               <p>Enjoying the process of each piece, making unique products. Encouraging "Never forget playing and dreaming hard <3."</p>
@@ -2120,7 +2543,12 @@
         }
       } else if (idx === 3) {
         sectionOverlay.classList.add('bio-modal');
-        if (couchClothes) couchClothes.src = 'img/oyestupida_naked.png';
+        if (couchClothes) { couchClothes.src = 'img/oyestupida_naked.png'; _loadCouchClothesPixels('img/oyestupida_naked.png'); }
+        if (couchBtn) {
+          couchBtn.style.pointerEvents = 'none';
+          couchBtn.style.transition = 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)';
+          couchBtn.style.transform = 'translate(-50%, 140%)';
+        }
         // Layering: bio modal above mid-right toggle; couch + overlay above bio modal
         sectionOverlay.style.zIndex = '1300';
         if (couchBtn) couchBtn.style.zIndex = '1400';
@@ -2128,26 +2556,6 @@
         if (bioHoverSlide) bioHoverSlide.classList.remove('visible');
         if (toggleBtnWrap) toggleBtnWrap.style.display = 'none';
         if (muteBtnWrap) muteBtnWrap.style.display = 'none';
-        
-        // Position couch at bottom center of screen, naked PNG more to the right
-        const screenCenterX = window.innerWidth / 2;
-        const screenBottomY = window.innerHeight;
-        
-        if (couchClothes) {
-          const bioCouchWidth = Math.max(320, Math.min(680, window.innerWidth * 0.48));
-          couchClothes.style.transition = 'top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
-          couchClothes.style.width = bioCouchWidth + 'px';
-          couchClothes.style.left = (screenCenterX + 150) + 'px'; // 150px to the right
-          couchClothes.style.top = screenBottomY + 'px';
-          couchClothes.style.transform = 'translate(-50%, -50%)';
-        }
-        // Move couchBtn to bottom center of screen
-        if (couchBtn) {
-          couchBtn.style.transition = 'top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
-          couchBtn.style.left = screenCenterX + 'px';
-          couchBtn.style.top = screenBottomY + 'px';
-          couchBtn.style.transform = 'translate(-50%, -50%)';
-        }
         sectionContent.innerHTML = `
           <button class="bio-modal-close" aria-label="Close">&times;</button>
           <h2 class="gallery-title">BIO</h2>
@@ -2155,9 +2563,11 @@
             <div class="bio-scroll" id="bioScroll">
               <div class="bio-intro">Hi, I'm Barbi.</div>
               <div class="bio-text">
-                <p>Self-expression has always been the force that keeps my mind alive and curious. Since childhood, I've been drawing, moving, questioning, and pushing against rules that never made sense to me. As I grew older, I realized how much oppression and rigidity could silence people — and how deeply I needed creativity to release, transform, and make sense of the world around me. Art became the place where I could channel that energy, mix reality with imagination, and build a universe of my own. It's a universe that makes me feel safe, one I return to in my dreams, and one I hope to keep discovering throughout my life.</p>
-                <p>Feeling lost at times has guided me toward unexpected paths. Each path opens new doors, and exploring them has become one of my greatest passions. Asking questions, drawing my thoughts, and creating stories out of everyday objects helps me understand myself and the world. Even something as simple as finding a set of old keys can spark endless curiosity — who owned them, what spaces they opened, what lives they touched. I love imagining the stories behind things that pass through my hands.</p>
-                <p>My creative journey has never been linear. I studied interior design, completed a postgraduate degree in illustration, baked and sold cakes at school, made handmade scarves, tattooed, explored upcycling clothing and jewelry from street materials, returned to baking, and continued tattooing. I'm happiest when I'm learning, experimenting, and trying new things. Creating — in any form — is where I feel most myself.</p>
+                <p>A multidisciplinary Chilean artist based in Berlin, full-time curious creature, though my spirit moves worldwide.. I studied Interior Design and Illustration. But it was too specific and I decided to build my own path with this knowledges and play a bit...</p>
+                <p>Inspired by games, society, trash, nature, beliefs, dreams, and fears that push me to face them and create new ones :)</p>
+                <p>Experimenting keeps me grounded. Creating for release and my way of staying connected to the world.</p>
+                <p>I jump between mediums like it's a sport: drawing -> tattooing -> upcycling clothes -> baking stupid cakes ... all at once, all together, mixing them like a receipe for satisfaction.</p>
+                <p>Life is a highway and we are the car, art is my gasoline and love, my heart.</p>
               </div>
             </div>
             <div class="bio-photo-wrap">
@@ -2166,14 +2576,55 @@
           </div>
         `;
 
-        const bioContent = sectionContent.querySelector('.bio-content');
-        if (bioHoverSlide && bioContent) {
-          bioContent.appendChild(bioHoverSlide);
+        // Move bioHoverSlide to end of bio-scroll content for scroll reveal effect
+        const bioScroll = sectionContent.querySelector('.bio-scroll');
+        if (bioHoverSlide && bioScroll) {
+          bioScroll.appendChild(bioHoverSlide);
           bioHoverSlide.classList.remove('visible');
+          // Add scroll detection to reveal image when near bottom
+          bioScroll.addEventListener('scroll', () => {
+            const scrollBottom = bioScroll.scrollTop + bioScroll.clientHeight;
+            const scrollThreshold = bioScroll.scrollHeight - 100; // 100px from bottom
+            if (scrollBottom >= scrollThreshold) {
+              bioHoverSlide.classList.add('visible');
+            }
+          }, { passive: true });
         }
 
         const bioCloseBtn = sectionContent.querySelector('.bio-modal-close');
         if (bioCloseBtn) bioCloseBtn.addEventListener('click', () => closeSection());
+
+        // Place couchClothes aligned to bio modal bottom once modal slide-in completes
+        setTimeout(() => {
+          if (!couchClothes || !sectionOverlay.classList.contains('bio-modal') || !sectionOverlay.classList.contains('expanding')) return;
+          const modalRect = sectionOverlay.getBoundingClientRect();
+          const bioCouchWidth = Math.max(300, Math.min(640, window.innerWidth * 0.46));
+          const bioRightOffset = window.innerWidth * 0.01;
+
+          // Lock to current on-screen box before switching anchors to avoid jump.
+          const current = couchClothes.getBoundingClientRect();
+          const currentLeft = current.left;
+          const currentBottom = window.innerHeight - current.bottom;
+          const currentWidth = current.width;
+
+          couchClothes.style.transition = 'none';
+          couchClothes.style.top = 'auto';
+          couchClothes.style.bottom = currentBottom + 'px';
+          couchClothes.style.left = currentLeft + 'px';
+          couchClothes.style.transform = 'translate(0, 0)';
+          couchClothes.style.width = currentWidth + 'px';
+
+          void couchClothes.offsetHeight;
+
+          couchClothes.style.transition = 'left 0.7s ease, bottom 0.7s ease, width 0.7s ease';
+
+          const targetLeft = modalRect.left - 50 - (window.innerWidth * 0.015) + bioRightOffset;
+          const targetBottom = window.innerHeight - modalRect.bottom - (window.innerHeight * 0.05) - 50;
+
+          couchClothes.style.left = targetLeft + 'px';
+          couchClothes.style.bottom = targetBottom + 'px';
+          couchClothes.style.width = bioCouchWidth + 'px';
+        }, 520);
 
         // invisible scroll + click-drag scrolling
         requestAnimationFrame(() => {
@@ -2211,38 +2662,53 @@
         sectionContent.innerHTML = `
           <button class="tarot-modal-close" id="tarotCloseBtn" aria-label="Close">×</button>
           <div class="tarot-scroll-arrow" id="tarotScrollArrow">↓</div>
-          <img src="img/bysturmz.png" class="tarot-bysturmz" alt="By Sturmz" style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:80px;height:auto;z-index:100;">
+          <img src="img/bysturmz.png" class="tarot-bysturmz" alt="By Sturmz">
           <h2 class="gallery-title" id="tarotTitle">TAROT</h2>
           <div class="tarot-scroll-snap" id="tarotScrollSnap">
             <div class="tarot-section tarot-section-intro">
               <div class="tarot-text-wrap">
                 <p class="tarot-text">Discover your path through the cards. Each reading is a journey into the unknown — a moment to reflect, dream, and connect.</p>
-                <button class="tarot-contact-btn" id="tarotContactBtn">GET YOUR DESTINY</button>
+              <button class="tarot-contact-btn" id="tarotContactBtn">GET YOUR DESTINY</button>
+              <img src="img/tarot/tarot-hand.jpg" class="tarot-destiny-image" alt="Tarot cards in hand" draggable="false">
+            </div>
+          </div>
+          <div class="tarot-section tarot-section-cards" id="tarotCardSection">
+            <div class="tarot-card-stage" id="tarotCardStage">
+              <!-- 21 flipped cards with checkerboard backs -->
+              <div class="tarot-flipped-cards" id="tarotFlippedCards">
+                <div class="tarot-flipped-card" style="--i:0;"></div>
+                <div class="tarot-flipped-card" style="--i:1;"></div>
+                <div class="tarot-flipped-card" style="--i:2;"></div>
+                <div class="tarot-flipped-card" style="--i:3;"></div>
+                <div class="tarot-flipped-card" style="--i:4;"></div>
+                <div class="tarot-flipped-card" style="--i:5;"></div>
+                <div class="tarot-flipped-card" style="--i:6;"></div>
+                <div class="tarot-flipped-card" style="--i:7;"></div>
+                <div class="tarot-flipped-card" style="--i:8;"></div>
+                <div class="tarot-flipped-card" style="--i:9;"></div>
+                <div class="tarot-flipped-card" style="--i:10;"></div>
+                <div class="tarot-flipped-card" style="--i:11;"></div>
+                <div class="tarot-flipped-card" style="--i:12;"></div>
+                <div class="tarot-flipped-card" style="--i:13;"></div>
+                <div class="tarot-flipped-card" style="--i:14;"></div>
+                <div class="tarot-flipped-card" style="--i:15;"></div>
+                <div class="tarot-flipped-card" style="--i:16;"></div>
+                <div class="tarot-flipped-card" style="--i:17;"></div>
+                <div class="tarot-flipped-card" style="--i:18;"></div>
+                <div class="tarot-flipped-card" style="--i:19;"></div>
+                <div class="tarot-flipped-card" style="--i:20;"></div>
+              </div>
+              <!-- Selected card (hidden initially) -->
+              <div class="tarot-selected-card" id="tarotSelectedCard">
+                <img src="" alt="Selected Tarot Card" id="tarotSelectedImg">
+              </div>
+              <!-- Meaning text (hidden initially) -->
+              <div class="tarot-meaning-display" id="tarotMeaningDisplay">
+                <p class="tarot-meaning-text" id="tarotMeaningText"></p>
               </div>
             </div>
-            <div class="tarot-section tarot-section-cards" id="tarotCardSection">
-              <div class="tarot-card-stage" id="tarotCardStage">
-                <!-- 6 flipped cards with checkerboard backs -->
-                <div class="tarot-flipped-cards" id="tarotFlippedCards">
-                  <div class="tarot-flipped-card" style="--i:0;"></div>
-                  <div class="tarot-flipped-card" style="--i:1;"></div>
-                  <div class="tarot-flipped-card" style="--i:2;"></div>
-                  <div class="tarot-flipped-card" style="--i:3;"></div>
-                  <div class="tarot-flipped-card" style="--i:4;"></div>
-                  <div class="tarot-flipped-card" style="--i:5;"></div>
-                </div>
-                <!-- Selected card (hidden initially) -->
-                <div class="tarot-selected-card" id="tarotSelectedCard">
-                  <img src="" alt="Selected Tarot Card" id="tarotSelectedImg">
-                </div>
-                <!-- Meaning text (hidden initially) -->
-                <div class="tarot-meaning-display" id="tarotMeaningDisplay">
-                  <p class="tarot-meaning-text" id="tarotMeaningText"></p>
-                </div>
-              </div>
-              <button class="tarot-roll-btn" id="tarotRollBtn">Roll the cards!</button>
-              <button class="tarot-get-reading-btn" id="tarotGetReadingBtn">GET A READING</button>
-            </div>
+            <button class="tarot-roll-btn" id="tarotRollBtn">Roll the cards!</button>
+            <button class="tarot-get-reading-btn" id="tarotGetReadingBtn">GET YOUR SET</button>
           </div>
         `;
         const tarotCloseBtn = document.getElementById('tarotCloseBtn');
@@ -2272,6 +2738,35 @@
         
         let isShowingMeaning = false;
         let currentCardIndex = 0;
+
+        function fitTarotMeaningText() {
+          if (!tarotMeaningDisplay || !tarotMeaningText) return;
+
+          const maxFontSize = 14;
+          const minFontSize = 8;
+          let size = maxFontSize;
+
+          tarotMeaningText.style.fontSize = `${size}px`;
+          tarotMeaningText.style.lineHeight = '1.55';
+
+          while (
+            size > minFontSize &&
+            tarotMeaningText.scrollHeight > tarotMeaningDisplay.clientHeight - 2
+          ) {
+            size -= 0.5;
+            tarotMeaningText.style.fontSize = `${size}px`;
+          }
+
+          tarotMeaningText.style.lineHeight = size <= 10 ? '1.35' : size <= 12 ? '1.45' : '1.55';
+
+          while (
+            size > minFontSize &&
+            tarotMeaningText.scrollHeight > tarotMeaningDisplay.clientHeight - 2
+          ) {
+            size -= 0.5;
+            tarotMeaningText.style.fontSize = `${size}px`;
+          }
+        }
         
         function getRandomCardIndex() {
           let newIndex;
@@ -2283,31 +2778,51 @@
         
         function resetToInitialState() {
           isShowingMeaning = false;
-          
+
           // Reset title
           tarotTitle.textContent = 'TAROT';
-          
+
           // Hide meaning and selected card
           tarotMeaningDisplay.classList.remove('visible');
           tarotSelectedCard.classList.remove('visible');
-          
+          tarotSelectedCard.style.opacity = '';
+          tarotSelectedCard.style.transform = '';
+
           // Hide GET A READING button
           const getReadingBtn = document.getElementById('tarotGetReadingBtn');
           if (getReadingBtn) getReadingBtn.classList.remove('visible');
-          
-          // Show flipped cards with animation
+
+          // Restore bysturmz logo
+          const bysturmzImg = document.querySelector('.tarot-bysturmz');
+          if (bysturmzImg) { bysturmzImg.style.transition = 'opacity 0.4s ease'; bysturmzImg.style.opacity = '1'; }
+
+          // Reset all flipped cards (remove face children, classes, inline styles)
+          tarotFlippedCards.querySelectorAll('.tarot-flipped-card').forEach(c => {
+            c.classList.remove('flipping');
+            c.style.opacity = '';
+            c.style.transform = '';
+            c.style.transition = '';
+            c.style.zIndex = '';
+            c.style.background = '';
+            c.style.border = '';
+            c.style.transformStyle = '';
+            c.querySelectorAll('.tarot-face').forEach(f => f.remove());
+          });
+
+          // Show flipped cards again
           tarotFlippedCards.classList.remove('fading-out');
-          
+          tarotFlippedCards.style.opacity = '';
+
           // Reappear roll button
           tarotRollBtn.classList.remove('disappearing');
           tarotRollBtn.classList.add('reappearing');
           tarotRollBtn.textContent = 'Roll the cards!';
-          
+
           // Reset close button
           tarotCloseBtn.innerHTML = '&times;';
           tarotCloseBtn.classList.remove('back-arrow');
           tarotCloseBtn.setAttribute('aria-label', 'Close');
-          
+
           setTimeout(() => {
             tarotRollBtn.classList.remove('reappearing');
           }, 600);
@@ -2320,6 +2835,7 @@
           // Show meaning text only (no title at bottom)
           tarotMeaningText.textContent = card.meaning;
           tarotMeaningDisplay.classList.add('visible');
+          requestAnimationFrame(() => requestAnimationFrame(fitTarotMeaningText));
           
           // Show GET A READING button at bottom
           const getReadingBtn = document.getElementById('tarotGetReadingBtn');
@@ -2330,56 +2846,122 @@
           tarotCloseBtn.classList.add('back-arrow');
           tarotCloseBtn.setAttribute('aria-label', 'Go back');
         }
-        
+
+        // Only add resize listener once to prevent accumulation
+        if (!window._tarotResizeListenerAdded) {
+          window._tarotResizeListenerAdded = true;
+          window.addEventListener('resize', () => {
+            // Only run if tarot modal is currently open
+            if (document.querySelector('.section-overlay.tarot-modal.expanding') && isShowingMeaning) {
+              fitTarotMeaningText();
+            }
+          });
+        }
+
         function rollCards() {
           // Hide scroll arrow when rolling
           const scrollArrow = document.getElementById('tarotScrollArrow');
           if (scrollArrow) scrollArrow.style.display = 'none';
-          
-          // Button disappears with animation
+
+          // Hide bysturmz logo
+          const bysturmzImg = document.querySelector('.tarot-bysturmz');
+          if (bysturmzImg) { bysturmzImg.style.transition = 'opacity 0.3s ease'; bysturmzImg.style.opacity = '0'; }
+
           tarotRollBtn.classList.add('disappearing');
-          
-          // Select random card
+
           currentCardIndex = getRandomCardIndex();
           const card = tarotCards[currentCardIndex];
-          
-          // Set the selected card image
-          tarotSelectedImg.src = card.image;
-          
-          // Animate one of the flipped cards to flip and reveal
+
           const flippedCards = tarotFlippedCards.querySelectorAll('.tarot-flipped-card');
           const randomCardIndex = Math.floor(Math.random() * flippedCards.length);
           const selectedFlippedCard = flippedCards[randomCardIndex];
-          
-          // Animate the selected flipped card
-          selectedFlippedCard.style.transform = 'rotateY(180deg) scale(1.2)';
-          selectedFlippedCard.style.zIndex = '100';
-          
+
+          // Capture original size before any animation
+          const initialRect = selectedFlippedCard.getBoundingClientRect();
+          const originalHeight = initialRect.height;
+
+          // Set up 3D flip faces
+          const backFace = document.createElement('div');
+          backFace.className = 'tarot-face tarot-face-back';
+          const frontFace = document.createElement('div');
+          frontFace.className = 'tarot-face tarot-face-front';
+          frontFace.style.backgroundImage = `url(${card.image})`;
+          selectedFlippedCard.appendChild(backFace);
+          selectedFlippedCard.appendChild(frontFace);
+
+          // Trigger flip keyframe animation
+          selectedFlippedCard.classList.add('flipping');
+
+          // After flip completes: fade others, then grow THIS card to center
           setTimeout(() => {
-            // Fade out all flipped cards
-            tarotFlippedCards.classList.add('fading-out');
-            
-            // Show the selected card
-            tarotSelectedCard.classList.add('visible');
-            
-            // Update title to card name immediately when card is shown
-            tarotTitle.textContent = `${card.name.toUpperCase()} (${card.number})`;
-            tarotTitle.classList.add('title-blink');
-            setTimeout(() => tarotTitle.classList.remove('title-blink'), 2000);
-            
-            // After 4 seconds, fade out card and show text
+            // Fade out all other cards
+            flippedCards.forEach((c, i) => {
+              if (i !== randomCardIndex) {
+                c.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                c.style.opacity = '0';
+                c.style.transform = 'scale(0.2)';
+              }
+            });
+
+            // Measure where the card is now and where the stage center is
+            const stage = tarotFlippedCards.parentElement;
+            const stageRect = stage.getBoundingClientRect();
+            const cardRect = selectedFlippedCard.getBoundingClientRect();
+
+            const cardCX = cardRect.left + cardRect.width / 2;
+            const cardCY = cardRect.top + cardRect.height / 2;
+            const stageCX = stageRect.left + stageRect.width / 2;
+            const stageCY = stageRect.top + stageRect.height / 2;
+            const dx = stageCX - cardCX;
+            const dy = stageCY - cardCY;
+
+            // Slightly larger final size while preserving PNG aspect ratio
+            const bigScale = (stageRect.height * 1.12) / originalHeight;
+
+            // Freeze state and switch to a front-only card so the back never reappears
+            selectedFlippedCard.style.transition = 'none';
+            selectedFlippedCard.classList.remove('flipping');
+            selectedFlippedCard.querySelectorAll('.tarot-face').forEach((f) => f.remove());
+            selectedFlippedCard.style.transformStyle = 'flat';
+            selectedFlippedCard.style.backgroundImage = `url(${card.image})`;
+            selectedFlippedCard.style.backgroundSize = 'contain';
+            selectedFlippedCard.style.backgroundPosition = 'center';
+            selectedFlippedCard.style.backgroundRepeat = 'no-repeat';
+            selectedFlippedCard.style.backgroundColor = '#000';
+            selectedFlippedCard.style.border = 'none';
+            selectedFlippedCard.style.zIndex = '200';
+            selectedFlippedCard.style.transform = 'translate(0px, 0px) scale(1.6)';
+
+            void selectedFlippedCard.offsetHeight; // force reflow
+
+            // Grow + move to center in one smooth motion
+            selectedFlippedCard.style.transition = 'transform 0.85s cubic-bezier(0.34, 1.1, 0.64, 1)';
+            const holySound = document.getElementById('soundTarot');
+            if (holySound && !siteMuted) {
+              holySound.volume = UI_VOLUME;
+              holySound.currentTime = 0;
+              holySound.play().catch(() => {});
+            }
+            selectedFlippedCard.style.transform = `translate(${dx}px, ${dy}px) scale(${bigScale})`;
+
+            // Show title mid-animation
             setTimeout(() => {
-              tarotSelectedCard.style.opacity = '0';
-              tarotSelectedCard.style.transform = 'scale(0.8)';
-              
+              tarotTitle.textContent = `${card.name.toUpperCase()} (${card.number})`;
+              tarotTitle.classList.add('title-blink');
+              setTimeout(() => tarotTitle.classList.remove('title-blink'), 2000);
+            }, 500);
+
+            // After viewing, fade out and show meaning
+            setTimeout(() => {
+              selectedFlippedCard.style.transition = 'opacity 0.6s ease';
+              selectedFlippedCard.style.opacity = '0';
               setTimeout(() => {
-                tarotSelectedCard.classList.remove('visible');
-                tarotSelectedCard.style.opacity = '';
-                tarotSelectedCard.style.transform = '';
+                tarotFlippedCards.classList.add('fading-out');
                 showCardMeaning();
               }, 600);
-            }, 4000);
-          }, 800);
+            }, 4500);
+
+          }, 750);
         }
         
         // Close/Back button handler
@@ -2398,6 +2980,11 @@
         tarotRollBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           if (!tarotRollBtn.classList.contains('disappearing')) {
+            if (soundTarotRoll && !siteMuted) {
+              soundTarotRoll.volume = UI_VOLUME;
+              soundTarotRoll.currentTime = 0;
+              soundTarotRoll.play().catch(() => {});
+            }
             rollCards();
           }
         });
@@ -2530,6 +3117,12 @@
           }
 
           scrollSnap.addEventListener('wheel', (e) => {
+            // If wheeling over the meaning display, let it scroll naturally
+            const meaningDisplay = document.getElementById('tarotMeaningDisplay');
+            if (meaningDisplay && meaningDisplay.classList.contains('visible') && meaningDisplay.contains(e.target)) {
+              return;
+            }
+
             e.preventDefault();
 
             if (isScrolling) return;
@@ -2576,14 +3169,36 @@
           scrollSnap.setAttribute('tabindex', '0');
           scrollSnap.style.outline = 'none';
         })();
-
       } else if (idx === 5) {
-        // Build tattoo list manually so we can skip tattoo13
-        const tattooImages = [];
-        for (let i = 1; i <= 22; i++) {
-          if (i === 13 || i === 17) continue;
-          tattooImages.push(`img/tatoos/tattoo${i}.jpeg`);
-        }
+        // Explicit list matching actual files in img/tatoos/
+        const tattooImages = [
+          'img/tatoos/tattoo1.jpeg',
+          'img/tatoos/tattoo2.jpeg',
+          'img/tatoos/tattoo3.jpeg',
+          'img/tatoos/tattoo4.jpeg',
+          'img/tatoos/tattoo5.jpeg',
+          'img/tatoos/tattoo6.jpeg',
+          'img/tatoos/tattoo7.jpeg',
+          'img/tatoos/tattoo8.jpeg',
+          'img/tatoos/tattoo9.jpeg',
+          'img/tatoos/tattoo10.jpeg',
+          'img/tatoos/tattoo11.jpeg',
+          'img/tatoos/tattoo12.jpeg',
+          'img/tatoos/tattoo13.jpg',
+          'img/tatoos/tattoo14.jpeg',
+          'img/tatoos/tattoo15.jpeg',
+          'img/tatoos/tattoo16.jpg',
+          'img/tatoos/tattoo18.jpeg',
+          'img/tatoos/tattoo19.jpeg',
+          'img/tatoos/tattoo20.jpeg',
+          'img/tatoos/tattoo22.jpeg',
+          'img/tatoos/tattoo23.JPG',
+          'img/tatoos/tattoo24.JPG',
+          'img/tatoos/tattoo25.PNG',
+          'img/tatoos/tattoo26.JPG',
+          'img/tatoos/tattoo27.JPG',
+          'img/tatoos/tattoo28.JPG',
+        ];
         const particleCount = 15;
         const makeParticles = () => Array.from({ length: particleCount }, () =>
           `<div class="tattoo-ball-particle" style="left:${10 + Math.random() * 80}%;top:${10 + Math.random() * 80}%"></div>`
@@ -2793,7 +3408,9 @@
         sectionContent.innerHTML = `
           <button class="contact-modal-close" aria-label="Close">&times;</button>
           <h2 class="contact-title">CONTACT</h2>
-          <form class="contact-form" id="contactForm">
+          <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="33fa51ca-9890-40f1-aff2-66f2ae3fbce3">
+            <input type="hidden" name="form_type" value="contact">
             <div class="form-step active" data-step="1">
               <p class="form-prompt"><span>Hey!</span><span>What's your name?</span></p>
               <input type="text" id="contactName" name="name" placeholder="Type here..." autocomplete="name">
@@ -2802,15 +3419,17 @@
             <div class="form-step" data-step="2">
               <p class="form-prompt"><span>Hello <span id="contactNameDisplay"></span> How can I contact you?</span></p>
               <input type="text" id="contactContact" name="contact" placeholder="Email or phone..." autocomplete="email">
-              <button type="button" class="form-btn" id="contactNext2">ÔåÆ</button>
+              <button type="button" class="form-btn" id="contactNext2">&rarr;</button>
             </div>
             <div class="form-step" data-step="3">
-              <p class="form-prompt">Last thing ÔÇö spell a dream to us. We're all ears.</p>
+              <p class="form-prompt">Last thing - How can I help you?</p>
               <textarea id="contactDream" name="dream" placeholder="Your dream..." rows="4"></textarea>
               <button type="submit" class="form-btn">Send</button>
             </div>
           </form>
         `;
+        // couchClothes position handled smoothly by updateCouchClothesPosition (520ms)
+
         const contactCloseBtn = sectionContent.querySelector('.contact-modal-close');
         if (contactCloseBtn) {
           contactCloseBtn.addEventListener('click', () => closeSection());
@@ -2870,8 +3489,15 @@
         form.addEventListener('submit', (e) => {
           e.preventDefault();
           if (!dreamInput.value.trim()) return;
-          console.log('Contact:', { name: nameInput.value, contact: contactInput.value, dream: dreamInput.value });
-          closeSection();
+          const data = new FormData(form);
+          data.set('subject', 'New contact message');
+          fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+            .finally(() => {
+              form.classList.add('contact-success-only');
+              form.innerHTML = `
+                <p class="cakes-order-success-text">Thanks for your message, I'll get back to you soon.</p>
+              `;
+            });
         });
 
         setTimeout(() => nameInput.focus(), 500);
@@ -2911,38 +3537,81 @@
         // Position couchClothes to align with modal bottom-left
         function updateCouchClothesPosition() {
           if (!couchClothes || !sectionOverlay.classList.contains('expanding')) return;
-          // Don't move character for STURMZX2 or cakes modals
-          if (sectionOverlay.classList.contains('sturmzx2-modal') || sectionOverlay.classList.contains('cakes-modal')) {
-            return;
-          }
-          
-          // Get actual modal position
+          if (sectionOverlay.classList.contains('sturmzx2-modal') || sectionOverlay.classList.contains('cakes-modal') || sectionOverlay.classList.contains('bio-modal') || sectionOverlay.classList.contains('tarot-modal') || sectionOverlay.classList.contains('tattoos-modal')) return;
+
           const modalRect = sectionOverlay.getBoundingClientRect();
-          
-          // 5% left from modal left edge (was 10%, now 5% less)
-          const modalLeft = modalRect.left - (window.innerWidth * 0.05);
-          
-          // 10% down (was 5%, now 5% more)
-          const bottomOffset = (window.innerHeight - modalRect.bottom) - (window.innerHeight * 0.10);
-          
-          couchClothes.style.left = modalLeft + 'px';
-          couchClothes.style.bottom = bottomOffset + 'px';
-          couchClothes.style.top = 'auto';
+          const bioCouchWidth = Math.max(320, Math.min(680, window.innerWidth * 0.48));
+          const targetWidth = bioCouchWidth;
+
+          // Snapshot current visual position before any changes
+          const cur = couchClothes.getBoundingClientRect();
+          const curLeft   = cur.left;
+          const curBottom = window.innerHeight - cur.bottom;
+          const curWidth = cur.width;
+          const curHeight = cur.height;
+
+          // Switch to bottom-based coords at current visual spot (no jump)
+          couchClothes.style.transition = 'none';
+          couchClothes.style.top       = 'auto';
+          couchClothes.style.bottom    = curBottom + 'px';
+          couchClothes.style.left      = curLeft + 'px';
           couchClothes.style.transform = 'translate(0, 0)';
+          couchClothes.style.width     = curWidth + 'px';
+
+          // Force reflow before starting animated move+resize
+          void couchClothes.offsetHeight;
+          const projectedHeight = curWidth > 0 ? curHeight * (targetWidth / curWidth) : couchClothes.offsetHeight;
+
+          // Center of image aligned to modal bottom, shifted 50px up and 50px left.
+          // Tarot and Tattoos need extra right/up offset for better visual alignment.
+          const isTarotModal = sectionOverlay.classList.contains('tarot-modal');
+          const isTattoosModal = sectionOverlay.classList.contains('tattoos-modal');
+          const isContactModal = sectionOverlay.classList.contains('contact-modal');
+          const contactScaleBoost = isContactModal ? 1.06 : 1;
+          const modalOffsetX = isTarotModal
+            ? window.innerWidth * 0.065
+            : isTattoosModal
+              ? window.innerWidth * 0.02
+              : 0;
+          const modalOffsetY =
+            isTarotModal || isTattoosModal
+              ? window.innerHeight * 0.10
+              : 0;
+          const contactRightOffset = isContactModal ? window.innerWidth * 0.02 : 0;
+          const contactDownOffset = isContactModal ? (window.innerHeight * 0.02 + 30) : 0;
+          const globalLeftNudge = window.innerWidth * 0.015;
+          const targetLeft   = modalRect.left - 50 + modalOffsetX - globalLeftNudge + contactRightOffset;
+          const targetBottom = isContactModal
+            ? window.innerHeight - modalRect.bottom - contactDownOffset
+            : window.innerHeight - modalRect.bottom - (projectedHeight / 2) - (projectedHeight / 3) + modalOffsetY;
+          const finalWidth = targetWidth * contactScaleBoost;
+
+          // Animate to target (including size) to avoid visual jump
+          couchClothes.style.transition = 'left 0.7s ease, bottom 0.7s ease, width 0.7s ease';
+          couchClothes.style.left   = targetLeft + 'px';
+          couchClothes.style.bottom = targetBottom + 'px';
+          couchClothes.style.width  = finalWidth + 'px';
         }
-        
-        // Wait for slide-in animation to finish before measuring modal position
+
+        // Wait for the modal slide-in to finish before measuring its position
         setTimeout(updateCouchClothesPosition, 520);
 
         // Update on window resize
         window.addEventListener('resize', updateCouchClothesPosition);
         
-        // when modal finish sliding up, put couch behind it
+        // when modal finish sliding up, keep couch behind tarot/tattoos modal content
         if (!sectionOverlay.classList.contains('bio-modal') && !sectionOverlay.classList.contains('sturmzx2-modal') && !sectionOverlay.classList.contains('cakes-modal')) {
           setTimeout(() => {
             if (couchBtn) couchBtn.style.zIndex = '';
-            // tattoos modal is z-index 200000, keep couch above it
-            if (couchClothes) couchClothes.style.zIndex = '';
+            if (couchClothes) {
+              if (sectionOverlay.classList.contains('tarot-modal')) {
+                couchClothes.style.zIndex = '1';
+              } else if (sectionOverlay.classList.contains('tattoos-modal')) {
+                couchClothes.style.zIndex = '1';
+              } else {
+                couchClothes.style.zIndex = '';
+              }
+            }
           }, 520);
         } else if (sectionOverlay.classList.contains('sturmzx2-modal') || sectionOverlay.classList.contains('cakes-modal')) {
           // Keep character behind for STURMZX2 and cakes
@@ -2960,24 +3629,96 @@
 
     function closeSection() {
       if (!sectionOpen) return;
+      const closingBioModal = sectionOverlay.classList.contains('bio-modal');
       
       // Make couch visible and reset button to natural ring position
       if (couchBtn) {
         couchBtn.style.opacity = '1';
-        couchBtn.style.pointerEvents = 'auto';
-        couchBtn.style.transition = 'none';
-        couchBtn.style.left = '';
-        couchBtn.style.top = '';
-        couchBtn.style.transform = '';
+        if (closingBioModal) {
+          couchBtn.style.pointerEvents = 'none';
+          couchBtn.style.transition = 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)';
+          couchBtn.style.transform = 'translate(-50%, 0%)';
+          setTimeout(() => {
+            couchBtn.style.pointerEvents = 'auto';
+            couchBtn.style.transition = '';
+            couchBtn.style.transform = '';
+          }, 700);
+        } else {
+          couchBtn.style.pointerEvents = 'auto';
+          couchBtn.style.transition = 'none';
+          couchBtn.style.left = '';
+          couchBtn.style.top = '';
+          couchBtn.style.transform = '';
+        }
       }
       
-      // Restore couchClothes to its natural position
-      if (couchClothes) {
-        positionCouchClothes();
+      // Restore couchClothes to its pre-modal position with smooth transition
+      if (couchClothes && !closingBioModal) {
+        const snap = premodalCouchSnap;
+        if (snap) {
+          const cur = couchClothes.getBoundingClientRect();
+          // On small screens, center horizontally instead of restoring exact snap position
+          const isSmall = window.innerWidth < 768;
+          const targetLeft = isSmall ? (window.innerWidth - snap.width) / 2 : snap.left;
+          couchClothes.style.transition = 'none';
+          couchClothes.style.transform = 'translate(0, 0)';
+          couchClothes.style.bottom = 'auto';
+          couchClothes.style.left = cur.left + 'px';
+          couchClothes.style.top  = cur.top  + 'px';
+          couchClothes.style.width = cur.width + 'px';
+          void couchClothes.offsetHeight;
+          couchClothes.style.transition = 'left 0.65s ease, top 0.65s ease, width 0.65s ease';
+          couchClothes.style.left  = targetLeft + 'px';
+          couchClothes.style.top   = snap.top   + 'px';
+          couchClothes.style.width = snap.width + 'px';
+          setTimeout(() => {
+            if (couchClothes) {
+              couchClothes.style.transition = '';
+              restingLeft = targetLeft;
+              restingTop  = snap.top;
+              premodalCouchSnap = null;
+            }
+          }, 700);
+        } else {
+          positionCouchClothes();
+        }
       }
       exitBtn.classList.remove('visible');
       if (sectionOverlay.classList.contains('bio-modal') && couchClothes) {
-        couchClothes.src = 'img/oyestupida_clothes.png';
+        couchClothes.src = 'img/oyestupida_clothes.png'; _loadCouchClothesPixels('img/oyestupida_clothes.png');
+        setTimeout(() => {
+          if (!couchBtn || !couchClothes) return;
+
+          const couchRect = couchBtn.getBoundingClientRect();
+          const targetTop = couchRect.top + couchRect.height * 0.25;
+          const targetWidth = Math.max(220, Math.min(520, couchRect.width * 0.55));
+          const isSmallBio = window.innerWidth < 768;
+          const targetLeft = isSmallBio
+            ? (window.innerWidth - targetWidth) / 2
+            : couchRect.left + couchRect.width / 2;
+
+          const current = couchClothes.getBoundingClientRect();
+          couchClothes.style.transition = 'none';
+          couchClothes.style.transform = 'translate(0, 0)';
+          couchClothes.style.left = current.left + 'px';
+          couchClothes.style.top = current.top + 'px';
+          couchClothes.style.bottom = 'auto';
+          couchClothes.style.width = current.width + 'px';
+
+          void couchClothes.offsetHeight;
+
+          couchClothes.style.transition = 'left 0.65s ease, top 0.65s ease, width 0.65s ease';
+          couchClothes.style.left = targetLeft + 'px';
+          couchClothes.style.top = targetTop + 'px';
+          couchClothes.style.width = targetWidth + 'px';
+
+          restingLeft = targetLeft;
+          restingTop = targetTop;
+
+          setTimeout(() => {
+            couchClothes.style.transition = '';
+          }, 700);
+        }, 710);
         sectionOverlay.style.zIndex = '';
         if (couchBtn) couchBtn.style.zIndex = '';
         if (couchClothes) couchClothes.style.zIndex = '';
@@ -3081,6 +3822,7 @@
       if (cakesOrderBtn) {
         cakesOrderBtn.addEventListener('click', (e) => {
           e.stopPropagation();
+          cakesOrderOverlay.classList.remove('cakes-order-success');
           cakesOrderOverlay.classList.add('visible');
           cakesOrderOverlay.setAttribute('aria-hidden', 'false');
           cakesOrderForm.reset();
@@ -3131,6 +3873,7 @@
       if (cakesOrderClose) {
         cakesOrderClose.addEventListener('click', (e) => {
           e.stopPropagation();
+          cakesOrderOverlay.classList.remove('cakes-order-success');
           cakesOrderOverlay.classList.remove('visible');
           cakesOrderOverlay.setAttribute('aria-hidden', 'true');
         });
@@ -3209,31 +3952,18 @@
       cakesOrderForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!validateCakeStep()) return;
-
-        const c1 = cakeColor1 ? cakeColor1.value : '';
-        const c2 = cakeColor2 ? cakeColor2.value : '';
-        const c3 = cakeColor3 ? cakeColor3.value : '';
-        const body = [
-          `Name: ${cakeName ? cakeName.value.trim() : ''}`,
-          `Inspiration / mood / concept: ${cakeInspiration ? cakeInspiration.value.trim() : ''}`,
-          `Colors:`,
-          `- ${colorNameFromHex(c1)} (${c1})`,
-          `- ${colorNameFromHex(c2)} (${c2})`,
-          `- ${colorNameFromHex(c3)} (${c3})`,
-          `Alimentary conditions / add: ${cakeConditions ? cakeConditions.value.trim() : ''}`,
-          `Needed for: ${cakeDate ? cakeDate.value : ''}`
-        ].join('\n');
-
-        // Opens user email client with prefilled text (no backend yet)
-        window.location.href = `mailto:?subject=${encodeURIComponent('Personalized cake order')}&body=${encodeURIComponent(body)}`;
-
-        cakesOrderForm.innerHTML = `
-          <h3>Recipe received</h3>
-          <p>Im processing your recipe, thanks for your message i will get back to you soon.</p>
-        `;
+        const data = new FormData(cakesOrderForm);
+        data.set('subject', 'Personalized cake order');
+        fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+          .finally(() => {
+            cakesOrderOverlay.classList.add('cakes-order-success');
+            cakesOrderForm.innerHTML = `
+              <h3 class="cakes-order-success-title">Recipe received</h3>
+              <p class="cakes-order-success-text">Im processing your recipe, thanks for your message i will get back to you soon.</p>
+            `;
+          });
       });
 
-      // init
       setCakeStep(0);
     }
 
@@ -3250,16 +3980,14 @@
       function setTarotReadingStep(nextIdx) {
         tarotReadingStepIdx = Math.max(0, Math.min(tarotReadingSteps.length - 1, nextIdx));
         tarotReadingSteps.forEach((step, i) => step.classList.toggle('active', i === tarotReadingStepIdx));
-        const focusEl = [tarotReadingName, tarotReadingTopic, tarotReadingBirth, tarotReadingQuestion, tarotReadingContact][tarotReadingStepIdx];
+
+        const focusEl = [tarotReadingName, tarotReadingContact][tarotReadingStepIdx];
         if (focusEl) setTimeout(() => focusEl.focus(), 80);
       }
 
       function validateTarotReadingStep() {
         if (tarotReadingStepIdx === 0) return tarotReadingName && tarotReadingName.value.trim().length > 0;
-        if (tarotReadingStepIdx === 1) return tarotReadingTopic && tarotReadingTopic.value.trim().length > 0;
-        if (tarotReadingStepIdx === 2) return tarotReadingBirth && tarotReadingBirth.value;
-        if (tarotReadingStepIdx === 3) return tarotReadingQuestion && tarotReadingQuestion.value.trim().length > 0;
-        if (tarotReadingStepIdx === 4) return tarotReadingContact && tarotReadingContact.value.trim().length > 0;
+        if (tarotReadingStepIdx === 1) return tarotReadingContact && tarotReadingContact.value.trim().length > 0;
         return true;
       }
 
@@ -3284,11 +4012,7 @@
       }
 
       const tarotReadingNext1 = document.getElementById('tarotReadingNext1');
-      const tarotReadingNext2 = document.getElementById('tarotReadingNext2');
-      const tarotReadingNext3 = document.getElementById('tarotReadingNext3');
-      const tarotReadingNext4 = document.getElementById('tarotReadingNext4');
-
-      [tarotReadingNext1, tarotReadingNext2, tarotReadingNext3, tarotReadingNext4].forEach(btn => {
+      [tarotReadingNext1].forEach(btn => {
         if (!btn) return;
         btn.addEventListener('mouseenter', () => {
           const btnSound = document.getElementById('soundButtonHover');
@@ -3308,33 +4032,6 @@
         });
       }
 
-      if (tarotReadingNext2) {
-        tarotReadingNext2.addEventListener('click', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          if (!validateTarotReadingStep()) return;
-          setTarotReadingStep(2);
-        });
-      }
-
-      if (tarotReadingNext3) {
-        tarotReadingNext3.addEventListener('click', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          if (!validateTarotReadingStep()) return;
-          setTarotReadingStep(3);
-        });
-      }
-
-      if (tarotReadingNext4) {
-        tarotReadingNext4.addEventListener('click', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          if (!validateTarotReadingStep()) return;
-          setTarotReadingStep(4);
-        });
-      }
-
       [tarotReadingName, tarotReadingQuestion, tarotReadingContact].filter(Boolean).forEach((el) => {
         el.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' && !(el.tagName === 'TEXTAREA' && e.shiftKey)) {
@@ -3351,21 +4048,16 @@
       tarotReadingForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!validateTarotReadingStep()) return;
-
-        const body = [
-          `Name: ${tarotReadingName ? tarotReadingName.value.trim() : ''}`,
-          `Guidance area: ${tarotReadingTopic ? tarotReadingTopic.value : ''}`,
-          `Birth date: ${tarotReadingBirth ? tarotReadingBirth.value : ''}`,
-          `Question: ${tarotReadingQuestion ? tarotReadingQuestion.value.trim() : ''}`,
-          `Contact: ${tarotReadingContact ? tarotReadingContact.value.trim() : ''}`
-        ].join('\n');
-
-        window.location.href = `mailto:?subject=${encodeURIComponent('Tarot reading request')}&body=${encodeURIComponent(body)}`;
-
-        tarotReadingForm.innerHTML = `
-          <h3>Reading request received</h3>
-          <p>Thanks for sharing your questions. I will contact you soon.</p>
-        `;
+        const data = new FormData(tarotReadingForm);
+        data.set('subject', 'Tarot reading request');
+        fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+          .finally(() => {
+            tarotReadingForm.classList.add('tarot-success-only');
+            tarotReadingForm.innerHTML = `
+              <h3 class="cakes-order-success-title">Reading request received</h3>
+              <p class="cakes-order-success-text">Im gonna get in contact with you.</p>
+            `;
+          });
       });
 
       setTarotReadingStep(0);
@@ -3510,24 +4202,16 @@
       tattooOrderForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!validateTattooStep()) return;
-
-        const colorValue = tattooOrderForm.querySelector('input[name="color"]:checked')?.value || 'black';
-        const body = [
-          `Name: ${tattooName ? tattooName.value.trim() : ''}`,
-          `Contact: ${tattooContact ? tattooContact.value.trim() : ''}`,
-          `Design: ${tattooDesign ? tattooDesign.value.trim() : ''}`,
-          `Size: ${tattooSize ? tattooSize.value : ''}`,
-          `Area: ${tattooArea ? tattooArea.value.trim() : ''}`,
-          `Color preference: ${colorValue}`
-        ].join('\n');
-
-        // Opens user email client with prefilled text
-        window.location.href = `mailto:?subject=${encodeURIComponent('Tattoo inquiry')}&body=${encodeURIComponent(body)}`;
-
-        tattooOrderForm.innerHTML = `
-          <h3>Request received</h3>
-          <p>Thanks for your tattoo inquiry! I'll get back to you soon.</p>
-        `;
+        const data = new FormData(tattooOrderForm);
+        data.set('subject', 'Tattoo inquiry');
+        fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+          .finally(() => {
+            tattooOrderForm.classList.add('tattoo-success-only');
+            tattooOrderForm.innerHTML = `
+              <h3 class="cakes-order-success-title">Request received</h3>
+              <p class="cakes-order-success-text">Thanks for your tattoo inquiry! I'll get back to you soon.</p>
+            `;
+          });
       });
     }
 
@@ -3552,7 +4236,7 @@
       );
     }
 
-    /* ---------- Collision detection ---------- */
+    /* ---------- Logo Neon Pink Glow Animation ---------- */
     function checkAllCollisions(bx, by, ballSize) {
       const ballCx = bx + ballSize / 2;
       const ballCy = by + ballSize / 2;
@@ -3576,6 +4260,8 @@
           const cy = r.top + r.height / 2;
           const dist = Math.hypot(ballCx - cx, ballCy - cy);
           if (dist < r.width / 2 + ballSize / 2) {
+            // Pixel-perfect check for couchClothes PNG
+            if (b.el === couchClothes && !_couchClothesPixelHit(ballCx, ballCy)) continue;
             return b;
           }
         }
@@ -3609,13 +4295,25 @@
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
         const dist = Math.hypot(ballCx - cx, ballCy - cy);
-        if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2) {
+        if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2 && _couchBtnPixelHit(ballCx, ballCy)) {
           return { el: couchBtn, press: null, isCouch: true };
         }
       }
 
+      // Check couchClothes collision (after couch exploded, home only)
+      const couchClothesEl = document.getElementById('couchClothes');
+      if (!sectionOpen && couchClothesEl && couchBtn && explodedButtons.has(couchBtn)) {
+        const r = couchClothesEl.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(ballCx - cx, ballCy - cy);
+        if (dist < Math.max(r.width, r.height) / 2 + ballSize / 2 && _couchClothesPixelHit(ballCx, ballCy)) {
+          return { el: couchClothesEl, press: null, isClothes: true };
+        }
+      }
+
       // Check logo collision
-      const logoEl = document.getElementById('siteLogoImg');
+      const logoEl = document.getElementById('logoModel');
       if (logoEl) {
         const r = logoEl.getBoundingClientRect();
         const cx = r.left + r.width / 2;
@@ -3671,6 +4369,144 @@
       const currentTop = parseInt(getComputedStyle(clothes).top) || 0;
       clothes.style.transition = 'top 0.5s ease-out';
       clothes.style.top = (currentTop + 100) + 'px';
+    }
+
+    /* ---------- Chase game state ---------- */
+    let _mouseX = innerWidth / 2, _mouseY = innerHeight / 2;
+    document.addEventListener('mousemove', e => { _mouseX = e.clientX; _mouseY = e.clientY; });
+
+    let clothesHitsAfterDrop = 0;
+    const CLOTHES_HITS_TO_FOLLOW = 20;
+    let clothesIsFollowing = false;
+    let clothesVelX = 0, clothesVelY = 0;
+    let clothesFollowRAF = null;
+
+    function startChaseMode() {
+      const clothes = document.getElementById('couchClothes');
+      if (!clothes || clothesIsFollowing) return;
+      clothesIsFollowing = true;
+      clothes.style.transition = 'none';
+      clothes.style.filter = 'drop-shadow(0 0 12px #ff00c0) drop-shadow(0 0 24px #ff0000)';
+      clothes.style.position = 'fixed';
+      // Anchor to current visual position
+      const r = clothes.getBoundingClientRect();
+      clothes.style.top = r.top + 'px';
+      clothes.style.left = r.left + 'px';
+      clothes.style.bottom = 'auto';
+      clothes.style.transform = 'none';
+      clothesVelX = 0;
+      clothesVelY = 0;
+      chaseLoop();
+    }
+
+    function chaseLoop() {
+      const clothes = document.getElementById('couchClothes');
+      if (!clothes || !clothesIsFollowing) return;
+
+      const r = clothes.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+
+      // Check catch — if center within 55px of mouse
+      if (Math.hypot(_mouseX - cx, _mouseY - cy) < 55) {
+        catchPlayerMouse();
+        return;
+      }
+
+      // Accelerate toward mouse
+      const dx = _mouseX - cx;
+      const dy = _mouseY - cy;
+      const dist = Math.hypot(dx, dy) || 1;
+      const speed = 0.28;
+      clothesVelX += (dx / dist) * speed;
+      clothesVelY += (dy / dist) * speed;
+
+      // Damping
+      clothesVelX *= 0.96;
+      clothesVelY *= 0.96;
+
+      // Clamp max speed
+      const maxSpd = 7;
+      const spd = Math.hypot(clothesVelX, clothesVelY);
+      if (spd > maxSpd) { clothesVelX = clothesVelX / spd * maxSpd; clothesVelY = clothesVelY / spd * maxSpd; }
+
+      let nx = r.left + clothesVelX;
+      let ny = r.top + clothesVelY;
+
+      // Bounce off viewport edges
+      if (nx < 0) { nx = 0; clothesVelX = Math.abs(clothesVelX); }
+      if (nx + r.width > innerWidth) { nx = innerWidth - r.width; clothesVelX = -Math.abs(clothesVelX); }
+      if (ny < 0) { ny = 0; clothesVelY = Math.abs(clothesVelY); }
+      if (ny + r.height > innerHeight) { ny = innerHeight - r.height; clothesVelY = -Math.abs(clothesVelY); }
+
+      clothes.style.left = nx + 'px';
+      clothes.style.top = ny + 'px';
+
+      clothesFollowRAF = requestAnimationFrame(chaseLoop);
+    }
+
+    function pushClothesAway(ballCX, ballCY) {
+      const clothes = document.getElementById('couchClothes');
+      if (!clothes) return;
+      const r = clothes.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = cx - ballCX;
+      const dy = cy - ballCY;
+      const dist = Math.hypot(dx, dy) || 1;
+      const force = 18;
+      clothesVelX += (dx / dist) * force;
+      clothesVelY += (dy / dist) * force;
+    }
+
+    function catchPlayerMouse() {
+      clothesIsFollowing = false;
+      if (clothesFollowRAF) { cancelAnimationFrame(clothesFollowRAF); clothesFollowRAF = null; }
+
+      // Explode the mouse cursor position
+      createExplosion(_mouseX, _mouseY);
+      setTimeout(() => createExplosion(_mouseX + 10, _mouseY - 10), 80);
+      setTimeout(() => createExplosion(_mouseX - 10, _mouseY + 10), 160);
+
+      // Flash clothes
+      const clothes = document.getElementById('couchClothes');
+      if (!clothes) return;
+      clothes.style.filter = 'brightness(3) drop-shadow(0 0 20px #fff)';
+      setTimeout(() => {
+        clothes.style.filter = 'drop-shadow(0 0 8px #ff00c0)';
+      }, 400);
+
+      // Move her to random floor position
+      const floorY = innerHeight - clothes.offsetHeight - 10;
+      const randomX = Math.random() * (innerWidth - clothes.offsetWidth);
+      setTimeout(() => {
+        clothes.style.transition = 'left 0.6s ease, top 0.5s ease';
+        clothes.style.left = randomX + 'px';
+        clothes.style.top = floorY + 'px';
+        clothesVelX = 0;
+        clothesVelY = 0;
+        // Reset hit counter so player can trigger chase again
+        clothesHitsAfterDrop = 0;
+        setTimeout(() => {
+          clothes.style.filter = 'none';
+        }, 600);
+      }, 300);
+    }
+
+    /* ---------- Logo hit game ---------- */
+    let _logoIsBlinking = false;
+    let _logoPinkUntil = 0;
+
+    function blinkLogoGreen() {
+      if (_logoIsBlinking || Date.now() < _logoPinkUntil) return;
+      _logoIsBlinking = true;
+      const wrap = document.getElementById('siteLogo');
+      if (wrap) wrap.style.filter = 'hue-rotate(140deg) saturate(2) brightness(1.3)';
+      setTimeout(() => {
+        if (wrap) wrap.style.filter = '';
+        _logoIsBlinking = false;
+        _logoPinkUntil = Date.now() + 500;
+      }, 150);
     }
 
     function createExplosion(x, y) {
@@ -3810,20 +4646,28 @@
             }
           }
 
+          // Clothes hit handling (chase game)
+          // hit.isClothes covers the explicit check; also catch when couchClothes is hit via ringButtons
+          const isClothesHit = hit.isClothes || (hit.el === couchClothes && couchBtn && explodedButtons.has(couchBtn));
+          if (isClothesHit) {
+            if (clothesIsFollowing) {
+              pushClothesAway(bx + ballSize / 2, by + ballSize / 2);
+            } else {
+              clothesHitsAfterDrop++;
+              if (clothesHitsAfterDrop >= CLOTHES_HITS_TO_FOLLOW) {
+                startChaseMode();
+              }
+            }
+          }
+
           // Visual flash only — no action triggered
           hit.el.classList.remove('hit');
           void hit.el.offsetWidth;
           hit.el.classList.add('hit');
 
-          // Logo hit - trigger green blink effect
-          if (hit.isLogo && hit.el.id === 'siteLogoImg') {
-            hit.el.classList.remove('hit');
-            void hit.el.offsetWidth;
-            hit.el.classList.add('hit');
-            // Remove hit class after animation completes
-            setTimeout(() => {
-              hit.el.classList.remove('hit');
-            }, 300);
+          // Logo hit
+          if (hit.isLogo) {
+            blinkLogoGreen();
           }
 
           // Reflect velocity off the element's surface normal
@@ -3834,14 +4678,37 @@
           const ballCy = by + ballSize / 2;
           const nx = ballCx - ecx;
           const ny = ballCy - ecy;
-          const len = Math.hypot(nx, ny) || 1;
-          const ndx = nx / len;
-          const ndy = ny / len;
+          const len = Math.hypot(nx, ny);
+          let ndx;
+          let ndy;
+          if (len < 0.001) {
+            // If the ball reaches exact center, use opposite velocity as fallback normal.
+            const vLen = Math.hypot(vx, vy);
+            if (vLen > 0.001) {
+              ndx = -vx / vLen;
+              ndy = -vy / vLen;
+            } else {
+              ndx = 0;
+              ndy = -1;
+            }
+          } else {
+            ndx = nx / len;
+            ndy = ny / len;
+          }
           const dot = vx * ndx + vy * ndy;
           vx = (vx - 2 * dot * ndx) * bounce;
           vy = (vy - 2 * dot * ndy) * bounce;
+          if (hit.isLogo) {
+            // Prevent tiny velocities from re-sticking to the logo collider.
+            const speedNow = Math.hypot(vx, vy);
+            const minLogoSpeed = 2.4;
+            if (speedNow < minLogoSpeed) {
+              vx = ndx * minLogoSpeed;
+              vy = ndy * minLogoSpeed;
+            }
+          }
           // Push ball out of collision zone so it doesn't re-trigger next frame
-          const minDist = Math.max(r.width, r.height) / 2 + ballSize / 2 + 2;
+          const minDist = Math.max(r.width, r.height) / 2 + ballSize / 2 + ballSize;
           bx = ecx + ndx * minDist - ballSize / 2;
           by = ecy + ndy * minDist - ballSize / 2;
         }
@@ -3889,20 +4756,41 @@
           }
         }
 
+        // Remove ball when it runs out of life (prevents eternal sticking)
+        if (life > 350) {
+          ball.style.transition = 'opacity 0.3s';
+          ball.style.opacity = '0';
+          setTimeout(() => {
+            if (ball.parentNode) ball.remove();
+            const _i = activeBalls.indexOf(ball);
+            if (_i !== -1) activeBalls.splice(_i, 1);
+          }, 300);
+          return;
+        }
         requestAnimationFrame(animate);
       }
       requestAnimationFrame(animate);
+    }
+
+    function shouldBlockShooting(targetEl) {
+      const blockedModalOpen =
+        sectionOverlay.classList.contains('cakes-modal') ||
+        sectionOverlay.classList.contains('bio-modal') ||
+        sectionOverlay.classList.contains('tarot-modal');
+      const overBlockedModal = !!(targetEl && targetEl.closest && targetEl.closest('.section-overlay.cakes-modal, .section-overlay.bio-modal, .section-overlay.tarot-modal'));
+      return blockedModalOpen || overBlockedModal;
     }
 
     // Single click — one shot
     document.body.addEventListener('click', (e) => {
       if (draggingHot || draggingVec) return;
       if (isDraggingUI || Date.now() - lastDragEnd < 120) return;
+      if (shouldBlockShooting(e.target)) return;
       if (sectionOpen) return;
       // Disable shooting in tattoo lightbox
       const lightbox = document.getElementById('paintingsLightbox');
       if (lightbox && lightbox.classList.contains('tattoo-view')) return;
-      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn') || e.target.closest('.gallery-item')) return;
+      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn-wrap') || e.target.closest('.toggle-btn-wrap') || e.target.closest('.toggle-btn-wrap') || e.target.closest('.gallery-item')) return;
       shootBall(e.clientX, e.clientY);
     });
 
@@ -3912,15 +4800,17 @@
 
     document.body.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return;
+      if (shouldBlockShooting(e.target)) return;
       // Disable uzi mode in tattoo lightbox
       const lightbox = document.getElementById('paintingsLightbox');
       if (lightbox && lightbox.classList.contains('tattoo-view')) return;
-      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn')) return;
+      if (e.target.closest('.preview-box') || e.target.closest('.ring-btn') || e.target.closest('.exit-btn') || e.target.closest('.mute-btn-wrap')) return;
       // Only start uzi after holding 200ms so a quick click stays a single shot
       const holdStart = Date.now();
       uziInterval = setTimeout(() => {
         uziInterval = setInterval(() => {
           if (draggingHot || draggingVec || isDraggingUI) return;
+          if (shouldBlockShooting(document.elementFromPoint(mouseX, mouseY))) return;
           shootBall(mouseX, mouseY);
         }, UZI_RATE_MS);
       }, 200);
@@ -4018,7 +4908,25 @@
       laserActive = true;
       updateCursorSide();
       updateGunCursor(e.target);
+      // Update green dot cursor position for small screens / touch devices
+      if (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches) {
+        document.body.style.setProperty('--cursor-x', e.clientX + 'px');
+        document.body.style.setProperty('--cursor-y', e.clientY + 'px');
+        document.body.classList.add('hide-native-cursor');
+      }
     });
+
+    // Touch support for green dot cursor on mobile
+    function updateGreenDotTouch(e) {
+      if (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches) {
+        const t = e.touches[0];
+        document.body.style.setProperty('--cursor-x', t.clientX + 'px');
+        document.body.style.setProperty('--cursor-y', t.clientY + 'px');
+        document.body.classList.add('hide-native-cursor');
+      }
+    }
+    document.addEventListener('touchstart', updateGreenDotTouch, { passive: true });
+    document.addEventListener('touchmove', updateGreenDotTouch, { passive: true });
 
     window.addEventListener('mouseenter', () => {
       updateGunCursor(null);
@@ -4364,88 +5272,91 @@
   <!-- Dithering Shader -->
   <script>
     (function() {
+      
       const canvas = document.getElementById('ditherCanvas');
       const toggle = document.getElementById('ditherToggle');
       const slider = document.getElementById('ditherIntensity');
-      const value = document.getElementById('ditherValue');
-      const controls = document.querySelector('.dither-controls');
-      
+      const valueEl = document.getElementById('ditherValue');
+      const sizeSlider = document.getElementById('ditherSize');
+      const sizeValueEl = document.getElementById('ditherSizeValue');
+      const typeSelect = document.getElementById('ditherType');
+
       let gl = null;
       let program = null;
       let intensityLocation = null;
+      let sizeLocation = null;
+      let typeLocation = null;
       let isActive = false;
-      let intensity = 0;
-      
-      // Vertex shader
+      let intensity = 32;
+      let ditherSize = 1;
+      let ditherType = 0;
+
       const vertexShaderSource = `
         attribute vec2 a_position;
         void main() {
           gl_Position = vec4(a_position, 0.0, 1.0);
         }
       `;
-      
-      // Fragment shader - Bayer ordered dithering
+
       const fragmentShaderSource = `
         precision mediump float;
         uniform float u_intensity;
         uniform vec2 u_resolution;
         uniform float u_time;
-        
-        // Bayer 4x4 matrix for ordered dithering
+        uniform float u_size;
+        uniform int u_type;
+
         float bayer4x4(vec2 coord) {
-          vec2 bayerCoord = mod(floor(coord), 4.0);
-          int x = int(bayerCoord.x);
-          int y = int(bayerCoord.y);
-          
-          float bayer[16];
-          bayer[0] = 0.0;   bayer[1] = 8.0;   bayer[2] = 2.0;   bayer[3] = 10.0;
-          bayer[4] = 12.0;  bayer[5] = 4.0;   bayer[6] = 14.0;  bayer[7] = 6.0;
-          bayer[8] = 3.0;   bayer[9] = 11.0;  bayer[10] = 1.0;  bayer[11] = 9.0;
-          bayer[12] = 15.0; bayer[13] = 7.0;  bayer[14] = 13.0; bayer[15] = 5.0;
-          
-          int index = y * 4 + x;
+          vec2 c = mod(floor(coord), 4.0);
+          int x = int(c.x);
+          int y = int(c.y);
+          int idx = y * 4 + x;
           float val = 0.0;
-          if (index == 0) val = bayer[0];
-          else if (index == 1) val = bayer[1];
-          else if (index == 2) val = bayer[2];
-          else if (index == 3) val = bayer[3];
-          else if (index == 4) val = bayer[4];
-          else if (index == 5) val = bayer[5];
-          else if (index == 6) val = bayer[6];
-          else if (index == 7) val = bayer[7];
-          else if (index == 8) val = bayer[8];
-          else if (index == 9) val = bayer[9];
-          else if (index == 10) val = bayer[10];
-          else if (index == 11) val = bayer[11];
-          else if (index == 12) val = bayer[12];
-          else if (index == 13) val = bayer[13];
-          else if (index == 14) val = bayer[14];
-          else if (index == 15) val = bayer[15];
-          
+          if      (idx ==  0) val =  0.0;
+          else if (idx ==  1) val =  8.0;
+          else if (idx ==  2) val =  2.0;
+          else if (idx ==  3) val = 10.0;
+          else if (idx ==  4) val = 12.0;
+          else if (idx ==  5) val =  4.0;
+          else if (idx ==  6) val = 14.0;
+          else if (idx ==  7) val =  6.0;
+          else if (idx ==  8) val =  3.0;
+          else if (idx ==  9) val = 11.0;
+          else if (idx == 10) val =  1.0;
+          else if (idx == 11) val =  9.0;
+          else if (idx == 12) val = 15.0;
+          else if (idx == 13) val =  7.0;
+          else if (idx == 14) val = 13.0;
+          else                val =  5.0;
           return val / 16.0;
         }
-        
+
+        float halftone(vec2 coord) {
+          vec2 cell = fract(coord / 6.0) - 0.5;
+          return length(cell) * 2.0;
+        }
+
+        float scanline(vec2 coord) {
+          return fract(coord.y * 0.5);
+        }
+
+        float noise(vec2 coord) {
+          return fract(sin(dot(floor(coord), vec2(127.1, 311.7))) * 43758.5453);
+        }
+
         void main() {
-          vec2 coord = gl_FragCoord.xy;
-          float threshold = bayer4x4(coord);
-          
-          // Create scanline effect
-          float scanline = sin(coord.y * 0.5 + u_time * 2.0) * 0.1 + 0.9;
-          
-          // Output dither pattern with intensity
-          float pattern = threshold * scanline;
-          float alpha = pattern * u_intensity;
-          
-          // Black and white dither
-          vec3 color = vec3(0.0);
-          if (pattern > 0.5) {
-            color = vec3(1.0);
-          }
-          
-          gl_FragColor = vec4(color, alpha * 0.3);
+          vec2 scaled = gl_FragCoord.xy / u_size;
+          float threshold;
+          if (u_type == 1)      threshold = halftone(scaled);
+          else if (u_type == 2) threshold = scanline(scaled);
+          else if (u_type == 3) threshold = noise(scaled);
+          else                  threshold = bayer4x4(scaled);
+
+          vec3 color = threshold > 0.5 ? vec3(1.0) : vec3(0.0);
+          gl_FragColor = vec4(color, threshold * u_intensity * 0.3);
         }
       `;
-      
+
       function createShader(gl, type, source) {
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
@@ -4457,154 +5368,204 @@
         }
         return shader;
       }
-      
-      function createProgram(gl, vertexShader, fragmentShader) {
-        const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-          console.error('Program link error:', gl.getProgramInfoLog(program));
-          gl.deleteProgram(program);
+
+      function createProgram(gl, vs, fs) {
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+          console.error('Program link error:', gl.getProgramInfoLog(prog));
+          gl.deleteProgram(prog);
           return null;
         }
-        return program;
+        return prog;
       }
-      
+
       function initGL() {
         if (!canvas) return false;
-        
         gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if (!gl) {
-          console.warn('WebGL not supported, falling back to CSS dithering');
-          return false;
-        }
-        
-        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-        
-        if (!vertexShader || !fragmentShader) return false;
-        
-        program = createProgram(gl, vertexShader, fragmentShader);
+        if (!gl) { console.warn('WebGL not supported'); return false; }
+
+        const vs = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+        const fs = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+        if (!vs || !fs) return false;
+
+        program = createProgram(gl, vs, fs);
         if (!program) return false;
-        
-        // Set up geometry (full screen quad)
+
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-          -1, -1,
-           1, -1,
-          -1,  1,
-          -1,  1,
-           1, -1,
-           1,  1
+          -1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1
         ]), gl.STATIC_DRAW);
-        
-        const positionLocation = gl.getAttribLocation(program, 'a_position');
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-        
+
+        const posLoc = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(posLoc);
+        gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
         intensityLocation = gl.getUniformLocation(program, 'u_intensity');
-        
-        // Enable blending for overlay effect
+        sizeLocation      = gl.getUniformLocation(program, 'u_size');
+        typeLocation      = gl.getUniformLocation(program, 'u_type');
+
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        
         resize();
         return true;
       }
-      
+
       function resize() {
         if (!gl) return;
-        const displayWidth = Math.floor(window.innerWidth);
-        const displayHeight = Math.floor(window.innerHeight);
-        
-        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-          canvas.width = displayWidth;
-          canvas.height = displayHeight;
-          gl.viewport(0, 0, displayWidth, displayHeight);
+        const w = Math.floor(window.innerWidth);
+        const h = Math.floor(window.innerHeight);
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+          gl.viewport(0, 0, w, h);
         }
       }
-      
+
       let startTime = Date.now();
-      
+
       function render() {
         if (!isActive || !gl) return;
-        
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        
         gl.useProgram(program);
-        
-        const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
-        const timeLocation = gl.getUniformLocation(program, 'u_time');
-        
-        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-        gl.uniform1f(timeLocation, (Date.now() - startTime) / 1000.0);
+        gl.uniform2f(gl.getUniformLocation(program, 'u_resolution'), canvas.width, canvas.height);
+        gl.uniform1f(gl.getUniformLocation(program, 'u_time'), (Date.now() - startTime) / 1000.0);
         gl.uniform1f(intensityLocation, intensity / 100.0);
-        
+        gl.uniform1f(sizeLocation, ditherSize);
+        gl.uniform1i(typeLocation, ditherType);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
-        
         requestAnimationFrame(render);
       }
-      
+
       function updateDithering() {
         if (intensity > 0) {
           canvas.classList.add('active');
-          if (!isActive) {
-            isActive = true;
-            if (gl) render();
-          }
+          if (!isActive) { isActive = true; if (gl) render(); }
         } else {
           canvas.classList.remove('active');
           isActive = false;
+          // Clear canvas so it's fully transparent when hidden
+          if (gl) {
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+          }
         }
-        value.textContent = intensity + '%';
+        if (valueEl) valueEl.textContent = intensity + '%';
       }
-      
-      // Event listeners
+
+      // Toggle: open/close the control panel
+      const ditherMenu = document.getElementById('ditherMenu');
       if (toggle) {
         toggle.addEventListener('click', () => {
-          toggle.classList.toggle('active');
-          controls.classList.toggle('visible');
-          if (intensity === 0 && toggle.classList.contains('active')) {
-            intensity = 50;
-            slider.value = 50;
-            updateDithering();
-          } else if (!toggle.classList.contains('active')) {
-            intensity = 0;
-            slider.value = 0;
-            updateDithering();
-          }
+          ditherMenu && ditherMenu.classList.toggle('open');
         });
       }
-      
+
       if (slider) {
         slider.addEventListener('input', () => {
           intensity = parseInt(slider.value);
-          if (intensity > 0) {
-            toggle.classList.add('active');
-          } else {
-            toggle.classList.remove('active');
-          }
+          toggle && toggle.classList.toggle('active', intensity > 0);
           updateDithering();
         });
       }
-      
+
+      if (sizeSlider) {
+        sizeSlider.addEventListener('input', () => {
+          ditherSize = parseInt(sizeSlider.value);
+          if (sizeValueEl) sizeValueEl.textContent = ditherSize;
+          if (!isActive && intensity > 0) { isActive = true; if (gl) render(); }
+        });
+      }
+
+      if (typeSelect) {
+        typeSelect.addEventListener('change', () => {
+          ditherType = parseInt(typeSelect.value);
+          if (!isActive && intensity > 0) { isActive = true; if (gl) render(); }
+        });
+      }
+
       window.addEventListener('resize', resize);
-      
-      // Initialize
+
       if (initGL()) {
-        console.log('WebGL dithering initialized');
+        updateDithering();
       } else {
-        // CSS fallback for non-WebGL browsers
         canvas.style.background = 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)';
       }
     })();
   </script>
 
+  <!-- Made by MICELIO button -->
+  <a href="https://micelio.thisisgonz.xyz" target="_blank" rel="noopener noreferrer" class="micelio-btn" aria-label="Made by MICELIO">
+    <span class="micelio-dot"></span>
+    <span class="micelio-tooltip">made by MICELIO</span>
+  </a>
+  <style>
+    .micelio-btn {
+      position: fixed;
+      bottom: 0;
+      right: 12px;
+      width: 112px;
+      height: 112px;
+      z-index: 10020;
+      cursor: pointer;
+      display: block;
+      transform: translateY(30%);
+      transition: transform 0.35s ease;
+    }
+    .micelio-dot {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: url('img/micelio-shrooms.PNG') center/contain no-repeat;
+      background-color: transparent;
+      transition: transform 0.2s ease;
+    }
+    .micelio-btn:hover .micelio-dot {
+      transform: scale(1.2);
+    }
+    .micelio-btn:hover {
+      transform: translateY(0);
+    }
+    .micelio-tooltip {
+      position: absolute;
+      bottom: 24px;
+      right: 0;
+      background: #000;
+      color: #fff;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+    }
+    .micelio-btn:hover .micelio-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    @media (max-width: 768px) {
+      .micelio-btn {
+        width: 96px;
+        height: 96px;
+        right: 10px;
+        bottom: 0;
+        transform: translateY(30%);
+      }
+    }
+  </style>
+
   <!-- Analytics -->
   <script src="analytics.js"></script>
 
+
+  <!-- Size Tuner Dev Panel -->
+  <!-- <script src="size-tuner.js"></script> -->
 </body>
 </html>

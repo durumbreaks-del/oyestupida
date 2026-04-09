@@ -38,11 +38,12 @@
     }
     .preloader-text {
       color: #ff00c0;
-      font-family: 'Courier New', monospace;
+      font-family: 'Ubuntu', sans-serif;
       font-size: 14px;
       letter-spacing: 4px;
       text-transform: uppercase;
       animation: preloaderPulse 1.5s ease-in-out infinite;
+    }
 
 /* ---------- Dithering Shader Canvas ---------- */
 .dither-canvas {
@@ -52,153 +53,125 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 999999990;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  z-index: 999999994;
+  visibility: hidden;
 }
 .dither-canvas.active {
-  opacity: 1;
+  visibility: visible;
 }
 
 /* Dithering Control Menu */
 .dither-menu {
   position: fixed;
-  top: 0;
   left: 0;
-  z-index: 10002;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999999997;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
 }
 
 .dither-toggle {
-  width: 32px;
-  height: 32px;
-  border: 2px solid #ff00c0;
-  background: rgba(10, 0, 20, 0.9);
-  color: #ff00c0;
-  font-size: 14px;
+  width: 18px;
+  height: 60px;
+  border: none;
+  background: transparent;
   cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.dither-controls {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(10, 0, 20, 0.95);
+  border: 2px solid #ff00c0;
+  padding: 10px;
+}
+
+.dither-menu.open .dither-controls {
+  display: flex;
+}
+
+.dither-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dither-row-inline {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 8px rgba(255, 0, 192, 0.4);
+  gap: 6px;
 }
-      top: 16px;
-      left: 16px;
-      z-index: 10002;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
 
-    .dither-toggle {
-      width: 32px;
-      height: 32px;
-      border: 2px solid #ff00c0;
-      background: rgba(10, 0, 20, 0.9);
-      color: #ff00c0;
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 8px rgba(255, 0, 192, 0.4);
-    }
+.dither-label {
+  color: #ff00c0;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
 
-    .dither-toggle:hover {
-      background: rgba(255, 0, 192, 0.2);
-      box-shadow: 0 0 12px rgba(255, 0, 192, 0.6);
-    }
+.dither-controls input[type="range"] {
+  width: 90px;
+  height: 4px;
+  background: rgba(255, 0, 192, 0.3);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
 
-    .dither-toggle.active {
-      background: #ff00c0;
-      color: #000;
-    }
+.dither-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #ff00c0;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 0, 192, 0.6);
+}
 
-    .dither-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(10, 0, 20, 0.95);
-      border: 2px solid #ff00c0;
-      padding: 6px 12px;
-      opacity: 0;
-      transform: translateX(-10px);
-      pointer-events: none;
-      transition: all 0.2s ease;
-    }
+.dither-controls input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #ff00c0;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(255, 0, 192, 0.6);
+}
 
-    .dither-menu:hover .dither-controls,
-    .dither-controls.visible {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: auto;
-    }
+.dither-value {
+  color: #ff00c0;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  min-width: 24px;
+}
 
-    .dither-label {
-      color: #ff00c0;
-      font-family: 'Courier New', monospace;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
+.dither-select {
+  background: rgba(10, 0, 20, 0.95);
+  border: 1px solid #ff00c0;
+  color: #ff00c0;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 3px 4px;
+  cursor: pointer;
+  width: 100%;
+  outline: none;
+}
 
-    .dither-controls input[type="range"] {
-      width: 80px;
-      height: 4px;
-      background: rgba(255, 0, 192, 0.3);
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-    }
+.dither-select option {
+  background: #0a0014;
+  color: #ff00c0;
+}
 
-    .dither-controls input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 12px;
-      height: 12px;
-      background: #ff00c0;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(255, 0, 192, 0.6);
-    }
-
-    .dither-controls input[type="range"]::-moz-range-thumb {
-      width: 12px;
-      height: 12px;
-      background: #ff00c0;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 0 8px rgba(255, 0, 192, 0.6);
-    }
-
-    .dither-value {
-      color: #ff00c0;
-      font-family: 'Courier New', monospace;
-      font-size: 10px;
-      min-width: 28px;
-      text-align: right;
-    }
-
-    /* Mobile adjustments for dithering menu */
-    @media (max-width: 768px) {
-      .dither-menu {
-        top: 10px;
-        left: 10px;
-      }
-      .dither-toggle {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-      }
-      .dither-controls {
-        padding: 4px 8px;
-      }
-      .dither-controls input[type="range"] {
-        width: 60px;
-      }
-    }
+@media (max-width: 768px) {
+  .dither-controls input[type="range"] {
+    width: 70px;
+  }
+}
 
     body { background: #000; overflow: hidden; }
 
@@ -230,20 +203,20 @@
 
     .site-logo {
       position: fixed;
-      top: 36px;
+      top: -44px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
       pointer-events: none;
-      width: 144px;
-      max-width: 144px;
+      width: 211px;
+      max-width: 211px;
     }
 
     @media (max-width: 768px) {
       .site-logo {
-        top: 16px;
-        width: 101px;
-        max-width: 101px;
+        top: -64px;
+        width: 148px;
+        max-width: 148px;
       }
     }
 
@@ -254,6 +227,26 @@
       object-fit: contain;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
+    }
+
+    .logo-3d-canvas, model-viewer {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      pointer-events: none;
+      filter: drop-shadow(0 0 1px #ff00c0) drop-shadow(0 0 2px rgba(255, 0, 192, 0.2));
+    }
+
+    /* Make 3D model material pink */
+    model-viewer::part(model) {
+      --model-material-color: #ff00c0;
+      --model-metalness: 0.3;
+      --model-roughness: 0.4;
+    }
+
+    .logo-3d-canvas.hit, model-viewer.hit {
+      filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%) drop-shadow(0 0 10px #0f0);
     }
 
     /* ---------- Logo Neon Pink Glow Animation ---------- */
@@ -307,7 +300,6 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
       transition: background-image 0.6s ease;
       /* CSS variables for green dot cursor position on mobile */
       --cursor-x: 50%;
@@ -326,7 +318,7 @@
       transform: translate(-50%, -50%);
       width: 360px;
       height: 360px;
-      z-index: 20;
+      z-index: 4000;
       transition: opacity 0.4s, transform 0.4s;
     }
 
@@ -334,6 +326,10 @@
       opacity: 0;
       transform: translate(-50%, -50%) scale(0.6);
       pointer-events: none;
+    }
+
+    body.modal-open .ring {
+      z-index: 5;
     }
 
     .ring-btn {
@@ -351,11 +347,14 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       box-shadow: inset 0 0 0 1px #000;
+      z-index: 4000;
+      pointer-events: auto;
+      touch-action: none;
     }
 
     .ring-btn.dragging {
       transition: none !important;
-      z-index: 3600 !important;
+      z-index: 5000 !important;
     }
 
     .ring-btn .tarot-button-label,
@@ -480,7 +479,7 @@
       background: #0f0;
       border-radius: 50%;
       pointer-events: none;
-      z-index: 999999;
+      z-index: 99999999999;
       transform: translate(-50%, -50%);
       left: var(--cursor-x, 50%);
       top: var(--cursor-y, 50%);
@@ -495,9 +494,9 @@
       -webkit-backdrop-filter: invert(1) contrast(1.1);
     }
 
-    /* Hide green dot when gun cursor is visible (not in modals) */
+    /* Show green dot on small screens and when gun cursor is hidden */
     body:not(.modal-open).hide-native-cursor::after {
-      display: none;
+      display: block;
     }
 
     /* Trail effect for dragged buttons - MUST override all inherited transitions */
@@ -643,42 +642,15 @@
         height: 38px;
       }
 
-      /* Hide gun cursor on small screens, show green dot instead */
-      #gunCursor {
-        display: none !important;
-      }
-      
-      body {
-        cursor: default !important;
-      }
-      
-      /* Green dot cursor for small screens - ensure it shows even with hide-native-cursor class */
-      body.hide-native-cursor::after,
-      body:not(.modal-open).hide-native-cursor::after,
-      body::after {
-        content: '';
-        position: fixed;
-        width: 20px;
-        height: 20px;
-        background: #0f0;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 999999;
-        transform: translate(-50%, -50%);
-        left: var(--cursor-x, 50%);
-        top: var(--cursor-y, 50%);
-        box-shadow: 0 0 12px #0f0, 0 0 24px rgba(0,255,0,0.5);
+      /* Show green cursor dot on small screens */
+      body.hide-native-cursor::after {
         display: block !important;
       }
-
-      body.hide-native-cursor.cursor-invert-close::after,
+      
+      /* No custom cursor dot on touch/mobile screens — except inside modals */
       body:not(.modal-open).hide-native-cursor.cursor-invert-close::after,
-      body.cursor-invert-close::after {
-        background: rgba(0, 255, 0, 0.08);
-        border: 1px solid #0f0;
-        box-shadow: 0 0 10px rgba(0,255,0,0.8), 0 0 24px rgba(0,255,0,0.35);
-        backdrop-filter: invert(1) contrast(1.1);
-        -webkit-backdrop-filter: invert(1) contrast(1.1);
+      body:not(.modal-open).cursor-invert-close::after {
+        display: none !important;
       }
     }
 
@@ -688,29 +660,43 @@
       }
     }
 
+
+
     @media (hover: none), (pointer: coarse) {
       #laserSvg {
         display: none;
       }
     }
 
-    /* Tarot tooltip: nudge slightly up */
+    /* Tarot tooltip: fixed near visual center of spread cards */
     .ring-btn.tarot-btn .ring-btn-tooltip {
+      top: auto;
       bottom: auto;
-      top: calc(100% + 10px);
+      left: 50%;
+      /* Sit just below the container, not scaled by container height */
+      margin-top: 0;
+      transform: translateX(-50%) translateY(calc(50% + 20px)) scale(0.9);
+      position: absolute;
+      top: 50%;
     }
 
-    /* CAKES button tooltip: lift a bit */
+    .ring-btn.tarot-btn:hover .ring-btn-tooltip,
+    .ring-btn.tarot-btn.laser-hover .ring-btn-tooltip {
+      transform: translateX(-50%) translateY(calc(50% + 20px)) scale(1);
+      opacity: 1;
+    }
+
+    /* CAKES button tooltip: centered above */
     .ring-btn.cakes-btn .ring-btn-tooltip {
       top: auto;
-      bottom: calc(100% + 14px);
-      left: 0;
-      transform: translateX(-100%) translateY(-10px) scale(0.9);
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px) scale(0.9);
     }
 
     .ring-btn.cakes-btn:hover .ring-btn-tooltip,
     .ring-btn.cakes-btn.laser-hover .ring-btn-tooltip {
-      transform: translateX(-100%) translateY(0) scale(1);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     /* CONTACT button tooltip: nudge up */
@@ -723,7 +709,7 @@
       bottom: calc(120% + 20px);
     }
 
-    /* STURM button is huge ÔåÆ lift tooltip more */
+    /* STURM button is huge -> lift tooltip more */
     .ring-btn.sturm-btn .ring-btn-tooltip {
       bottom: calc(120% + 60px);
     }
@@ -745,6 +731,38 @@
       background: #ff00c0;
       color: #000;
       box-shadow: 0 0 14px rgba(255,0,192,0.5);
+    }
+
+    /* gentle float */
+    @keyframes btnFloatA { 0%,100%{ transform: translateY(0px);  } 50%{ transform: translateY(-7px); } }
+    @keyframes btnFloatB { 0%,100%{ transform: translateY(-4px); } 50%{ transform: translateY(4px);  } }
+    @keyframes btnFloatC { 0%,100%{ transform: translateY(0px);  } 50%{ transform: translateY(-9px); } }
+    @keyframes btnFloatD { 0%,100%{ transform: translateY(-3px); } 50%{ transform: translateY(5px);  } }
+    @keyframes btnFloatE { 0%,100%{ transform: translateY(-2px); } 50%{ transform: translateY(7px);  } }
+
+    .ring-btn.float-a { animation: btnFloatA 3.2s ease-in-out infinite; }
+    .ring-btn.float-b { animation: btnFloatB 2.9s ease-in-out infinite; }
+    .ring-btn.float-c { animation: btnFloatC 3.7s ease-in-out infinite; }
+    .ring-btn.float-d { animation: btnFloatD 2.5s ease-in-out infinite; }
+    .ring-btn.float-e { animation: btnFloatE 3.0s ease-in-out infinite; }
+
+    .ring-btn.dragging.float-a, .ring-btn.dragging.float-b, .ring-btn.dragging.float-c,
+    .ring-btn.dragging.float-d, .ring-btn.dragging.float-e { animation: none; }
+
+    /* sparkle dots */
+    @keyframes sparkleLife {
+      0%   { opacity: 1; transform: translate(-50%,-50%) scale(0)   rotate(0deg);  }
+      40%  { opacity: 1; transform: translate(-50%,-50%) scale(1.2) rotate(25deg); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scale(0.1) rotate(55deg); }
+    }
+
+    .btn-sparkle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 3999;
+      border-radius: 1px;
+      clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      animation: sparkleLife 0.85s ease-out forwards;
     }
 
     .ring-btn.hit {
@@ -953,6 +971,7 @@
       align-items: center;
       justify-content: center;
       overflow: visible;
+      pointer-events: none;
     }
 
     .contact-button-icon svg {
@@ -1038,14 +1057,34 @@
       100% { transform: scale(1); }
     }
 
+    /* Big screens (1600px+): 2x size for buttons, couch and clothes */
+    @media (min-width: 1600px) {
+      .ring-btn                               { width: 128px !important; height: 128px !important; }
+      .ring-btn.tarot-btn                    { width: 240px !important; height: 240px !important; }
+      .ring-btn.contact-btn                  { width: 160px !important; height: 112px !important; }
+      .ring-btn.tattoos-btn,
+      .ring-btn.cakes-btn,
+      .ring-btn.sturm-btn                    { width: 160px !important; height: 112px !important; }
+      .ring-btn .mini-btn-icon img,
+      .ring-btn .contact-button-icon img     { width: 340px !important; height: 340px !important; }
+      .ring-btn.cakes-btn .mini-btn-icon img  { width: 480px !important; height: 480px !important; }
+      .ring-btn .mini-btn-label,
+      .ring-btn .contact-button-label        { font-size: 18px; }
+      .tarot-button-card                     { width: 56px !important; height: 96px !important; }
+      #couchBtn                              { width: 80vw !important; max-width: 1000px !important; }
+      #couchClothes                          { width: 170% !important; max-width: 900px !important; }
+    }
+
     .frame-btn {
       pointer-events: auto !important;
+      touch-action: none;
       transform-origin: top center;
       transition: filter 0.2s, width 0.4s ease, max-width 0.4s ease;
     }
 
     .frame-btn.dragging {
       transition: none !important;
+      z-index: 5000 !important;
     }
 
     #frameArt.dragging {
@@ -1171,8 +1210,8 @@
       overflow-y: auto;
       overflow: visible;
       padding: 48px 20px 20px;
-      border-radius: 0;
-      border: none;
+      border-radius: 12px;
+      border: 2px solid #00ff00;
       background: rgba(10, 0, 20, 0.96);
       font-family: 'Courier New', monospace;
       color: #fdf0ff;
@@ -1227,7 +1266,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px 48px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -1247,11 +1286,70 @@
       );
     }
 
+    /* Decorative cake images — bottom-left corner of the container */
+    .cakes-order-deco {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      align-items: flex-end;
+      gap: clamp(4px, 1vw, 10px);
+      padding: 0 0 8px 8px;
+      pointer-events: none;
+    }
+
+    .cakes-order-deco img {
+      width: clamp(48px, 8vw, 80px);
+      height: auto;
+      object-fit: contain;
+      display: block;
+      opacity: 0.92;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    }
+
+    .cakes-order-form-overlay.cakes-order-success .cakes-order-deco {
+      display: none;
+    }
+
+    /* Decorative tattoo button image — bottom-left corner of the container */
+    .tattoo-order-deco {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: clamp(80px, 15vw, 140px);
+      height: auto;
+      object-fit: contain;
+      opacity: 0.92;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+      pointer-events: none;
+      padding: 0 0 8px 8px;
+      transform: rotate(90deg);
+      transform-origin: bottom left;
+    }
+
     .cakes-order-form {
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 0;
+    }
+
+    .cakes-order-success-title,
+    .cakes-order-success-text {
+      color: #ff00c0;
+      text-align: center;
+    }
+
+    .cakes-order-success-title {
+      margin: 8px 0 10px;
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    .cakes-order-success-text {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.35;
     }
 
     .cakes-order-step {
@@ -1312,7 +1410,7 @@
 
     .cakes-order-form small {
       display: block;
-      font-size: 13px;
+      font-size: 14px;
       color: #ff9eea;
       margin-top: -8px;
     }
@@ -1340,29 +1438,44 @@
       bottom: auto;
       z-index: auto;
       padding: 12px 32px;
-      border: 2px solid #ff00c0;
-      background: rgba(255, 105, 180, 0.1);
-      color: #ff00c0;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
       font-family: 'Courier New', monospace;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
       margin-top: 8px;
       width: auto;
-      border-radius: 0;
       display: inline-block;
       align-self: flex-end;
-      border: 2px solid #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     .cakes-order-form button[type="button"]:hover,
     .cakes-order-form button[type="submit"]:hover {
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .cakes-order-form button[type="button"]:active,
+    .cakes-order-form button[type="submit"]:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateY(2px);
     }
 
     .cakes-order-actions {
@@ -1408,8 +1521,8 @@
       overflow-y: auto;
       overflow: visible;
       padding: 48px 20px 20px;
-      border-radius: 0;
-      border: none;
+      border-radius: 12px;
+      border: 2px solid #00ff00;
       background: rgba(10, 0, 20, 0.96);
       font-family: 'Courier New', monospace;
       color: #fdf0ff;
@@ -1464,7 +1577,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px 40px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -1559,29 +1672,44 @@
     .tarot-reading-form button[type="button"],
     .tarot-reading-form button[type="submit"] {
       padding: 12px 32px;
-      border: 2px solid #ff00c0;
-      background: rgba(255, 105, 180, 0.1);
-      color: #ff00c0;
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
       font-family: 'Courier New', monospace;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
       margin-top: 8px;
       width: auto;
-      border-radius: 0;
       display: inline-block;
       align-self: flex-end;
-      border: 2px solid #000;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     .tarot-reading-form button[type="button"]:hover,
     .tarot-reading-form button[type="submit"]:hover {
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .tarot-reading-form button[type="button"]:active,
+    .tarot-reading-form button[type="submit"]:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateY(2px);
     }
     .cakes-order-submit:hover {
       filter: brightness(1.1);
@@ -1685,8 +1813,8 @@
       overflow-y: auto;
       overflow: visible;
       padding: 48px 20px 20px;
-      border-radius: 0;
-      border: none;
+      border-radius: 12px;
+      border: 2px solid #00ff00;
       background: rgba(10, 0, 20, 0.96);
       font-family: 'Courier New', monospace;
       color: #fdf0ff;
@@ -1741,7 +1869,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -1766,6 +1894,11 @@
       display: flex;
       flex-direction: column;
       gap: 0;
+    }
+
+    .tattoo-order-form h3,
+    .tattoo-order-form p {
+      color: #ff00c0;
     }
 
     .tattoo-order-step {
@@ -1878,27 +2011,44 @@
     .tattoo-order-form button[type="button"],
     .tattoo-order-form button[type="submit"] {
       padding: 12px 32px;
+      background: #00ff00;
+      color: #000;
       border: 2px solid #000;
-      background: rgba(255, 105, 180, 0.1);
-      color: #ff00c0;
       font-family: 'Courier New', monospace;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #000;
       margin-top: 8px;
       width: auto;
-      border-radius: 0;
       display: inline-block;
+      align-self: flex-end;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
     }
 
     .tattoo-order-form button[type="button"]:hover,
     .tattoo-order-form button[type="submit"]:hover {
       background: #ff00c0;
       color: #000;
-      box-shadow: 0 0 20px rgba(255,0,192,0.5);
+      box-shadow: 0 6px 0 #000, 0 0 18px rgba(255, 0, 192, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .tattoo-order-form button[type="button"]:active,
+    .tattoo-order-form button[type="submit"]:active {
+      box-shadow: 0 2px 0 #000;
+      transform: translateY(2px);
     }
 
     .couch-kiss {
@@ -1972,8 +2122,12 @@
     }
 
     .section-overlay.slide-from-top,
-    .section-overlay.slide-from-bottom {
+    .section-overlay.slide-from-bottom,
+    .section-overlay.slide-out-top,
+    .section-overlay.slide-out-bottom {
       pointer-events: auto;
+      left: 50% !important;
+      top: 50% !important;
     }
 
     /* Modal slide animations */
@@ -1996,10 +2150,12 @@
     @keyframes slideFromTop {
       0% {
         opacity: 0;
+        left: 50%;
         transform: translate(-50%, -150%);
       }
       100% {
         opacity: 1;
+        left: 50%;
         transform: translate(-50%, -50%);
       }
     }
@@ -2007,10 +2163,12 @@
     @keyframes slideFromBottom {
       0% {
         opacity: 0;
+        left: 50%;
         transform: translate(-50%, 150%);
       }
       100% {
         opacity: 1;
+        left: 50%;
         transform: translate(-50%, -50%);
       }
     }
@@ -2018,10 +2176,12 @@
     @keyframes slideOutTop {
       0% {
         opacity: 1;
+        left: 50%;
         transform: translate(-50%, -50%);
       }
       100% {
         opacity: 0;
+        left: 50%;
         transform: translate(-50%, -150%);
       }
     }
@@ -2029,10 +2189,12 @@
     @keyframes slideOutBottom {
       0% {
         opacity: 1;
+        left: 50%;
         transform: translate(-50%, -50%);
       }
       100% {
         opacity: 0;
+        left: 50%;
         transform: translate(-50%, 150%);
       }
     }
@@ -2099,7 +2261,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -2184,6 +2346,16 @@
       z-index: 1300 !important;
     }
 
+    .tarot-bysturmz {
+      position: absolute;
+      top: 34px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: auto;
+      z-index: 100;
+    }
+
     .tarot-modal .section-content {
       display: flex;
       flex-direction: column;
@@ -2201,7 +2373,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px 40px !important;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -2234,9 +2406,6 @@
       transition: opacity 0.15s ease;
     }
 
-    .section-overlay.tarot-modal:not(.expanding) .tarot-scroll-snap {
-      opacity: 0;
-    }
 
     .tarot-section {
       height: 100%;
@@ -2414,14 +2583,14 @@
     .tarot-text {
       font-size: 14px;
       line-height: 1.7;
-      color: rgba(255, 105, 180, 0.95);
+      color: #ff00c0;
       text-align: center;
       margin-bottom: 24px;
     }
 
     .tarot-contact-btn {
       position: absolute;
-      bottom: -30px;
+      bottom: -70px;
       left: 50%;
       transform: translateX(-50%);
       padding: 12px 32px;
@@ -2445,6 +2614,20 @@
         7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
       );
       z-index: 100000;
+    }
+
+    .tarot-destiny-image {
+      position: absolute;
+      left: 50%;
+      bottom: -90px;
+      transform: translateX(-50%);
+      width: min(360px, 90vw);
+      height: auto;
+      z-index: 2;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55));
+      opacity: 0.96;
     }
 
     .tarot-contact-btn:hover,
@@ -2505,11 +2688,11 @@
       bottom: -40px;
       left: 50%;
       transform: translateX(-50%);
-      padding: 12px 32px;
+      padding: 16px 44px;
       background: #00ff00;
       color: #000;
       border: 2px solid #000;
-      font-size: 16px;
+      font-size: 20px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -2547,87 +2730,83 @@
       align-items: center;
     }
 
-    .section-overlay.contact-modal {
-      background: rgba(0, 0, 0, 0.9);
-      border: 2px solid #00ff00;
-    }
+.section-overlay.contact-modal.expanding {
+  overflow: visible !important;
+  padding-top: 48px !important;
+  width: clamp(300px, 88vw, 520px) !important;
+  min-height: auto;
+  height: auto !important;
+  max-height: 81vh !important;
+  display: flex;
+  flex-direction: column;
+  z-index: 1300 !important;
+}
 
-    .section-overlay.contact-modal.expanding {
-      overflow: visible !important;
-      padding-top: 48px !important;
-      width: clamp(300px, 88vw, 520px) !important;
-      min-height: auto;
-      height: fit-content !important;
-      max-height: 81vh !important;
-      display: flex;
-      flex-direction: column;
-      z-index: 1300 !important;
-    }
+.contact-modal .section-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  max-height: calc(81vh - 48px);
+  padding: 20px 0 20px 0;
+}
 
-    .contact-modal .section-content {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-      overflow: visible;
-      padding: 0;
-    }
+.section-overlay.contact-modal .contact-title {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  margin: 0;
+  letter-spacing: 4px;
+  padding: 20px;
+  border-radius: 0;
+  background: #ff00c0;
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  z-index: 10;
+  box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+  clip-path: polygon(
+    50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+    93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+    93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+    50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+    7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+    7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+  );
+}
 
-    .section-overlay.contact-modal .contact-title {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      margin: 0;
-      letter-spacing: 4px;
-      padding: 10px 22px;
-      border-radius: 0;
-      background: #ff00c0;
-      color: #000;
-      font-size: 18px;
-      font-weight: bold;
-      text-transform: uppercase;
-      text-align: center;
-      z-index: 10;
-      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
-      clip-path: polygon(
-        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
-        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
-        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
-        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
-        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
-        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
-      );
-    }
-
-    .contact-title {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      margin: 0;
-      letter-spacing: 4px;
-      padding: 10px 22px;
-      border-radius: 0;
-      background: #ff00c0;
-      color: #000;
-      font-size: 18px;
-      font-weight: bold;
-      text-transform: uppercase;
-      text-align: center;
-      z-index: 10;
-      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
-      clip-path: polygon(
-        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
-        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
-        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
-        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
-        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
-        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
-      );
-    }
+.contact-title {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  margin: 0;
+  letter-spacing: 4px;
+  padding: 20px;
+  border-radius: 0;
+  background: #ff00c0;
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  z-index: 10;
+  box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
+  clip-path: polygon(
+    50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+    93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+    93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+    50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+    7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+    7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+  );
+}
 
     .tarot-video-wrap {
       background: transparent;
@@ -2655,21 +2834,41 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #000;
     }
 
-    /* Flipped cards container */
+    /* Flipped cards container - 7 columns × 3 rows for 21 cards */
     .tarot-flipped-cards {
       position: absolute;
       width: 100%;
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 52px));
+      grid-template-rows: repeat(3, auto);
+      gap: 4px;
+      padding: 10px;
       box-sizing: border-box;
       transition: opacity 0.8s ease;
+      align-content: center;
+      justify-content: center;
+      justify-items: center;
+      overflow: visible;
+    }
+
+    /* Individual flipped card with checkerboard back - responsive sizing */
+    .tarot-flipped-card {
+      width: 100%;
+      max-width: 52px;
+      height: auto;
+      aspect-ratio: 5/8;
+      border-radius: 3px;
+      background: 
+        repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 8px 8px;
+      border: 1px solid #333;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      transform: rotate(calc(var(--i) * 1.5deg - 3deg)) translateY(calc(var(--i) * 0.5px));
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      cursor: pointer;
     }
 
     .tarot-flipped-cards.fading-out {
@@ -2677,60 +2876,107 @@
       pointer-events: none;
     }
 
-    /* Individual flipped card with checkerboard back */
-    .tarot-flipped-card {
-      width: 60px;
-      height: 100px;
-      border-radius: 6px;
-      background: 
-        repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 12px 12px;
-      border: 2px solid #333;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      transform: rotate(calc(var(--i) * 4deg - 10deg)) translateY(calc(var(--i) * 2px));
-      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+      .tarot-flipped-cards {
+        gap: 3px;
+        padding: 8px;
+        grid-template-columns: repeat(7, minmax(0, 40px));
+      }
+
+      .tarot-flipped-card {
+        max-width: 40px;
+        border-radius: 2px;
+        background:
+          repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 6px 6px;
+        transform: rotate(calc(var(--i) * 1deg - 2deg)) translateY(calc(var(--i) * 0.3px));
+      }
     }
 
-    .tarot-flipped-card:nth-child(1) { z-index: 6; }
-    .tarot-flipped-card:nth-child(2) { z-index: 5; }
-    .tarot-flipped-card:nth-child(3) { z-index: 4; }
-    .tarot-flipped-card:nth-child(4) { z-index: 3; }
-    .tarot-flipped-card:nth-child(5) { z-index: 2; }
-    .tarot-flipped-card:nth-child(6) { z-index: 1; }
+    @media (max-width: 480px) {
+      .tarot-flipped-cards {
+        gap: 2px;
+        padding: 6px;
+        grid-template-columns: repeat(7, minmax(0, 32px));
+      }
 
-    /* Selected card container */
+      .tarot-flipped-card {
+        max-width: 32px;
+        background:
+          repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 5px 5px;
+        transform: rotate(calc(var(--i) * 0.8deg - 1.5deg)) translateY(calc(var(--i) * 0.2px));
+      }
+    }
+
+    /* Hidden initial state for selected card */
     .tarot-selected-card {
       position: absolute;
-      width: 200px;
-      height: 320px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.3);
+      width: min(74%, 270px);
+      aspect-ratio: 5/8;
       opacity: 0;
-      transform: scale(0.8) rotateY(180deg);
-      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
       pointer-events: none;
-      z-index: 10;
+      z-index: 50;
     }
 
     .tarot-selected-card.visible {
       opacity: 1;
-      transform: scale(1) rotateY(0deg);
+      transform: translate(-50%, -50%) scale(1);
       pointer-events: auto;
     }
 
     .tarot-selected-card img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
+      object-fit: contain;
+      border-radius: 4px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    /* 3D card flip helpers */
+    .tarot-flipped-card.flipping {
+      transform-style: preserve-3d;
+      background: transparent !important;
+      border: none !important;
+      animation: tarotCardFlip 0.75s ease-in-out forwards;
+      z-index: 200;
+    }
+
+    .tarot-flipped-card .tarot-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 3px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .tarot-flipped-card .tarot-face-back {
+      background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 8px 8px;
+    }
+
+    .tarot-flipped-card .tarot-face-front {
+      transform: rotateY(180deg);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #000;
+    }
+
+    @keyframes tarotCardFlip {
+      0%   { transform: rotateY(0deg)   scale(1);   }
+      50%  { transform: rotateY(90deg)  scale(1.4); }
+      100% { transform: rotateY(180deg) scale(1.6); }
     }
 
     /* Meaning display - no border, moved up */
     .tarot-meaning-display {
       position: absolute;
-      width: 90%;
-      max-width: 400px;
+      width: 94%;
+      max-width: 460px;
       max-height: 70%;
-      background: rgba(0, 0, 0, 0.95);
       padding: 24px;
       border-radius: 8px;
       border: none;
@@ -2738,9 +2984,11 @@
       transform: translateY(20px);
       transition: all 0.6s ease;
       pointer-events: none;
-      overflow-y: auto;
+      overflow: hidden;
       z-index: 20;
-      top: 10%;
+      top: calc(10%);
+      display: flex;
+      align-items: center;
     }
 
     .tarot-meaning-display.visible {
@@ -2753,8 +3001,9 @@
       color: #ff00c0;
       font-size: 14px;
       line-height: 1.6;
-      margin: 0 0 16px 0;
+      margin: 0;
       font-family: inherit;
+      width: 100%;
     }
 
     /* GET A READING button - fixed position to appear over bottom left PNG */
@@ -2812,15 +3061,14 @@
       left: 50%;
       transform: translate(-50%, -50%) scale(1.3);
       padding: 16px 32px;
-      border: 1px solid #000;
+      border: 2px solid #000;
       border-radius: 0;
       background: #00ff00;
       color: #000;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       cursor: pointer;
       box-shadow: 0 0 14px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.3);
       clip-path: polygon(
@@ -2834,6 +3082,7 @@
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 2200;
       white-space: nowrap;
+      animation: tarotPinkBlink 2s ease-in-out infinite;
     }
 
     .tarot-roll-btn:hover {
@@ -2841,6 +3090,22 @@
       color: #000;
       box-shadow: 0 0 20px rgba(255,0,192,0.9), 0 0 40px rgba(255,0,192,0.5);
       transform: translate(-50%, -50%) scale(1.35);
+      animation: none;
+    }
+
+    @keyframes tarotPinkBlink {
+      0%, 40%, 50%, 90%, 100% {
+        background: #00ff00;
+        box-shadow: 0 0 14px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.3);
+      }
+      20%, 30% {
+        background: #ff00c0;
+        box-shadow: 0 0 20px rgba(255,0,192,0.9), 0 0 40px rgba(255,0,192,0.5);
+      }
+      70%, 80% {
+        background: #ff00c0;
+        box-shadow: 0 0 20px rgba(255,0,192,0.9), 0 0 40px rgba(255,0,192,0.5);
+      }
     }
 
     /* Button disappearing animation */
@@ -2986,13 +3251,20 @@
     }
 
     .tarot-text-wrap {
-      background: #000;
       padding: 20px 16px 50px 16px;
       border-radius: 0 0 8px 8px;
       /* ... */
       width: 100%;
       box-sizing: border-box;
       position: relative;
+    }
+
+    .tarot-text-wrap .tarot-text {
+      color: #ff00c0 !important;
+      margin-top: -5px;
+      position: relative;
+      z-index: 3;
+      transform: translateY(-50px);
     }
 
     /* Tarot card meaning display */
@@ -3066,7 +3338,8 @@
   white-space: nowrap;
   margin: 0;
   letter-spacing: 4px;
-  padding: 10px 22px;
+  padding: 20px;
+
   border-radius: 0;
   background: #ff00c0;
   color: #000;
@@ -3093,7 +3366,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -3114,13 +3387,18 @@
 
     .tattoos-modal .tattoos-gallery-scroll {
       flex: 1;
+      width: 100%;
       min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
+      box-sizing: border-box;
       -webkit-overflow-scrolling: touch;
-      padding: 4px 20px 0 0;
+      padding: 0 20px 0 0;
       opacity: 1;
       transition: opacity 0.15s ease;
+      margin: 10px;
+      scrollbar-width: auto;
+      scrollbar-color: #ff00c0 #000;
     }
 
     .tattoos-modal:not(.expanding) .tattoos-gallery-scroll {
@@ -3128,22 +3406,28 @@
     }
 
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar {
-      width: 80px;
+      width: 12px;
+      background-color: #000;
     }
+
+    .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-track {
-      background: #050505;
-      border-left: 3px solid #ff00c0;
-      margin-left: 14px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+      background-color: #000;
     }
+
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-thumb {
       background: #ff00c0;
-      border: 3px solid #000;
       min-height: 64px;
-      box-shadow: inset 0 0 0 2px #000;
     }
+
     .tattoos-modal .tattoos-gallery-scroll::-webkit-scrollbar-thumb:hover {
-      background: #ff00c0;
-      box-shadow: inset 0 0 0 3px #000;
+      background: #ff4dcf;
     }
 
     .tattoos-modal-close {
@@ -3294,7 +3578,7 @@
         7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
         7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
       );
-      z-index: 100000;
+      z-index: 2002;
     }
 
     .tattoos-get-btn:hover,
@@ -3464,7 +3748,7 @@
       white-space: nowrap;
       margin: 0;
       letter-spacing: 4px;
-      padding: 10px 22px;
+      padding: 20px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -3491,16 +3775,14 @@
       overflow-x: hidden;
       box-sizing: border-box;
       -webkit-overflow-scrolling: touch;
-      padding: 4px 20px 0 0;
+      padding: 0 20px 0 0;
       opacity: 1;
       transition: opacity 0.15s ease;
       scrollbar-width: auto;
       scrollbar-color: #ff00c0 #000;
+      margin:10px;
     }
 
-    .section-overlay.sturmzx2-modal:not(.expanding) .sturmzx2-scroll {
-      opacity: 0;
-    }
 
     .sturmzx2-scroll::-webkit-scrollbar {
       width: 12px;
@@ -3580,6 +3862,7 @@
       overflow: visible;
       padding: 0;
       position: relative;
+      z-index: 2;
       align-items: center;
       justify-content: center;
     }
@@ -3605,7 +3888,7 @@
       margin: 0;
       white-space: nowrap;
       z-index: 5;
-      padding: 10px 22px;
+      padding: 20px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -3630,19 +3913,22 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 540px;
-      height: 540px;
+      width: min(540px, 41vw);
+      height: min(540px, 41vw);
       flex-shrink: 0;
-      max-width: 41vw;
-      max-height: 41vw;
+    }
+
+    @media (min-width: 1600px) {
+      .cakes-container {
+        width: min(720px, 42vw);
+        height: min(720px, 42vw);
+      }
     }
 
     @media (max-width: 1200px) {
       .cakes-container {
-        width: 450px;
-        height: 450px;
-        max-width: 41vw;
-        max-height: 41vw;
+        width: min(450px, 41vw);
+        height: min(450px, 41vw);
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -3651,10 +3937,10 @@
 
     @media (max-width: 768px) {
       .cakes-container {
-        width: 360px;
-        height: 360px;
-        max-width: 77vw;
-        max-height: 77vw;
+        width: 430px;
+        height: 430px;
+        max-width: 90vw;
+        max-height: 90vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -3663,10 +3949,10 @@
 
     @media (max-width: 480px) {
       .cakes-container {
-        width: 277px;
-        height: 277px;
-        max-width: 86vw;
-        max-height: 86vw;
+        width: 360px;
+        height: 360px;
+        max-width: 94vw;
+        max-height: 94vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -3695,6 +3981,78 @@
       height: 100%;
       object-fit: contain;
       animation: cakeCenterAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    .cakes-center-selected {
+      z-index: 12;
+      overflow: visible;
+    }
+
+    .cakes-float-group {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: cakeCenterFloat 3.1s ease-in-out 0.8s infinite;
+      transform-origin: center;
+    }
+
+    .cakes-float-group::before {
+      content: '';
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 28% 26%, rgba(255, 0, 192, 0.62) 0%, rgba(255, 0, 192, 0) 58%),
+        radial-gradient(circle at 72% 74%, rgba(0, 255, 0, 0.62) 0%, rgba(0, 255, 0, 0) 56%);
+      filter: blur(12px) saturate(125%);
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cakes-float-group > img {
+      position: relative;
+      z-index: 2;
+    }
+
+    .cakes-center-selected:hover .cakes-float-group::before,
+    .cakes-center-selected.laser-hover .cakes-float-group::before {
+      opacity: 1;
+      transform: scale(1.04);
+      animation: cakeAuraPulse 1.2s ease-in-out infinite alternate;
+    }
+
+    .cake-name-tooltip {
+      position: absolute;
+      left: 50%;
+      top: 75%;
+      transform: translate(-50%, -50%);
+      padding: 12px 20px;
+      border: none;
+      background: #ff00c0;
+      color: #000;
+      font-size: clamp(14px, 1.08vw, 17px);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      line-height: 1;
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(255, 0, 192, 0.55), 0 0 16px rgba(255, 0, 192, 0.25);
+      white-space: nowrap;
+      z-index: 4;
+      clip-path: polygon(
+        50% 0%, 58% 12%, 70% 6%, 72% 19%, 84% 14%, 82% 28%,
+        96% 24%, 90% 38%, 100% 40%, 91% 50%, 100% 60%, 90% 62%,
+        96% 76%, 82% 72%, 84% 86%, 72% 81%, 70% 94%, 58% 88%,
+        50% 100%, 42% 88%, 30% 94%, 28% 81%, 16% 86%, 18% 72%,
+        4% 76%, 10% 62%, 0% 60%, 9% 50%, 0% 40%, 10% 38%,
+        4% 24%, 18% 28%, 16% 14%, 28% 19%, 30% 6%, 42% 12%
+      );
     }
 
     /* Center cake circular border animation */
@@ -3731,6 +4089,20 @@
       100% {
         transform: scale(1) rotate(0deg);
         opacity: 1;
+      }
+    }
+
+    @keyframes cakeCenterFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes cakeAuraPulse {
+      0% {
+        filter: blur(10px) saturate(115%);
+      }
+      100% {
+        filter: blur(16px) saturate(140%);
       }
     }
 
@@ -3776,10 +4148,10 @@
 
     .cakes-orbit-item {
       position: absolute;
-      width: 22%;
-      height: 22%;
-      min-width: 80px;
-      min-height: 80px;
+      width: 35%;
+      height: 35%;
+      min-width: clamp(100px, 12vw, 200px);
+      min-height: clamp(100px, 12vw, 200px);
       cursor: pointer;
       transition: all 0.3s ease;
       transform: translate(-50%, -50%);
@@ -3814,9 +4186,9 @@
     .cakes-orbit-item::before {
       content: '';
       position: absolute;
-      inset: -6px;
+      inset: -3px;
       border-radius: 50%;
-      padding: 4px;
+      padding: 6px;
       background: linear-gradient(90deg, #ff00c0 50%, #00ff00 50%);
       background-size: 200% 100%;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -3871,7 +4243,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 2;
+      z-index: 860;
       overflow: hidden;
     }
 
@@ -3880,7 +4252,7 @@
       border-radius: 50%;
       overflow: hidden;
       pointer-events: none;
-      z-index: 3;
+      z-index: 0;
     }
 
     .falling-cake img {
@@ -3951,7 +4323,6 @@
     .section-overlay::-webkit-scrollbar-track {
       background: #050505;
       border-left: 3px solid #ff00c0;
-      margin-left: 4px;
     }
     .section-overlay::-webkit-scrollbar-thumb {
       background: #ff00c0;
@@ -4028,7 +4399,7 @@
 
     .gallery-title {
       display: inline-block;
-      padding: 16px 42px;
+      padding: 20px;
       border-radius: 0;
       background: #ff00c0;
       color: #000;
@@ -4207,6 +4578,7 @@
       margin: 0 auto;
       box-sizing: border-box;
       position: relative;
+      overflow: hidden;
     }
 
     .bio-content .bio-tagline {
@@ -4233,6 +4605,8 @@
       padding: 10px 16px 18px 16px;
       width: 100%;
       margin: 0 auto;
+      position: relative;
+      z-index: 10;
       scrollbar-width: auto; /* Firefox */
       scrollbar-color: #ff00c0 #0a0a0a;
       cursor: grab;
@@ -4320,7 +4694,6 @@
       font-weight: bold;
       line-height: 1.1;
       margin-bottom: 4px;
-      margin-top: -50px;
     }
 
     .contact-form .form-prompt span {
@@ -4334,7 +4707,7 @@
       border: 2px solid #ff00c0;
       background: rgba(255, 105, 180, 0.05);
       color: #ff00c0;
-      font-family: 'Courier New', monospace;
+      font-family: inherit;
       font-size: 16px;
       transition: all 0.25s ease;
     }
@@ -4411,6 +4784,49 @@
       transform: translateY(2px);
     }
 
+    .contact-form .contact-success-title {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.2;
+      color: #ff00c0;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .contact-form .contact-success-text {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #ff9eea;
+      max-width: 36ch;
+    }
+
+    .contact-form.contact-success-only {
+      padding-top: 0;
+      min-height: 320px;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    .tarot-reading-form .tarot-success-title {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.2;
+      color: #ff00c0;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .tarot-reading-form .tarot-success-text {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #ff9eea;
+      max-width: 36ch;
+    }
+
     #contactNext1,
     #contactNext2 {
       align-self: flex-end;
@@ -4475,6 +4891,8 @@
       justify-content: center;
       cursor: pointer;
       transition: transform 0.25s ease;
+      position: relative;
+      z-index: 2;
     }
 
     .mute-btn:not(.muted) {
@@ -4524,12 +4942,54 @@
       border: 2px solid #000;
     }
 
-    /* mute tooltip: below-left of the icon */
+    /* mute tooltip: below the icon, fades in on hover/click, star shape */
     .mute-tooltip {
-      top: 110%;
+      top: calc(100% - 8px);
       bottom: auto;
-      left: -80px;
-      transform: translateX(0) translateY(4px) scale(0.85);
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%) scale(0.6);
+      margin-left: -10px;
+      opacity: 0;
+      font-size: 13px;
+      padding: 20px;
+      min-width: 56px;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(
+        50% 0%, 56% 14%, 65% 4%, 67% 19%, 79% 11%, 77% 26%,
+        93% 22%, 87% 36%, 100% 37%, 90% 50%, 100% 63%, 87% 64%,
+        93% 78%, 77% 74%, 79% 89%, 67% 81%, 65% 96%, 56% 86%,
+        50% 100%, 44% 86%, 35% 96%, 33% 81%, 21% 89%, 23% 74%,
+        7% 78%, 13% 64%, 0% 63%, 10% 50%, 0% 37%, 13% 36%,
+        7% 22%, 23% 26%, 21% 11%, 33% 19%, 35% 4%, 44% 14%
+      );
+      z-index: 1;
+      pointer-events: none;
+      filter: drop-shadow(2px 0 0 #000) drop-shadow(-2px 0 0 #000) drop-shadow(0 2px 0 #000) drop-shadow(0 -2px 0 #000);
+      transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+    }
+
+    /* Fade in on hover */
+    .mute-btn-wrap:hover .mute-tooltip {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Show tooltip when clicked (active state) */
+    .mute-btn-wrap.active .mute-tooltip {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Keep ON state green even when not hovering */
+    .mute-btn:not(.muted) + .mute-tooltip {
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      box-shadow: 0 0 14px rgba(0,255,0,0.75), 0 0 28px rgba(0,255,0,0.35);
     }
 
     /* light toggle tooltip: above the icon */
@@ -4538,14 +4998,25 @@
       top: auto;
     }
 
-    .mute-btn-wrap:hover .mute-tooltip,
     .toggle-btn-wrap:hover .toggle-tooltip {
       opacity: 1;
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    .mute-btn-wrap:hover .mute-tooltip {
-      transform: translateX(0) translateY(0) scale(1);
+    .mute-btn-wrap:hover .mute-btn.muted + .mute-tooltip {
+      transform: translateX(-50%) scale(0.6);
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #000;
+      box-shadow: 0 0 14px rgba(0,255,0,0.75), 0 0 28px rgba(0,255,0,0.35);
+    }
+
+    .mute-btn-wrap:hover .mute-btn:not(.muted) + .mute-tooltip {
+      transform: translateX(-50%) scale(0.6);
+      background: #ff00c0;
+      color: #000;
+      border: 2px solid #000;
+      box-shadow: 0 0 14px rgba(255,0,192,0.7), 0 0 28px rgba(255,0,192,0.3);
     }
 
     .toggle-btn-wrap {
@@ -4559,36 +5030,9 @@
       justify-content: center;
     }
 
-    /* Cakes button tiny fire animation */
+    /* Cakes button */
     .ring-btn.cakes-btn {
       position: absolute;
-    }
-    .ring-btn.cakes-btn::before {
-      content: "🔥";
-      position: absolute;
-      top: -61px;
-      left: -12px;
-      font-size: 20px;
-      filter: drop-shadow(0 0 6px rgba(255, 120, 0, 0.9));
-      animation: cakesFire 0.6s infinite alternate;
-      pointer-events: none;
-      opacity: 0;
-      z-index: 2;
-      transition: opacity 0.25s ease-out;
-    }
-    .ring-btn.cakes-btn:hover::before,
-    .ring-btn.cakes-btn.laser-hover::before {
-      opacity: 1;
-    }
-    @keyframes cakesFire {
-      from {
-        transform: translateY(0) scale(1);
-        opacity: 0.9;
-      }
-      to {
-        transform: translateY(-2px) scale(1.08);
-        opacity: 1;
-      }
     }
     .mute-btn.muted .mute-icon { opacity: 0.5; }
 
@@ -4922,20 +5366,50 @@
       transition: left 0.7s ease-out, bottom 0.7s ease-out, top 0.7s ease-out, transform 0.7s ease-out;
     }
 
-    .section-overlay.contact-modal.expanding #couchClothes {
-      transform: translate(-50%, calc(-50% + 50px));
+    .section-overlay.contact-modal.expanding ~ #couchClothes {
+      transform: translate(calc(-50% + 5vw), calc(-50% - 5vh));
+      max-width: 130px;
+      width: 22%;
+    }
+
+    .section-overlay.tarot-modal.expanding ~ #couchClothes {
+      z-index: 1200 !important;
+    }
+
+    .section-overlay.tattoos-modal.expanding ~ #couchClothes {
+      z-index: 1 !important;
+    }
+
+    @media (max-width: 768px) {
+      .section-overlay.contact-modal.expanding ~ #couchClothes {
+        transform: translate(calc(-50% + 50px), calc(-50% - 50px));
+        max-width: 110px;
+        width: 28%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-overlay.contact-modal.expanding ~ #couchClothes {
+        transform: translate(calc(-50% + 50px), calc(-50% - 50px));
+        max-width: 90px;
+        width: 24%;
+      }
     }
 
     #bioHoverSlide {
-      position: absolute;
-      left: 0;
-      bottom: 0;
+      display: none;
+      position: relative;
       width: 100%;
       pointer-events: none;
-      z-index: 24;
+      z-index: 40;
       transform: translateY(100%);
       transition: transform 0.55s ease;
-      overflow: visible;
+      overflow: hidden;
+      padding-top: 20px;
+      padding-bottom: 30px;
+    }
+    .bio-scroll #bioHoverSlide {
+      display: block;
     }
     #bioHoverSlide.visible {
       transform: translateY(0);
@@ -4949,13 +5423,11 @@
       filter: drop-shadow(0 0 18px rgba(255, 0, 192, 0.35));
     }
 
-
     /* ---- Nutrition Facts label (baking essentials) ---- */
     .cakes-center-essentials {
-      overflow-y: auto;
-      overflow-x: hidden;
-      align-items: flex-start;
-      justify-content: flex-start;
+      overflow: visible;
+      align-items: center;
+      justify-content: center;
       border-radius: 0 !important;
     }
     .cakes-center-essentials::before {
@@ -4966,18 +5438,22 @@
       background: transparent;
       color: #ff00c0;
       border: 3px solid #ff00c0;
-      padding: 5px 7px 6px;
+      padding: 4px 5px 5px;
       font-family: 'Helvetica Neue', Arial, sans-serif !important;
-      width: 100%;
+      width: 58%;
+      margin: 0 auto;
+      container-type: inline-size;
       box-sizing: border-box;
-      font-size: 10px;
-      line-height: 1.2;
+      font-size: 8.5px;
+      line-height: 1.15;
     }
 
     .nf-title {
-      font-size: 22px;
+      font-size: 14px;
+      font-size: clamp(11px, 10cqi, 17px);
       font-weight: 900;
       line-height: 1;
+      letter-spacing: -0.25px;
       margin-bottom: 1px;
       font-family: inherit !important;
     }
@@ -4996,7 +5472,7 @@
     }
 
     .nf-rule { background: #ff00c0; margin: 2px 0; }
-    .nf-rule--thick  { height: 8px; }
+    .nf-rule--thick  { height: 6px; }
     .nf-rule--medium { height: 4px; }
     .nf-rule--thin   { height: 1px; }
 
@@ -5028,10 +5504,10 @@
       gap: 3px;
       border-bottom: 1px solid #ff00c0;
       padding: 1px 0;
-      font-size: 9px;
+      font-size: 8.5px;
     }
-    .nf-name   { flex: 1; font-weight: 700; text-transform: capitalize; }
-    .nf-amount { color: #ff00c0; min-width: 36px; text-align: right; }
+    .nf-name   { flex: 1; font-weight: 700; text-transform: capitalize; font-size: 12px; letter-spacing: 0; }
+    .nf-amount { color: #ff00c0; min-width: 34px; text-align: right; }
     .nf-pct    { font-weight: 900; min-width: 28px; text-align: right; }
 
     .nf-footnote {
@@ -5048,38 +5524,243 @@
         padding: 4px 5px 5px;
         border-width: 2px;
       }
-      .nf-title { font-size: 18px; }
       .nf-cal-label { font-size: 9px; }
       .nf-cal-num   { font-size: 17px; }
       .nf-rule--thick  { height: 6px; }
       .nf-rule--medium { height: 3px; }
     }
 
-    /* ≤768px — title + thick line + daily value list only */
+    /* ≤768px — simplified list */
     @media (max-width: 768px) {
       .nutrition-facts {
         padding: 4px 5px 5px;
         border-width: 2px;
       }
-      .nf-title { font-size: 16px; }
       .nf-servings,
       .nf-serving-size,
       .nf-calories-row,
       .nf-rule--medium,
       .nf-rule--thin,
-      .nf-footnote { display: none; }
+      .nf-footnote,
+      .nf-dv-header { display: none; }
       .nf-rule--thick { height: 6px; margin: 3px 0; }
-      .nf-dv-header { font-size: 8px; }
-      .nf-list li   { font-size: 9px; padding: 2px 0; }
-      .nf-amount    { min-width: 32px; }
+      .nf-list li   { font-size: 9.5px; padding: 2px 0; }
+      .nf-name      { font-size: 10px; }
+      .nf-amount    { min-width: 36px; }
       .nf-pct       { min-width: 24px; }
     }
 
     /* ≤480px — same structure, slightly tighter */
     @media (max-width: 480px) {
       .nutrition-facts { padding: 3px 4px 4px; border-width: 1px; }
-      .nf-title { font-size: 13px; }
       .nf-rule--thick { height: 4px; margin: 2px 0; }
-      .nf-dv-header { font-size: 7px; }
-      .nf-list li   { font-size: 8px; }
+      .nf-list li   { font-size: 8.5px; }
+      .nf-name      { font-size: 9px; }
+    }
+
+    /* ── Phone: scale modal titles, buttons & tooltips down 20% ── */
+    @media (max-width: 479px) {
+      /* Page tooltips on ring buttons */
+      .ring-btn-tooltip { font-size: 16px !important; }
+
+      /* All modal gallery/section titles */
+      .gallery-title,
+      .bio-modal .gallery-title,
+      .tarot-modal .gallery-title,
+      .tattoos-modal .gallery-title,
+      .sturmzx2-modal .gallery-title,
+      .cakes-modal .gallery-title,
+      .paintings-modal .gallery-title { font-size: 16px !important; }
+
+      /* Contact badge title */
+      .contact-title { font-size: 14px !important; }
+
+      /* Cakes order form title */
+      .cakes-order-title { font-size: 26px !important; }
+
+      /* Modal close buttons (×) */
+      .bio-modal-close,
+      .tarot-modal-close,
+      .cakes-modal-close,
+      .contact-modal-close,
+      .tattoos-modal-close { font-size: 26px !important; }
+
+      /* Action buttons inside modals */
+      .tarot-contact-btn { font-size: 13px !important; }
+      .cakes-order-modal-btn { font-size: 16px !important; }
+      .cakes-order-btn.visible { font-size: 11px !important; }
+      .contact-form .form-btn { font-size: 13px !important; }
+      .form-btn { font-size: 13px !important; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       BAKED SIZE VALUES — calibrated per breakpoint
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── PHONE < 480px ── */
+    @media (max-width: 479px) {
+      body .ring-btn.tarot-btn { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card { width:37.33px !important; height:64px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c1 { transform: translate(-90%,-30%) rotate(-18deg) scale(1.333) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c2 { transform: translate(-50%,-60%) rotate(-6deg)  scale(1.333) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c3 { transform: translate(-10%,-60%) rotate(6deg)   scale(1.333) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c4 { transform: translate(30%, -30%) rotate(18deg)  scale(1.333) !important; }
+      body .ring-btn.tarot-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) translateY(40px) scale(0.9) !important; }
+      body .ring-btn.tarot-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) translateY(40px) scale(1) !important; }
+
+      body .ring-btn.tattoos-btn { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; }
+      body .ring-btn.tattoos-btn .mini-btn-icon img { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; object-fit:contain !important; }
+      body .ring-btn.tattoos-btn .mini-btn-wrap { width:160px !important; height:160px !important; }
+      html body .ring-btn.tattoos-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.tattoos-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.cakes-btn { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; }
+      body .ring-btn.cakes-btn .mini-btn-icon img { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; object-fit:contain !important; }
+      body .ring-btn.cakes-btn .mini-btn-wrap { width:160px !important; height:160px !important; }
+      html body .ring-btn.cakes-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.cakes-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.sturm-btn { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; }
+      body .ring-btn.sturm-btn .mini-btn-icon img { width:160px !important; height:160px !important; min-width:160px !important; min-height:160px !important; max-width:160px !important; max-height:160px !important; object-fit:contain !important; }
+      body .ring-btn.sturm-btn .mini-btn-wrap { width:160px !important; height:160px !important; }
+      html body .ring-btn.sturm-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.sturm-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.contact-btn { width:172px !important; height:172px !important; min-width:172px !important; min-height:172px !important; max-width:172px !important; max-height:172px !important; }
+      body .ring-btn.contact-btn .contact-button-icon img { width:172px !important; height:172px !important; min-width:172px !important; min-height:172px !important; max-width:172px !important; max-height:172px !important; }
+      html body .ring-btn.contact-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.contact-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      #couchBtn { width:525px !important; height:auto !important; min-width:525px !important; max-width:525px !important; }
+      #couchClothes { width:389px !important; height:auto !important; min-width:389px !important; max-width:389px !important; }
+      #frameBtn { width:200px !important; height:auto !important; min-width:200px !important; max-width:200px !important; }
+      #frameArt { width:200px !important; height:auto !important; min-width:200px !important; max-width:200px !important; }
+      .section-overlay.contact-modal.expanding ~ #couchClothes { width:267px !important; min-width:267px !important; max-width:267px !important; }
+      .section-overlay.bio-modal.expanding ~ #couchClothes { width:325px !important; min-width:325px !important; max-width:325px !important; }
+    }
+
+    /* ── TABLET 480–768px ── */
+    @media (min-width: 480px) and (max-width: 768px) {
+      body .ring-btn.tarot-btn { width:142px !important; height:142px !important; min-width:142px !important; min-height:142px !important; max-width:142px !important; max-height:142px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card { width:33.13px !important; height:56.8px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c1 { transform: translate(-90%,-30%) rotate(-18deg) scale(1.183) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c2 { transform: translate(-50%,-60%) rotate(-6deg)  scale(1.183) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c3 { transform: translate(-10%,-60%) rotate(6deg)   scale(1.183) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c4 { transform: translate(30%, -30%) rotate(18deg)  scale(1.183) !important; }
+      body .ring-btn.tarot-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) translateY(35.5px) scale(0.9) !important; }
+      body .ring-btn.tarot-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) translateY(35.5px) scale(1) !important; }
+
+      body .ring-btn.tattoos-btn { width:142px !important; height:142px !important; min-width:142px !important; min-height:142px !important; max-width:142px !important; max-height:142px !important; }
+      body .ring-btn.tattoos-btn .mini-btn-icon img { width:142px !important; height:142px !important; min-width:142px !important; min-height:142px !important; max-width:142px !important; max-height:142px !important; object-fit:contain !important; }
+      body .ring-btn.tattoos-btn .mini-btn-wrap { width:142px !important; height:142px !important; }
+      html body .ring-btn.tattoos-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.tattoos-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.cakes-btn { width:142px !important; height:142px !important; min-width:142px !important; min-height:142px !important; max-width:142px !important; max-height:142px !important; }
+      body .ring-btn.cakes-btn .mini-btn-icon img { width:142px !important; height:142px !important; min-width:142px !important; min-height:142px !important; max-width:142px !important; max-height:142px !important; object-fit:contain !important; }
+      body .ring-btn.cakes-btn .mini-btn-wrap { width:142px !important; height:142px !important; }
+      html body .ring-btn.cakes-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.cakes-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.sturm-btn { width:167px !important; height:167px !important; min-width:167px !important; min-height:167px !important; max-width:167px !important; max-height:167px !important; }
+      body .ring-btn.sturm-btn .mini-btn-icon img { width:167px !important; height:167px !important; min-width:167px !important; min-height:167px !important; max-width:167px !important; max-height:167px !important; object-fit:contain !important; }
+      body .ring-btn.sturm-btn .mini-btn-wrap { width:167px !important; height:167px !important; }
+      html body .ring-btn.sturm-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.sturm-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.contact-btn { width:167px !important; height:167px !important; min-width:167px !important; min-height:167px !important; max-width:167px !important; max-height:167px !important; }
+      body .ring-btn.contact-btn .contact-button-icon img { width:167px !important; height:167px !important; min-width:167px !important; min-height:167px !important; max-width:167px !important; max-height:167px !important; }
+      html body .ring-btn.contact-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.contact-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      #couchBtn { width:380px !important; height:auto !important; min-width:380px !important; max-width:380px !important; }
+      #couchClothes { width:261px !important; height:auto !important; min-width:261px !important; max-width:261px !important; }
+      #frameBtn { width:191px !important; height:auto !important; min-width:191px !important; max-width:191px !important; }
+      #frameArt { width:191px !important; height:auto !important; min-width:191px !important; max-width:191px !important; }
+      .section-overlay.contact-modal.expanding ~ #couchClothes { width:100px !important; min-width:100px !important; max-width:100px !important; }
+      .section-overlay.bio-modal.expanding ~ #couchClothes { width:280px !important; min-width:280px !important; max-width:280px !important; }
+    }
+
+    /* ── LAPTOP 769–1599px ── */
+    @media (min-width: 769px) and (max-width: 1599px) {
+      body .ring-btn.tarot-btn { width:180px !important; height:180px !important; min-width:180px !important; min-height:180px !important; max-width:180px !important; max-height:180px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card { width:42px !important; height:72px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c1 { transform: translate(-90%,-30%) rotate(-18deg) scale(1.5) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c2 { transform: translate(-50%,-60%) rotate(-6deg)  scale(1.5) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c3 { transform: translate(-10%,-60%) rotate(6deg)   scale(1.5) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c4 { transform: translate(30%, -30%) rotate(18deg)  scale(1.5) !important; }
+      body .ring-btn.tarot-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) translateY(45px) scale(0.9) !important; }
+      body .ring-btn.tarot-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) translateY(45px) scale(1) !important; }
+
+      body .ring-btn.tattoos-btn { width:231px !important; height:231px !important; min-width:231px !important; min-height:231px !important; max-width:231px !important; max-height:231px !important; }
+      body .ring-btn.tattoos-btn .mini-btn-icon img { width:231px !important; height:231px !important; min-width:231px !important; min-height:231px !important; max-width:231px !important; max-height:231px !important; object-fit:contain !important; }
+      body .ring-btn.tattoos-btn .mini-btn-wrap { width:231px !important; height:231px !important; }
+      html body .ring-btn.tattoos-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.tattoos-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.cakes-btn { width:246px !important; height:246px !important; min-width:246px !important; min-height:246px !important; max-width:246px !important; max-height:246px !important; }
+      body .ring-btn.cakes-btn .mini-btn-icon img { width:246px !important; height:246px !important; min-width:246px !important; min-height:246px !important; max-width:246px !important; max-height:246px !important; object-fit:contain !important; }
+      body .ring-btn.cakes-btn .mini-btn-wrap { width:246px !important; height:246px !important; }
+      html body .ring-btn.cakes-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.cakes-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.sturm-btn { width:231px !important; height:231px !important; min-width:231px !important; min-height:231px !important; max-width:231px !important; max-height:231px !important; }
+      body .ring-btn.sturm-btn .mini-btn-icon img { width:231px !important; height:231px !important; min-width:231px !important; min-height:231px !important; max-width:231px !important; max-height:231px !important; object-fit:contain !important; }
+      body .ring-btn.sturm-btn .mini-btn-wrap { width:231px !important; height:231px !important; }
+      html body .ring-btn.sturm-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.sturm-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.contact-btn { width:231px !important; height:231px !important; min-width:231px !important; min-height:231px !important; max-width:231px !important; max-height:231px !important; }
+      body .ring-btn.contact-btn .contact-button-icon img { width:231px !important; height:231px !important; min-width:231px !important; min-height:231px !important; max-width:231px !important; max-height:231px !important; }
+      html body .ring-btn.contact-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.contact-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      #couchBtn { width:516px !important; height:auto !important; min-width:516px !important; max-width:516px !important; }
+      #couchClothes { width:449px !important; height:auto !important; min-width:449px !important; max-width:449px !important; }
+      #frameBtn { width:231px !important; height:auto !important; min-width:231px !important; max-width:231px !important; }
+      #frameArt { width:231px !important; height:auto !important; min-width:231px !important; max-width:231px !important; }
+      .section-overlay.contact-modal.expanding ~ #couchClothes { width:120px !important; min-width:120px !important; max-width:120px !important; }
+      .section-overlay.bio-modal.expanding ~ #couchClothes { width:350px !important; min-width:350px !important; max-width:350px !important; }
+    }
+
+    /* ── BIG 24" >= 1600px ── */
+    @media (min-width: 1600px) {
+      body .ring-btn.tarot-btn { width:199px !important; height:199px !important; min-width:199px !important; min-height:199px !important; max-width:199px !important; max-height:199px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card { width:46.43px !important; height:79.6px !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c1 { transform: translate(-90%,-30%) rotate(-18deg) scale(1.658) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c2 { transform: translate(-50%,-60%) rotate(-6deg)  scale(1.658) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c3 { transform: translate(-10%,-60%) rotate(6deg)   scale(1.658) !important; }
+      body .ring-btn.tarot-btn .tarot-button-card.c4 { transform: translate(30%, -30%) rotate(18deg)  scale(1.658) !important; }
+      body .ring-btn.tarot-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) translateY(49.75px) scale(0.9) !important; }
+      body .ring-btn.tarot-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) translateY(49.75px) scale(1) !important; }
+
+      body .ring-btn.tattoos-btn { width:361px !important; height:361px !important; min-width:361px !important; min-height:361px !important; max-width:361px !important; max-height:361px !important; }
+      body .ring-btn.tattoos-btn .mini-btn-icon img { width:361px !important; height:361px !important; min-width:361px !important; min-height:361px !important; max-width:361px !important; max-height:361px !important; object-fit:contain !important; }
+      body .ring-btn.tattoos-btn .mini-btn-wrap { width:361px !important; height:361px !important; }
+      html body .ring-btn.tattoos-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.tattoos-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.cakes-btn { width:345px !important; height:345px !important; min-width:345px !important; min-height:345px !important; max-width:345px !important; max-height:345px !important; }
+      body .ring-btn.cakes-btn .mini-btn-icon img { width:345px !important; height:345px !important; min-width:345px !important; min-height:345px !important; max-width:345px !important; max-height:345px !important; object-fit:contain !important; }
+      body .ring-btn.cakes-btn .mini-btn-wrap { width:345px !important; height:345px !important; }
+      html body .ring-btn.cakes-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.cakes-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.sturm-btn { width:296px !important; height:296px !important; min-width:296px !important; min-height:296px !important; max-width:296px !important; max-height:296px !important; }
+      body .ring-btn.sturm-btn .mini-btn-icon img { width:296px !important; height:296px !important; min-width:296px !important; min-height:296px !important; max-width:296px !important; max-height:296px !important; object-fit:contain !important; }
+      body .ring-btn.sturm-btn .mini-btn-wrap { width:296px !important; height:296px !important; }
+      html body .ring-btn.sturm-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.sturm-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      body .ring-btn.contact-btn { width:393px !important; height:393px !important; min-width:393px !important; min-height:393px !important; max-width:393px !important; max-height:393px !important; }
+      body .ring-btn.contact-btn .contact-button-icon img { width:393px !important; height:393px !important; min-width:393px !important; min-height:393px !important; max-width:393px !important; max-height:393px !important; }
+      html body .ring-btn.contact-btn .ring-btn-tooltip { top:50% !important; bottom:auto !important; transform:translate(-50%,-50%) scale(0.9) !important; }
+      html body .ring-btn.contact-btn:hover .ring-btn-tooltip { transform:translate(-50%,-50%) scale(1) !important; }
+
+      #couchBtn { width:707px !important; height:auto !important; min-width:707px !important; max-width:707px !important; }
+      #couchClothes { width:516px !important; height:auto !important; min-width:516px !important; max-width:516px !important; }
+      #frameBtn { width:393px !important; height:auto !important; min-width:393px !important; max-width:393px !important; }
+      #frameArt { width:393px !important; height:auto !important; min-width:393px !important; max-width:393px !important; }
+      .section-overlay.contact-modal.expanding ~ #couchClothes { width:312px !important; min-width:312px !important; max-width:312px !important; }
+      .section-overlay.bio-modal.expanding ~ #couchClothes { width:338px !important; min-width:338px !important; max-width:338px !important; }
     }

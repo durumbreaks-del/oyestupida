@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J3X0F6N7GG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-J3X0F6N7GG');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oye Estupida - Opening Soon</title>
+  <link rel="icon" type="image/png" href="img/favico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/@google/model-viewer@3.3.0/dist/model-viewer.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Gun cursor */
+    #gunCursor {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate3d(0,0,0);
+    }
+
+    #gunCursor img {
+      display: block;
+      width: 64px;
+      height: 64px;
+      transform-origin: 32px 0;
+      image-rendering: auto;
+    }
+
+    body.hide-native-cursor,
+    body.hide-native-cursor * {
+      cursor: none !important;
+    }
+
+    /* Logo container */
+    .site-logo {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      width: 500px;
+      max-width: 85vw;
+      height: 500px;
+      max-height: 60vh;
+    }
+
+    @media (max-width: 768px) {
+      .site-logo {
+        width: 350px;
+        max-width: 75vw;
+        height: 350px;
+      }
+
+      #gunCursor {
+        display: none !important;
+      }
+    }
+
+    model-viewer {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Opening soon text */
+    .opening-soon {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ff00c0;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      animation: pulse 2s ease-in-out infinite;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .coming-word {
+      position: fixed;
+      bottom: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #00ff00;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .opening-soon {
+        font-size: 12px;
+        letter-spacing: 3px;
+        bottom: 70px;
+      }
+      .coming-word {
+        font-size: 11px;
+        letter-spacing: 2px;
+        bottom: 50px;
+      }
+    }
+
+    /* Countdown - minimal framed */
+    .countdown {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 101;
+      text-align: center;
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 50px;
+    }
+
+    .countdown-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ff00c0;
+      font-family: 'Roboto', sans-serif;
+      letter-spacing: 1px;
+    }
+
+    .countdown-label {
+      font-size: 9px;
+      color: #00ff00;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+      opacity: 0.9;
+    }
+
+    .countdown-separator {
+      color: #ff00c0;
+      font-size: 14px;
+      font-weight: bold;
+      padding-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .countdown { padding: 10px 15px; gap: 6px; }
+      .countdown-value { font-size: 16px; }
+      .countdown-label { font-size: 8px; }
+      .countdown-item { min-width: 40px; }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 20px #ff00c0, 0 0 40px #ff00c0, 0 0 60px rgba(255, 0, 192, 0.8);
+      }
+      50% {
+        opacity: 0.7;
+        text-shadow: 0 0 10px #ff00c0, 0 0 20px #ff00c0, 0 0 30px rgba(255, 0, 192, 0.5);
+      }
+    }
+
+    /* Shooting balls */
+    .ball {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    .ball img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .muzzle-flash {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #ff00c0 0%, #ff69c7 40%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9997;
+      animation: flash 0.2s ease-out;
+    }
+
+    @keyframes flash {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Countdown Timer -->
+  <div class="countdown" id="countdown">
+    <div class="countdown-item">
+      <div class="countdown-value" id="countdownDays">00</div>
+      <div class="countdown-label">days</div>
+    </div>
+    <div class="countdown-separator">:</div>
+    <div class="countdown-item">
+      <div class="countdown-value" id="countdownHours">00</div>
+      <div class="countdown-label">hours</div>
+    </div>
+    <div class="countdown-separator">:</div>
+    <div class="countdown-item">
+      <div class="countdown-value" id="countdownMinutes">00</div>
+      <div class="countdown-label">min</div>
+    </div>
+    <div class="countdown-separator">:</div>
+    <div class="countdown-item">
+      <div class="countdown-value" id="countdownSeconds">00</div>
+      <div class="countdown-label">sec</div>
+    </div>
+  </div>
+
+  <!-- 3D Pink Logo -->
+  <div class="site-logo" id="siteLogo">
+    <model-viewer 
+      id="logoModel"
+      src="img/logo.glb"
+      alt="Oye Estupida 3D Logo"
+      auto-rotate
+      rotation-per-second="60deg"
+      style="width: 100%; height: 100%;"
+      exposure="1.5"
+      shadow-intensity="1"
+      camera-orbit="0deg 75deg 6m"
+      min-camera-orbit="0deg 75deg 6m"
+      max-camera-orbit="0deg 75deg 6m"
+      background-color="#000000"
+      onerror="console.error('Model viewer error:', event)"
+      onload="console.log('Model loaded successfully'); makeModelPink();"
+      onprogress="console.log('Loading progress:', event.detail.loaded + '/' + event.detail.total)">
+    </model-viewer>
+  </div>
+
+  <!-- Opening Soon Text -->
+  <div class="opening-soon">opening soon!</div>
+  <div class="coming-word">ASAP</div>
+
+  <!-- Gun Cursor -->
+  <div id="gunCursor">
+    <img src="mouse.png" alt="Gun cursor">
+  </div>
+
+  <script>
+    // Make 3D model pink
+    function setMaterialEmissive(material, r, g, b) {
+      if (!material) return;
+      if (typeof material.setEmissiveFactor === 'function') {
+        material.setEmissiveFactor([r, g, b]);
+      }
+    }
+
+    function makeModelPink() {
+      const modelViewer = document.getElementById('logoModel');
+      if (modelViewer && modelViewer.model) {
+        modelViewer.model.materials.forEach(material => {
+          if (material.pbrMetallicRoughness) {
+            // Pink matte material (less bright)
+            material.pbrMetallicRoughness.setBaseColorFactor([0.7, 0.1, 0.5, 1]);
+            material.pbrMetallicRoughness.setMetallicFactor(0.3);
+            material.pbrMetallicRoughness.setRoughnessFactor(0.4);
+          }
+          if (material.pbrMetallicRoughness) {
+            setMaterialEmissive(material, 0.1, 0, 0.08);
+          }
+        });
+        console.log('Logo materials set to pink');
+      } else {
+        setTimeout(makeModelPink, 500);
+      }
+    }
+
+    // Gun cursor variables
+    const gunCursorEl = document.getElementById('gunCursor');
+    const gunCursorImgEl = gunCursorEl ? gunCursorEl.querySelector('img') : null;
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorHX = 32;
+    let cursorHY = 32;
+    let cursorW = 64;
+    let cursorH = 64;
+    let imgW = 64;
+    let imgH = 64;
+    let shootAngle = -0.15;
+    let hotX = 0.5;
+    let hotY = 0.5;
+    let cursorEnabled = true;
+
+    // Load mouse image to get proper dimensions
+    const tmpImg = new Image();
+    tmpImg.onload = () => {
+      imgW = tmpImg.naturalWidth;
+      imgH = tmpImg.naturalHeight;
+      applyCursor(0.5, 0.5);
+    };
+    tmpImg.src = 'mouse.png';
+
+    function applyCursor(xRatio, yRatio) {
+      hotX = Math.max(0, Math.min(1, xRatio));
+      hotY = Math.max(0, Math.min(1, yRatio));
+      const maxW = Math.min(imgW, 128);
+      const maxH = Math.min(imgH, 128);
+      const hx = Math.round(hotX * (maxW - 1));
+      const hy = Math.round(hotY * (maxH - 1));
+
+      cursorHX = hx;
+      cursorHY = hy;
+      cursorW = maxW;
+      cursorH = maxH;
+
+      if (gunCursorEl) {
+        gunCursorEl.style.width = cursorW + 'px';
+        gunCursorEl.style.height = cursorH + 'px';
+      }
+      if (gunCursorImgEl) {
+        gunCursorImgEl.style.width = cursorW + 'px';
+        gunCursorImgEl.style.height = cursorH + 'px';
+        gunCursorImgEl.style.transformOrigin = (cursorW / 2) + 'px 0';
+      }
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      updateGunCursor();
+    });
+
+    function updateGunCursor() {
+      if (!gunCursorEl || !gunCursorImgEl) return;
+
+      if (window.innerWidth <= 768) {
+        gunCursorEl.style.display = 'none';
+        document.body.classList.remove('hide-native-cursor');
+        return;
+      }
+
+      const flipped = mouseX > window.innerWidth / 2;
+      document.body.classList.add('hide-native-cursor');
+
+      if (flipped) {
+        gunCursorEl.style.left = (mouseX - (cursorW - cursorHX)) + 'px';
+        gunCursorEl.style.top = (mouseY - cursorHY) + 'px';
+        gunCursorImgEl.style.transform = 'scaleX(-1)';
+      } else {
+        gunCursorEl.style.left = (mouseX - cursorHX) + 'px';
+        gunCursorEl.style.top = (mouseY - cursorHY) + 'px';
+        gunCursorImgEl.style.transform = 'scaleX(1)';
+      }
+      gunCursorEl.style.display = 'block';
+    }
+
+    // Shooting functionality
+    const MAX_BALLS = 15;
+    const activeBalls = [];
+
+    function effectiveShootAngle() {
+      const flipped = mouseX > window.innerWidth / 2;
+      if (flipped) return Math.PI - shootAngle;
+      return shootAngle;
+    }
+
+    function shootBall(startX, startY) {
+      const flash = document.createElement('div');
+      flash.className = 'muzzle-flash';
+      flash.style.left = (startX - 20) + 'px';
+      flash.style.top = (startY - 20) + 'px';
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 200);
+
+      const ball = document.createElement('div');
+      ball.className = 'ball';
+      ball.innerHTML = '<img src="ball.png" alt="">';
+      document.body.appendChild(ball);
+
+      activeBalls.push(ball);
+      if (activeBalls.length > MAX_BALLS) {
+        const oldestBall = activeBalls.shift();
+        if (oldestBall && oldestBall.parentNode) {
+          oldestBall.style.transition = 'opacity 0.5s ease-out';
+          oldestBall.style.opacity = '0';
+          setTimeout(() => oldestBall.remove(), 500);
+        }
+      }
+
+      const fireAngle = effectiveShootAngle() + (Math.random() - 0.5) * 0.08;
+      const speed = 35 + Math.random() * 8;
+      const ballSize = 20;
+      let bx = startX - ballSize / 2;
+      let by = startY - ballSize / 2;
+      let vx = Math.cos(fireAngle) * speed;
+      let vy = Math.sin(fireAngle) * speed;
+      const gravity = 0.35;
+      const friction = 0.965;
+      const bounce = 0.55;
+
+      function animate() {
+        vx *= friction;
+        vy *= friction;
+        vy += gravity;
+        bx += vx;
+        by += vy;
+
+        if (bx < 0) { bx = 0; vx = Math.abs(vx) * bounce; }
+        if (bx + ballSize > window.innerWidth) { bx = window.innerWidth - ballSize; vx = -Math.abs(vx) * bounce; }
+        if (by < 0) { by = 0; vy = Math.abs(vy) * bounce; }
+        if (by + ballSize > window.innerHeight) { by = window.innerHeight - ballSize; vy = -Math.abs(vy) * bounce; }
+
+        ball.style.left = bx + 'px';
+        ball.style.top = by + 'px';
+
+        if (Math.abs(vx) > 0.5 || Math.abs(vy) > 0.5 || by < window.innerHeight - ballSize - 5) {
+          requestAnimationFrame(animate);
+        } else {
+          ball.style.transition = 'opacity 1s ease-out';
+          ball.style.opacity = '0';
+          setTimeout(() => ball.remove(), 1000);
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    // Click to shoot
+    document.body.addEventListener('click', (e) => {
+      if (!cursorEnabled) return;
+      shootBall(mouseX, mouseY);
+    });
+
+    // Uzi mode on hold
+    let uziInterval = null;
+    const UZI_RATE_MS = 80;
+
+    document.body.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      uziInterval = setTimeout(() => {
+        uziInterval = setInterval(() => {
+          shootBall(mouseX, mouseY);
+        }, UZI_RATE_MS);
+      }, 200);
+    });
+
+    document.body.addEventListener('mouseup', () => {
+      clearTimeout(uziInterval);
+      clearInterval(uziInterval);
+      uziInterval = null;
+    });
+
+    // Touch support for mobile shooting
+    document.body.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      mouseX = touch.clientX;
+      mouseY = touch.clientY;
+      shootBall(mouseX, mouseY);
+    }, { passive: true });
+
+    // Countdown timer
+    function updateCountdown() {
+      const now = new Date();
+      const currentDay = now.getDay();
+      const currentHour = now.getHours();
+      
+      // Find next Thursday at 16:00
+      let targetDate = new Date(now);
+      targetDate.setHours(16, 0, 0, 0);
+      
+      const daysUntilThursday = (4 - currentDay + 7) % 7;
+      
+      if (currentDay === 4 && currentHour >= 16) {
+        targetDate.setDate(targetDate.getDate() + 7);
+      } else {
+        targetDate.setDate(targetDate.getDate() + daysUntilThursday);
+      }
+      
+      const diff = targetDate - now;
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('countdownDays').textContent = String(days).padStart(2, '0');
+      document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('countdownMinutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('countdownSeconds').textContent = String(seconds).padStart(2, '0');
+    }
+    
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Handle resize
+    window.addEventListener('resize', updateGunCursor);
+
+    // Initial setup
+    window.addEventListener('load', () => {
+      makeModelPink();
+      updateGunCursor();
+    });
+  </script>
+</body>
+</html>
